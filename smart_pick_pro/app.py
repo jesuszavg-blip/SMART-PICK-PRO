@@ -977,11 +977,14 @@ if st.sidebar.button("🔮 Generar Análisis Integral", use_container_width=True
                 badge_html = "<div style='background:#f39c12; color:white; padding:4px 12px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>⏳ POR INICIAR</div>"
                 score_html = "<h2 style='margin:0; color:#888; font-size:32px;'>VS</h2>"
 
+            logo_local_render = api_client.obtener_logo_oficial_equipo(equipo_local_real, datos_partido.get('logo_local', ''))
+            logo_visita_render = api_client.obtener_logo_oficial_equipo(equipo_visita_real, datos_partido.get('logo_visita', ''))
+
             # Marcador Principal Estilizado
             st.markdown(f'''
             <div style="display:flex; align-items:center; justify-content:space-around; background-color:white; padding:25px 15px; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:20px;">
                 <div style="text-align:center; width:33%;">
-                    <img src="{datos_partido.get('logo_local', '')}" style="width:75px; height:75px; object-fit:contain; margin-bottom:8px;">
+                    <img src="{logo_local_render}" style="width:75px; height:75px; object-fit:contain; margin-bottom:8px;">
                     <h3 style="margin:0; color:#1E2130; font-size:18px; font-weight:800;">{equipo_local_real}</h3>
                 </div>
                 <div style="width:34%; text-align:center;">
@@ -989,7 +992,7 @@ if st.sidebar.button("🔮 Generar Análisis Integral", use_container_width=True
                     {score_html}
                 </div>
                 <div style="text-align:center; width:33%;">
-                    <img src="{datos_partido.get('logo_visita', '')}" style="width:75px; height:75px; object-fit:contain; margin-bottom:8px;">
+                    <img src="{logo_visita_render}" style="width:75px; height:75px; object-fit:contain; margin-bottom:8px;">
                     <h3 style="margin:0; color:#1E2130; font-size:18px; font-weight:800;">{equipo_visita_real}</h3>
                 </div>
             </div>

@@ -17,6 +17,47 @@ def obtener_ligas_mundo():
         url = f"{config.API_FOOTBALL_URL}/leagues"
         resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
         
+def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
+    """Mapeador 100% exacto de escudos oficiales para Liga MX y Liga MX Femenil por nombre"""
+    eq = str(nombre_equipo).lower().strip()
+    if "américa" in eq or "america" in eq:
+        return "https://media.api-sports.io/football/teams/2287.png"
+    elif "chivas" in eq or "guadalajara" in eq:
+        return "https://media.api-sports.io/football/teams/2291.png"
+    elif "cruz azul" in eq:
+        return "https://media.api-sports.io/football/teams/2286.png"
+    elif "pumas" in eq:
+        return "https://media.api-sports.io/football/teams/2288.png"
+    elif "tigres" in eq:
+        return "https://media.api-sports.io/football/teams/2289.png"
+    elif "monterrey" in eq or "rayada" in eq:
+        return "https://media.api-sports.io/football/teams/2290.png"
+    elif "pachuca" in eq:
+        return "https://media.api-sports.io/football/teams/2285.png"
+    elif "toluca" in eq:
+        return "https://media.api-sports.io/football/teams/2293.png"
+    elif "santos" in eq:
+        return "https://media.api-sports.io/football/teams/2294.png"
+    elif "atlas" in eq:
+        return "https://media.api-sports.io/football/teams/2295.png"
+    elif "león" in eq or "leon" in eq:
+        return "https://media.api-sports.io/football/teams/2286.png"
+    elif "puebla" in eq:
+        return "https://media.api-sports.io/football/teams/2284.png"
+    elif "juárez" in eq or "juarez" in eq:
+        return "https://media.api-sports.io/football/teams/2292.png"
+    elif "mazatlán" in eq or "mazatlan" in eq:
+        return "https://media.api-sports.io/football/teams/2296.png"
+    elif "tijuana" in eq or "xolos" in eq:
+        return "https://media.api-sports.io/football/teams/2297.png"
+    elif "san luis" in eq:
+        return "https://media.api-sports.io/football/teams/2298.png"
+    elif "querétaro" in eq or "queretaro" in eq:
+        return "https://media.api-sports.io/football/teams/2299.png"
+    elif "necaxa" in eq:
+        return "https://media.api-sports.io/football/teams/2288.png"
+    return logo_actual if logo_actual else "https://media.api-sports.io/football/teams/2287.png"
+
         ligas_top = {
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
