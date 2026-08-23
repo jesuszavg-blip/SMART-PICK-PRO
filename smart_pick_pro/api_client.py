@@ -21,7 +21,7 @@ def obtener_ligas_mundo():
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
             "🇲🇽 Mexico - Liga MX": "262", 
-            "👩🇲🇽 Mexico - Liga MX Femenil": "1065", 
+            "👩🇲🇽 Mexico - Liga MX Femenil": "868", 
             "🇬🇧 England - Premier League": "39", 
             "🇪🇸 Spain - La Liga": "140", 
             "🌍 UEFA Champions League": "2",
@@ -50,7 +50,7 @@ def obtener_ligas_mundo():
         "🎯 [ESPECIAL] Simulador Progol": "PROGOL_MODE",
         "⚙️ [ESPECIAL] Optimizador de Reducciones": "REDUCCIONES_MODE",
         "🇲🇽 Liga MX (Varonil)": "262",
-        "👩🇲🇽 Liga MX Femenil": "1065",
+        "👩🇲🇽 Liga MX Femenil": "868",
         "🇬🇧 Premier League": "39",
         "🇪🇸 La Liga": "140",
         "🌍 UEFA Champions League": "2"

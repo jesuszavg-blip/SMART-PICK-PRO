@@ -334,18 +334,14 @@ st.set_page_config(
 # Estilos CSS Personalizados de Máximo Contraste Visual
 st.markdown("""
 <style>
-    /* Reemplazar las dos flechitas (« / ») de la esquina superior izquierda por un Balón de Fútbol ⚽ */
+    /* Reemplazar únicamente las dos flechitas (« / ») de la barra lateral por un Balón de Fútbol ⚽ */
     [data-testid="stSidebarCollapseButton"] svg, 
-    [data-testid="collapsedControl"] svg,
-    [data-testid="stHeader"] button svg,
-    header button svg {
+    [data-testid="collapsedControl"] svg {
         display: none !important;
     }
 
     [data-testid="stSidebarCollapseButton"]::after, 
-    [data-testid="collapsedControl"]::after,
-    [data-testid="stHeader"] button::after,
-    header button::after {
+    [data-testid="collapsedControl"]::after {
         content: "⚽" !important;
         font-size: 22px !important;
         line-height: 1 !important;
