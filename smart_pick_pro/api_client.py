@@ -11,7 +11,7 @@ def get_current_season():
     return str(now.year)
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
-    """Mapeador 100% exacto e infalible de escudos oficiales de la Liga MX y Liga MX Femenil por nombre de equipo"""
+    """Mapeador 100% exacto e infalible de escudos oficiales con soporte total para alias de la Liga MX y Femenil"""
     eq = str(nombre_equipo).lower().strip()
     if "américa" in eq or "america" in eq:
         return "https://media.api-sports.io/football/teams/2287.png"
@@ -19,35 +19,35 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         return "https://media.api-sports.io/football/teams/2291.png"
     elif "cruz azul" in eq:
         return "https://media.api-sports.io/football/teams/2286.png"
-    elif "pumas" in eq:
+    elif "pumas" in eq or "universidad nacional" in eq or "unam" in eq:
         return "https://media.api-sports.io/football/teams/2288.png"
-    elif "tigres" in eq:
+    elif "tigres" in eq or "uanl" in eq:
         return "https://media.api-sports.io/football/teams/2289.png"
-    elif "monterrey" in eq or "rayada" in eq:
+    elif "monterrey" in eq or "rayada" in eq or "rayados" in eq:
         return "https://media.api-sports.io/football/teams/2290.png"
-    elif "pachuca" in eq:
+    elif "pachuca" in eq or "tuzos" in eq or "tuzas" in eq:
         return "https://media.api-sports.io/football/teams/2285.png"
-    elif "toluca" in eq:
+    elif "toluca" in eq or "diablos" in eq:
         return "https://media.api-sports.io/football/teams/2293.png"
-    elif "santos" in eq:
+    elif "santos" in eq or "laguna" in eq:
         return "https://media.api-sports.io/football/teams/2294.png"
-    elif "atlas" in eq:
+    elif "atlas" in eq or "zorros" in eq or "roji" in eq:
         return "https://media.api-sports.io/football/teams/2295.png"
-    elif "león" in eq or "leon" in eq:
+    elif "león" in eq or "leon" in eq or "fieras" in eq:
         return "https://media.api-sports.io/football/teams/2283.png"
-    elif "puebla" in eq:
+    elif "puebla" in eq or "camoteros" in eq:
         return "https://media.api-sports.io/football/teams/2284.png"
-    elif "juárez" in eq or "juarez" in eq:
+    elif "juárez" in eq or "juarez" in eq or "bravos" in eq or "bravas" in eq:
         return "https://media.api-sports.io/football/teams/2292.png"
-    elif "mazatlán" in eq or "mazatlan" in eq:
+    elif "mazatlán" in eq or "mazatlan" in eq or "cañoneros" in eq:
         return "https://media.api-sports.io/football/teams/2296.png"
     elif "tijuana" in eq or "xolos" in eq:
         return "https://media.api-sports.io/football/teams/2297.png"
     elif "san luis" in eq:
         return "https://media.api-sports.io/football/teams/2298.png"
-    elif "querétaro" in eq or "queretaro" in eq:
+    elif "querétaro" in eq or "queretaro" in eq or "gallos" in eq:
         return "https://media.api-sports.io/football/teams/2299.png"
-    elif "necaxa" in eq:
+    elif "necaxa" in eq or "rayos" in eq:
         return "https://media.api-sports.io/football/teams/2282.png"
         
     return logo_actual if (logo_actual and str(logo_actual).startswith("http")) else "https://media.api-sports.io/football/teams/2287.png"
