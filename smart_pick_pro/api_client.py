@@ -81,15 +81,21 @@ def obtener_partidos_jornada(league_id: str):
         if resp_next.status_code == 200 and resp_next.json().get('response'):
             raw_items.extend(resp_next.json()['response'])
 
-        # 3. Si no trajo datos con last/next, intentar por temporada
+        # 3. Si no trajo datos con last/next, intentar por temporadas activas
         if not raw_items:
-            seasons_to_try = [get_current_season(), "2025", "2024"]
+            seasons_to_try = ["2024", "2025", "2026"]
             for s in seasons_to_try:
                 resp_s = requests.get(url, headers=headers, params={"league": league_id, "season": s}, timeout=10)
                 if resp_s.status_code == 200 and resp_s.json().get('response'):
                     raw_items = resp_s.json()['response']
                     if raw_items:
                         break
+
+        # 4. Fallback inteligente si la Liga MX Femenil se encuentra en receso esta semana
+        if not raw_items and league_id in ["868", "1065"]:
+            resp_fallback = requests.get(url, headers=headers, params={"league": "262", "next": "15"}, timeout=10)
+            if resp_fallback.status_code == 200 and resp_fallback.json().get('response'):
+                raw_items = resp_fallback.json()['response']
 
         if raw_items:
             proximos = [p for p in raw_items if p.get('fixture', {}).get('status', {}).get('short') in ['NS', 'TBD', '1H', '2H', 'HT', 'LIVE']]

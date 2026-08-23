@@ -34,6 +34,27 @@ def _verify_password(password: str, hashed: str) -> bool:
         # Comparación texto plano para compatibilidad de migración inicial
         return password == hashed
 
+USER_BACKUP_PATH = Path(__file__).parent / "users_backup.json"
+
+def _respaldar_usuarios_json():
+    """Guarda un respaldo persistente de todos los usuarios en JSON"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username, password, role, is_active FROM users")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        users_list = []
+        for u, p, r, a in rows:
+            users_list.append({"username": u, "password": p, "role": r, "is_active": a})
+            
+        import json
+        with open(USER_BACKUP_PATH, "w", encoding="utf-8") as f:
+            json.dump(users_list, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error al respaldar usuarios: {e}")
+
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -59,6 +80,28 @@ def init_db():
             (config.ADMIN_INIT_USER.lower(), hashed_pw, 'ADMIN')
         )
         conn.commit()
+
+    # Auto-Restaurar usuarios del respaldo JSON si el servidor en la nube se reinició
+    if USER_BACKUP_PATH.exists():
+        try:
+            import json
+            with open(USER_BACKUP_PATH, "r", encoding="utf-8") as f:
+                saved_users = json.load(f)
+                for u_data in saved_users:
+                    u_name = u_data.get("username", "").strip().lower()
+                    u_pw = u_data.get("password", "")
+                    u_role = u_data.get("role", "VIP")
+                    u_active = u_data.get("is_active", 1)
+                    if u_name and u_pw:
+                        cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                        if not cursor.fetchone():
+                            cursor.execute(
+                                "INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)",
+                                (u_name, u_pw, u_role, u_active)
+                            )
+            conn.commit()
+        except Exception as e:
+            print(f"Error al restaurar respaldo de usuarios: {e}")
 
     conn.close()
 
@@ -102,6 +145,7 @@ def registrar_usuario(username: str, password: str, role: str = 'VIP') -> tuple[
         )
         conn.commit()
         conn.close()
+        _respaldar_usuarios_json()
         return True, f"Usuario '{username_clean}' registrado exitosamente como {role}."
     except sqlite3.IntegrityError:
         conn.close()
@@ -121,6 +165,7 @@ def cambiar_estado_usuario(user_id: int, nuevo_estado: int):
     cursor.execute("UPDATE users SET is_active = ? WHERE id = ?", (nuevo_estado, user_id))
     conn.commit()
     conn.close()
+    _respaldar_usuarios_json()
 
 # Inicializar DB al importar
 init_db()
