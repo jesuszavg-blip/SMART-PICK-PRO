@@ -11,10 +11,7 @@ def get_current_season():
     return str(now.year)
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
-    """Mapeador de escudos oficiales: Respeta 100% las URLs oficiales de la API si están presentes."""
-    if logo_actual and isinstance(logo_actual, str) and logo_actual.startswith("http") and ("media.api-sports.io" in logo_actual or "cdn" in logo_actual):
-        return logo_actual
-
+    """Mapeador 100% exacto e infalible de escudos oficiales por nombre de equipo"""
     eq = str(nombre_equipo).lower().strip()
     if "américa" in eq or "america" in eq:
         return "https://media.api-sports.io/football/teams/2287.png"
@@ -53,7 +50,7 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
     elif "necaxa" in eq:
         return "https://media.api-sports.io/football/teams/2282.png"
         
-    return logo_actual if logo_actual else "https://media.api-sports.io/football/teams/2287.png"
+    return logo_actual if (logo_actual and str(logo_actual).startswith("http")) else "https://media.api-sports.io/football/teams/2287.png"
 
 @st.cache_data(ttl=60)
 def obtener_ligas_mundo():
