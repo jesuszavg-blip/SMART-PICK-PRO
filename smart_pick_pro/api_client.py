@@ -11,7 +11,7 @@ def get_current_season():
     return str(now.year)
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
-    """Mapeador 100% exacto e infalible de escudos oficiales por nombre de equipo"""
+    """Mapeador 100% exacto e infalible de escudos oficiales de la Liga MX y Liga MX Femenil por nombre de equipo"""
     eq = str(nombre_equipo).lower().strip()
     if "américa" in eq or "america" in eq:
         return "https://media.api-sports.io/football/teams/2287.png"
