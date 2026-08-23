@@ -429,6 +429,28 @@ st.markdown("""
         color: #FFFFFF !important;
         font-weight: 600 !important;
     }
+
+    /* Estilos Globales para Botones Streamlit en Tema Oscuro VIP */
+    .stButton > button {
+        background-color: #1E2130 !important;
+        color: #FFFFFF !important;
+        border: 1.5px solid #00E676 !important;
+        border-radius: 10px !important;
+        font-weight: 800 !important;
+        font-size: 15px !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .stButton > button:hover {
+        background-color: #00E676 !important;
+        color: #0E1117 !important;
+        box-shadow: 0 0 15px rgba(0, 230, 118, 0.5) !important;
+    }
+
+    .stButton > button p, .stButton > button span, .stButton > button div {
+        color: inherit !important;
+        font-weight: 800 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
