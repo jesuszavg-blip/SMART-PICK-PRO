@@ -864,16 +864,14 @@ with col_btn1:
             mayor_prob, mejor_partido, mejor_consejo = 0.0, "", ""
             for nombre, datos in partidos_a_escanear:
                 if datos.get("id"):
-                    c, pl, pe, pv, _, _, _, _, _, _, _, _ = api_client.obtener_analisis_completo(datos["id"], datos.get("local_id", 0), datos.get("visita_id", 0))
-                    try:
-                        v_pl, v_pe, v_pv = float(pl.replace('%','')), float(pe.replace('%','')), float(pv.replace('%',''))
-                        prob_1x = v_pl + v_pe
-                        prob_x2 = v_pv + v_pe
-                        if prob_1x > mayor_prob:
-                            mayor_prob, mejor_partido, mejor_consejo = prob_1x, nombre, f"{datos['local']} o Empate (1X)"
-                        if prob_x2 > mayor_prob:
-                            mayor_prob, mejor_partido, mejor_consejo = prob_x2, nombre, f"{datos['visita']} o Empate (X2)"
-                    except: pass
+                    c, pl, pe, pv, il, iv, h2h, uo, gl, gv, fl, fv = api_client.obtener_analisis_completo(datos["id"], datos.get("local_id", 0), datos.get("visita_id", 0))
+                    stats_p = analytics.calcular_matriz_poisson_multifactorial(pl, pe, pv, gl, gv, fl, fv, h2h, il, iv)
+                    v_p1x = stats_p.get("p_1X", 0.0)
+                    v_px2 = stats_p.get("p_X2", 0.0)
+                    if v_p1x > mayor_prob:
+                        mayor_prob, mejor_partido, mejor_consejo = v_p1x, nombre, f"{datos['local']} o Empate (1X)"
+                    if v_px2 > mayor_prob:
+                        mayor_prob, mejor_partido, mejor_consejo = v_px2, nombre, f"{datos['visita']} o Empate (X2)"
             if mejor_partido:
                 st.success(f"🎯 **PICK ULTRA SEGURO:** {mejor_partido} | Probabilidad Calculada: **{mayor_prob:.1f}%**")
                 st.info(f"💡 **Apuesta recomendada:** Doble Oportunidad ({mejor_consejo})")
@@ -885,14 +883,14 @@ with col_btn2:
             picks = []
             for nombre, datos in partidos_a_escanear:
                 if datos.get("id"):
-                    c, pl, pe, pv, _, _, _, _, _, _, _, _ = api_client.obtener_analisis_completo(datos["id"], datos.get("local_id", 0), datos.get("visita_id", 0))
-                    try:
-                        v_pl, v_pe, v_pv = float(pl.replace('%', '')), float(pe.replace('%', '')), float(pv.replace('%', ''))
-                        if (v_pl + v_pe) >= 72:
-                            picks.append({"partido": nombre, "pick": f"{datos['local']} o Empate", "prob": v_pl + v_pe})
-                        elif (v_pv + v_pe) >= 72:
-                            picks.append({"partido": nombre, "pick": f"{datos['visita']} o Empate", "prob": v_pv + v_pe})
-                    except: pass
+                    c, pl, pe, pv, il, iv, h2h, uo, gl, gv, fl, fv = api_client.obtener_analisis_completo(datos["id"], datos.get("local_id", 0), datos.get("visita_id", 0))
+                    stats_p = analytics.calcular_matriz_poisson_multifactorial(pl, pe, pv, gl, gv, fl, fv, h2h, il, iv)
+                    v_p1x = stats_p.get("p_1X", 0.0)
+                    v_px2 = stats_p.get("p_X2", 0.0)
+                    if v_p1x >= 70.0:
+                        picks.append({"partido": nombre, "pick": f"{datos['local']} o Empate", "prob": v_p1x})
+                    elif v_px2 >= 70.0:
+                        picks.append({"partido": nombre, "pick": f"{datos['visita']} o Empate", "prob": v_px2})
             picks = sorted(picks, key=lambda x: x['prob'], reverse=True)[:3]
             if len(picks) >= 2:
                 html_parlay = '<div style="background-color: #1E2130; color: white; padding: 20px; border-radius: 12px; border: 2px dashed #00E676; margin-top: 15px;"><h3 style="text-align: center; color: #00E676; margin-top:0;">🎟️ BOLETO VIP CONSERVADOR</h3><hr style="border-color: #333;">'
