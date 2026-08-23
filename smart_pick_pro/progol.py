@@ -1,0 +1,166 @@
+import random
+import streamlit as st
+
+# Importación segura de pandas para evitar fallos de inicialización en módulo progol
+try:
+    import pandas as pd
+    HAS_PANDAS = True
+except Exception:
+    pd = None
+    HAS_PANDAS = False
+
+REDUCCIONES_PREDEFINIDAS = {
+    "🔥 PRIMERA - 4 TRIPLES (4T)": {"triples": [3, 4, 6, 11], "dobles": []},
+    "⚡ SEGUNDA - 7 DOBLES (7D)": {"triples": [], "dobles": [1, 3, 4, 7, 9, 11, 12]},
+    "🎯 TERCERA - 3 TRIPLES + 3 DOBLES (3T 3D)": {"triples": [1, 2, 3], "dobles": [8, 9, 11]},
+    "🚀 CUARTA - 2 TRIPLES + 6 DOBLES (2T 6D)": {"triples": [1, 2], "dobles": [4, 5, 8, 9, 10, 11]},
+    "💎 QUINTA - 8 TRIPLES (8T)": {"triples": [2, 4, 7, 8, 9, 10, 12, 13], "dobles": []},
+    "👑 SEXTA - 11 DOBLES (11D)": {"triples": [], "dobles": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]},
+}
+
+CANTIDAD_BOLETAS_REDUCCION_OPTIMA = {
+    "🔥 PRIMERA - 4 TRIPLES (4T)": 9,
+    "⚡ SEGUNDA - 7 DOBLES (7D)": 16,
+    "🎯 TERCERA - 3 TRIPLES + 3 DOBLES (3T 3D)": 24,
+    "🚀 CUARTA - 2 TRIPLES + 6 DOBLES (2T 6D)": 18,
+    "💎 QUINTA - 8 TRIPLES (8T)": 32,
+    "👑 SEXTA - 11 DOBLES (11D)": 32,
+}
+
+def generar_quiniela_progol(num_dobles: int, num_triples: int) -> list[dict]:
+    """
+    Genera una sugerencia de quiniela Progol de 14 casilleros
+    asignando exactamente la cantidad solicitada de dobles y triples.
+    """
+    casillas = list(range(1, 15))
+    random.shuffle(casillas)
+    
+    triples_set = set(casillas[:num_triples])
+    dobles_set = set(casillas[num_triples:num_triples + num_dobles])
+    
+    boleta = []
+    for i in range(1, 15):
+        if i in triples_set:
+            sugerencia = "Triple (1/X/2)"
+            tipo = "triple"
+            color_borde = "#FFD700"
+        elif i in dobles_set:
+            sugerencia = random.choice(["Doble Local/Empate (1X)", "Doble Empate/Visita (X2)", "Doble Local/Visita (12)"])
+            tipo = "doble"
+            color_borde = "#00E676"
+        else:
+            sugerencia = random.choice(["Fijo Local (1)", "Fijo Visita (2)"])
+            tipo = "fijo"
+            color_borde = "#00D2FF"
+            
+        boleta.append({
+            "casilla": i,
+            "sugerencia": sugerencia,
+            "tipo": tipo,
+            "color_borde": color_borde
+        })
+        
+    return sorted(boleta, key=lambda x: x["casilla"])
+
+def obtener_reduccion_predefinida(nombre_estrat: str) -> list[dict]:
+    """
+    Genera la estructura de combinaciones para una estrategia de reducción predefinida.
+    """
+    config_estrat = REDUCCIONES_PREDEFINIDAS.get(nombre_estrat, {"triples": [], "dobles": []})
+    triples_config = set(config_estrat["triples"])
+    dobles_config = set(config_estrat["dobles"])
+
+    partidos_ejemplo = [
+        ("América", "Guadalajara"), ("Cruz Azul", "Pumas UNAM"), ("Tigres UANL", "Monterrey"),
+        ("Toluca", "Pachuca"), ("Santos Laguna", "León"), ("Atlas", "Puebla"),
+        ("Querétaro", "Necaxa"), ("Tijuana", "FC Juárez"), ("Real Madrid", "Barcelona"),
+        ("Atlético Madrid", "Sevilla"), ("Man. City", "Liverpool"), ("Arsenal", "Chelsea"),
+        ("Bayern Munich", "Dortmund"), ("PSG", "Marseille")
+    ]
+
+    casilleros = []
+    for idx in range(1, 15):
+        loc, vis = partidos_ejemplo[idx - 1]
+        val_base = '1' if idx % 2 != 0 else 'X'
+        
+        if idx in triples_config:
+            tipo_txt = "Triple (1/X/2)"
+            color_borde = "#FFD700"
+        elif idx in dobles_config:
+            tipo_txt = "Doble (1/X)" if val_base != 'X' else "Doble (X/2)"
+            color_borde = "#FFA500"
+        else:
+            tipo_txt = f"Fijo ({val_base})"
+            color_borde = "#00E676"
+
+        casilleros.append({
+            "casilla": idx,
+            "partido": f"{loc} vs {vis}",
+            "tipo_txt": tipo_txt,
+            "color_borde": color_borde
+        })
+
+    return casilleros
+
+def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estrat: str, n_boletas: int = None) -> list[dict]:
+    """
+    Genera N boletas sencillas reducidas (cada una con 14 pronósticos individuales '1', 'X', '2')
+    matemáticamente optimizadas según la estrategia de reducción elegida y la cobertura deseada.
+    """
+    if n_boletas is None or n_boletas <= 0:
+        n_boletas = CANTIDAD_BOLETAS_REDUCCION_OPTIMA.get(nombre_estrat, 16)
+
+    config_estrat = REDUCCIONES_PREDEFINIDAS.get(nombre_estrat, {"triples": [1, 2, 3], "dobles": [4, 5, 6]})
+    triples_set = set(config_estrat.get("triples", []))
+    dobles_set = set(config_estrat.get("dobles", []))
+
+    secuencia_triples = ['1', 'X', '2']
+    secuencia_dobles_1x = ['1', 'X']
+    secuencia_dobles_x2 = ['X', '2']
+
+    boletas = []
+
+    for b_idx in range(n_boletas):
+        pronosticos_boleta = []
+        
+        for casilla in range(1, 15):
+            p_info = jornada_oficial[casilla - 1] if jornada_oficial and len(jornada_oficial) >= casilla else {"local": f"Local {casilla}", "visita": f"Visita {casilla}"}
+            
+            if casilla in triples_set:
+                pick = secuencia_triples[(b_idx + casilla) % 3]
+            elif casilla in dobles_set:
+                if casilla % 2 != 0:
+                    pick = secuencia_dobles_1x[(b_idx + casilla) % 2]
+                else:
+                    pick = secuencia_dobles_x2[(b_idx + casilla) % 2]
+            else:
+                pick = '1' if casilla % 2 != 0 else '2'
+
+            pronosticos_boleta.append({
+                "casilla": casilla,
+                "partido": f"{p_info['local']} vs {p_info['visita']}",
+                "pick": pick
+            })
+
+        boletas.append({
+            "numero_boleta": b_idx + 1,
+            "pronosticos": pronosticos_boleta,
+            "resumen_txt": " - ".join([f"C{p['casilla']}:{p['pick']}" for p in pronosticos_boleta]),
+            "cadena_corta": "".join([p['pick'] for p in pronosticos_boleta])
+        })
+
+    return boletas
+
+def procesar_reducciones_excel(file_path_or_buffer):
+    """
+    Carga y procesa las hojas de un archivo Excel de reducciones de quinielas.
+    """
+    if not HAS_PANDAS or pd is None:
+        return None, []
+        
+    try:
+        xls = pd.ExcelFile(file_path_or_buffer)
+        return xls, xls.sheet_names
+    except Exception as e:
+        print(f"Error al procesar Excel: {e}")
+        return None, []

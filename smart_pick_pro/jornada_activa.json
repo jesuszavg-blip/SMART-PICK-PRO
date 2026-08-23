@@ -1,0 +1,86 @@
+[
+  {
+    "casilla": 1,
+    "local": "leon",
+    "visita": "monterrey",
+    "id": null
+  },
+  {
+    "casilla": 2,
+    "local": "san luis",
+    "visita": "pachuca",
+    "id": null
+  },
+  {
+    "casilla": 3,
+    "local": "pachuca f",
+    "visita": "guadalajara f",
+    "id": null
+  },
+  {
+    "casilla": 4,
+    "local": "valencia",
+    "visita": "celta",
+    "id": null
+  },
+  {
+    "casilla": 5,
+    "local": "ipswich",
+    "visita": "sunderland",
+    "id": null
+  },
+  {
+    "casilla": 6,
+    "local": "brentford",
+    "visita": "tottenham",
+    "id": null
+  },
+  {
+    "casilla": 7,
+    "local": "brighton",
+    "visita": "aston villa",
+    "id": null
+  },
+  {
+    "casilla": 8,
+    "local": "bolonia",
+    "visita": "lazio",
+    "id": null
+  },
+  {
+    "casilla": 9,
+    "local": "estoril",
+    "visita": "rio ave",
+    "id": null
+  },
+  {
+    "casilla": 10,
+    "local": "inter p. a.",
+    "visita": "at. mineiro",
+    "id": null
+  },
+  {
+    "casilla": 11,
+    "local": "vitoria ba",
+    "visita": "bahia",
+    "id": null
+  },
+  {
+    "casilla": 12,
+    "local": "racing",
+    "visita": "boca jrs",
+    "id": null
+  },
+  {
+    "casilla": 13,
+    "local": "st. luis",
+    "visita": "houston",
+    "id": null
+  },
+  {
+    "casilla": 14,
+    "local": "u. de chile",
+    "visita": "colo colo",
+    "id": null
+  }
+]
