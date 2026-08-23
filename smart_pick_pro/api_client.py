@@ -11,7 +11,10 @@ def get_current_season():
     return str(now.year)
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
-    """Mapeador 100% exacto de escudos oficiales para Liga MX y Liga MX Femenil por nombre"""
+    """Mapeador de escudos oficiales: Respeta 100% las URLs oficiales de la API si están presentes."""
+    if logo_actual and isinstance(logo_actual, str) and logo_actual.startswith("http") and ("media.api-sports.io" in logo_actual or "cdn" in logo_actual):
+        return logo_actual
+
     eq = str(nombre_equipo).lower().strip()
     if "américa" in eq or "america" in eq:
         return "https://media.api-sports.io/football/teams/2287.png"
@@ -34,7 +37,7 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
     elif "atlas" in eq:
         return "https://media.api-sports.io/football/teams/2295.png"
     elif "león" in eq or "leon" in eq:
-        return "https://media.api-sports.io/football/teams/2286.png"
+        return "https://media.api-sports.io/football/teams/2283.png"
     elif "puebla" in eq:
         return "https://media.api-sports.io/football/teams/2284.png"
     elif "juárez" in eq or "juarez" in eq:
@@ -48,7 +51,8 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
     elif "querétaro" in eq or "queretaro" in eq:
         return "https://media.api-sports.io/football/teams/2299.png"
     elif "necaxa" in eq:
-        return "https://media.api-sports.io/football/teams/2288.png"
+        return "https://media.api-sports.io/football/teams/2282.png"
+        
     return logo_actual if logo_actual else "https://media.api-sports.io/football/teams/2287.png"
 
 @st.cache_data(ttl=86400)
