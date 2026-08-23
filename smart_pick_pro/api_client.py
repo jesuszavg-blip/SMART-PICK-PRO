@@ -55,7 +55,7 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         
     return logo_actual if logo_actual else "https://media.api-sports.io/football/teams/2287.png"
 
-@st.cache_data(ttl=86400)
+@st.cache_data(ttl=60)
 def obtener_ligas_mundo():
     headers = get_headers()
     try:
