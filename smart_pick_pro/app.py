@@ -980,8 +980,8 @@ if st.sidebar.button("🔮 Generar Análisis Integral", use_container_width=True
                 badge_html = "<div style='background:#f39c12; color:white; padding:4px 12px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>⏳ POR INICIAR</div>"
                 score_html = "<h2 style='margin:0; color:#888; font-size:32px;'>VS</h2>"
 
-            logo_local_render = api_client.obtener_logo_oficial_equipo(equipo_local_real, datos_partido.get('logo_local', ''))
-            logo_visita_render = api_client.obtener_logo_oficial_equipo(equipo_visita_real, datos_partido.get('logo_visita', ''))
+            logo_local_render = datos_partido.get('logo_local') if (datos_partido.get('logo_local') and str(datos_partido.get('logo_local')).startswith('http')) else api_client.obtener_logo_oficial_equipo(equipo_local_real)
+            logo_visita_render = datos_partido.get('logo_visita') if (datos_partido.get('logo_visita') and str(datos_partido.get('logo_visita')).startswith('http')) else api_client.obtener_logo_oficial_equipo(equipo_visita_real)
 
             # Marcador Principal Estilizado
             st.markdown(f'''
