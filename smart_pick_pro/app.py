@@ -677,7 +677,7 @@ if liga_elegida_val == "PROGOL_MODE":
     st.write("### 📋 Casilleros Oficiales (Progol 14 Partidos)")
     
     if st.button("🚀 GENERAR COMBINACIÓN MAESTRA PROGOL", use_container_width=True):
-        boleta = progol.generar_quiniela_progol(num_dobles, num_triples)
+        boleta = progol.generar_quiniela_progol(num_dobles, num_triples, jornada_oficial)
         st.success(f"✅ ¡Quiniela Optimizada con éxito ({num_dobles} dobles y {num_triples} triples)!")
         st.markdown("### 🎟️ Tu Boleta Progol Sugerida")
         

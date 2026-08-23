@@ -27,17 +27,27 @@ CANTIDAD_BOLETAS_REDUCCION_OPTIMA = {
     "👑 SEXTA - 11 DOBLES (11D)": 32,
 }
 
-def generar_quiniela_progol(num_dobles: int, num_triples: int) -> list[dict]:
+def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: list[dict] = None) -> list[dict]:
     """
-    Genera una sugerencia de quiniela Progol de 14 casilleros
-    asignando exactamente la cantidad solicitada de dobles y triples.
+    Genera una sugerencia DETERMINÍSTICA Y MATEMÁTICAMENTE CONSISTENTE de quiniela Progol 
+    de 14 casilleros asignando la cantidad solicitada de dobles y triples.
+    Siempre entrega exactamente el mismo resultado para la misma combinación y jornada.
     """
-    casillas = list(range(1, 15))
-    random.shuffle(casillas)
+    seed_val = 2026
+    if jornada_oficial:
+        concat_str = "".join([f"{p.get('local','')}{p.get('visita','')}" for p in jornada_oficial if isinstance(p, dict)])
+        if concat_str:
+            seed_val = sum(ord(c) for c in concat_str)
+
+    # Orden de prioridad determinista para asignar Triples y Dobles
+    prioridad_casillas = [3, 6, 1, 10, 4, 7, 12, 2, 8, 9, 5, 11, 13, 14]
     
-    triples_set = set(casillas[:num_triples])
-    dobles_set = set(casillas[num_triples:num_triples + num_dobles])
+    triples_set = set(prioridad_casillas[:num_triples])
+    dobles_set = set(prioridad_casillas[num_triples:num_triples + num_dobles])
     
+    opciones_dobles = ["Doble Local/Empate (1X)", "Doble Empate/Visita (X2)", "Doble Local/Visita (12)"]
+    opciones_fijos = ["Fijo Local (1)", "Fijo Visita (2)"]
+
     boleta = []
     for i in range(1, 15):
         if i in triples_set:
@@ -45,11 +55,13 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int) -> list[dict]:
             tipo = "triple"
             color_borde = "#FFD700"
         elif i in dobles_set:
-            sugerencia = random.choice(["Doble Local/Empate (1X)", "Doble Empate/Visita (X2)", "Doble Local/Visita (12)"])
+            idx_doble = (i * 7 + seed_val) % 3
+            sugerencia = opciones_dobles[idx_doble]
             tipo = "doble"
             color_borde = "#00E676"
         else:
-            sugerencia = random.choice(["Fijo Local (1)", "Fijo Visita (2)"])
+            idx_fijo = (i * 3 + seed_val) % 2
+            sugerencia = opciones_fijos[idx_fijo]
             tipo = "fijo"
             color_borde = "#00D2FF"
             
