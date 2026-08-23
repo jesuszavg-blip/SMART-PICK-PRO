@@ -10,13 +10,6 @@ def get_current_season():
     now = datetime.datetime.now()
     return str(now.year)
 
-@st.cache_data(ttl=86400)
-def obtener_ligas_mundo():
-    headers = get_headers()
-    try:
-        url = f"{config.API_FOOTBALL_URL}/leagues"
-        resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
-        
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
     """Mapeador 100% exacto de escudos oficiales para Liga MX y Liga MX Femenil por nombre"""
     eq = str(nombre_equipo).lower().strip()
@@ -58,6 +51,13 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         return "https://media.api-sports.io/football/teams/2288.png"
     return logo_actual if logo_actual else "https://media.api-sports.io/football/teams/2287.png"
 
+@st.cache_data(ttl=86400)
+def obtener_ligas_mundo():
+    headers = get_headers()
+    try:
+        url = f"{config.API_FOOTBALL_URL}/leagues"
+        resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
+        
         ligas_top = {
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
