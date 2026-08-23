@@ -326,7 +326,7 @@ REDUCCIONES_DICT = getattr(progol, 'REDUCCIONES_PREDEFINIDAS', {
 # Configuración de Página
 st.set_page_config(
     page_title="Smart Pick Pro - Escáner Estadístico VIP",
-    page_icon="🏆",
+    page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -334,6 +334,24 @@ st.set_page_config(
 # Estilos CSS Personalizados de Máximo Contraste Visual
 st.markdown("""
 <style>
+    /* Reemplazar las dos flechitas (« / ») de la esquina superior izquierda por un Balón de Fútbol ⚽ */
+    [data-testid="stSidebarCollapseButton"] svg, 
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stHeader"] button svg,
+    header button svg {
+        display: none !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"]::after, 
+    [data-testid="collapsedControl"]::after,
+    [data-testid="stHeader"] button::after,
+    header button::after {
+        content: "⚽" !important;
+        font-size: 22px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+    }
+
     /* Estilos globales y contraste de texto */
     .stApp {
         background-color: #0E1117;
