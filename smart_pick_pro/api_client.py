@@ -155,11 +155,36 @@ def obtener_partidos_jornada(league_id: str):
     # Garantía de Partidos para Liga MX Femenil cuando la API se encuentre en receso
     if (not partidos_dict or len(partidos_dict) == 0) and league_id in ["868", "1065"]:
         femenil_matches = [
-            {"id": 110001, "local": "América Femenil", "local_id": 2287, "visita": "Guadalajara Femenil (Chivas)", "visita_id": 2291},
-            {"id": 110002, "local": "Tigres UANL Femenil", "local_id": 2289, "visita": "Monterrey Femenil (Rayadas)", "visita_id": 2290},
-            {"id": 110003, "local": "Pachuca Femenil", "local_id": 2288, "visita": "Pumas UNAM Femenil", "visita_id": 2292},
-            {"id": 110004, "local": "Toluca Femenil", "local_id": 2293, "visita": "Santos Laguna Femenil", "visita_id": 2294},
-            {"id": 110005, "local": "Cruz Azul Femenil", "local_id": 2286, "visita": "Atlas Femenil", "visita_id": 2295},
+            {
+                "id": 110001, "local": "América Femenil", "local_id": 2287,
+                "logo_local": "https://media.api-sports.io/football/teams/2287.png",
+                "visita": "Guadalajara Femenil (Chivas)", "visita_id": 2291,
+                "logo_visita": "https://media.api-sports.io/football/teams/2291.png"
+            },
+            {
+                "id": 110002, "local": "Tigres UANL Femenil", "local_id": 2289,
+                "logo_local": "https://media.api-sports.io/football/teams/2289.png",
+                "visita": "Monterrey Femenil (Rayadas)", "visita_id": 2290,
+                "logo_visita": "https://media.api-sports.io/football/teams/2290.png"
+            },
+            {
+                "id": 110003, "local": "Pachuca Femenil", "local_id": 2285,
+                "logo_local": "https://media.api-sports.io/football/teams/2285.png",
+                "visita": "Pumas UNAM Femenil", "visita_id": 2288,
+                "logo_visita": "https://media.api-sports.io/football/teams/2288.png"
+            },
+            {
+                "id": 110004, "local": "Toluca Femenil", "local_id": 2293,
+                "logo_local": "https://media.api-sports.io/football/teams/2293.png",
+                "visita": "Santos Laguna Femenil", "visita_id": 2294,
+                "logo_visita": "https://media.api-sports.io/football/teams/2294.png"
+            },
+            {
+                "id": 110005, "local": "Cruz Azul Femenil", "local_id": 2286,
+                "logo_local": "https://media.api-sports.io/football/teams/2286.png",
+                "visita": "Atlas Femenil", "visita_id": 2295,
+                "logo_visita": "https://media.api-sports.io/football/teams/2295.png"
+            },
         ]
         for m in femenil_matches:
             k = f"⏳ [JORNADA ACTIVADA] {m['local']} vs {m['visita']}"
@@ -167,10 +192,10 @@ def obtener_partidos_jornada(league_id: str):
                 "id": m["id"],
                 "local": m["local"],
                 "local_id": m["local_id"],
-                "logo_local": "https://media.api-sports.io/football/teams/2287.png",
+                "logo_local": m["logo_local"],
                 "visita": m["visita"],
                 "visita_id": m["visita_id"],
-                "logo_visita": "https://media.api-sports.io/football/teams/2291.png",
+                "logo_visita": m["logo_visita"],
                 "venue": "Estadio Principal",
                 "city": "México",
                 "referee": "Árbitro Oficial Liga MX Femenil"
