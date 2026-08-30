@@ -8,6 +8,21 @@ def poisson_probability(k: int, lamb: float) -> float:
         return 1.0 if k == 0 else 0.0
     return (math.pow(lamb, k) * math.exp(-lamb)) / math.factorial(k)
 
+def dixon_coles_tau(x: int, y: int, lambda_h: float, lambda_a: float, rho: float = -0.11) -> float:
+    """
+    Factor de corrección de Dixon & Coles para capturar la interdependencia 
+    entre goles locales y visitantes en marcadores bajos (0-0, 1-0, 0-1, 1-1).
+    """
+    if x == 0 and y == 0:
+        return max(0.01, 1.0 - (lambda_h * lambda_a * rho))
+    elif x == 0 and y == 1:
+        return max(0.01, 1.0 + (lambda_a * rho))
+    elif x == 1 and y == 0:
+        return max(0.01, 1.0 + (lambda_h * rho))
+    elif x == 1 and y == 1:
+        return max(0.01, 1.0 - rho)
+    return 1.0
+
 def _parse_forma_pct(forma_str: str) -> float:
     """Convierte cadenas de racha tipo 'WWDWW' o '80%' a un factor numérico de 0.0 a 1.0"""
     if not forma_str or forma_str == "0%":
@@ -271,7 +286,7 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
     txt = f"""🏆 *SMART PICK PRO - FICHA DE PRONÓSTICO VIP* 🏆
 ⚽ *{equipo_local} vs {equipo_visita}*
 
-📊 *PROBABILIDADES MULTIFACTORIALES:*
+📊 *PROBABILIDADES MULTIFACTORIALES (POISSON + DIXON-COLES):*
 • 🔵 Gana {equipo_local}: {p_loc}%
 • 🟡 Empate: {p_emp}%
 • 🔴 Gana {equipo_visita}: {p_vis}%
@@ -308,6 +323,10 @@ def calcular_matriz_poisson_multifactorial(
     posicion_loc=None,
     posicion_vis=None
 ) -> dict:
+    """
+    Calcula la Matriz de Poisson Multifactorial combinada con el Ajuste Dixon-Coles
+    para máxima precisión en predicción de fútbol profesional.
+    """
     try:
         p_l_base = float(str(prob_loc_str).replace('%', '')) / 100.0
         p_e_base = float(str(prob_emp_str).replace('%', '')) / 100.0
@@ -362,9 +381,11 @@ def calcular_matriz_poisson_multifactorial(
     max_goals = 6
     matrix = [[0.0 for _ in range(max_goals)] for _ in range(max_goals)]
 
+    # Cálculo con Distribución de Poisson + Factor de Ajuste Dixon-Coles
     for h in range(max_goals):
         for a in range(max_goals):
-            matrix[h][a] = poisson_probability(h, lambda_home) * poisson_probability(a, lambda_away)
+            tau = dixon_coles_tau(h, a, lambda_home, lambda_away)
+            matrix[h][a] = tau * poisson_probability(h, lambda_home) * poisson_probability(a, lambda_away)
 
     total_p = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals))
     if total_p > 0:
@@ -419,6 +440,7 @@ def calcular_matriz_poisson(prob_loc_str: str, prob_emp_str: str, prob_vis_str: 
     return calcular_matriz_poisson_multifactorial(prob_loc_str, prob_emp_str, prob_vis_str, goles_loc_est, goles_vis_est)
 
 def calcular_valor(prob_str: str, cuota: float) -> tuple[bool, float]:
+    """Calcula si existe Valor Esperado Positivo (+EV) para una cuota de mercado"""
     try:
         prob_real = float(str(prob_str).replace('%', '')) / 100.0
         cuota_float = float(cuota)
@@ -431,6 +453,40 @@ def calcular_valor(prob_str: str, cuota: float) -> tuple[bool, float]:
         return False, 0.0
     except (ValueError, TypeError):
         return False, 0.0
+
+def calcular_criterio_kelly(prob_pct: float, cuota: float, fraccion: float = 0.25, bankroll: float = 1000.0) -> dict:
+    """
+    Calcula el Criterio de Kelly Fraccional (Quarter Kelly recomendado para apuestas deportivas).
+    Fórmula: f* = (b*p - q) / b * fraccion
+    donde b = cuota - 1, p = prob/100, q = 1 - p.
+    """
+    try:
+        p = float(prob_pct) / 100.0
+        q = 1.0 - p
+        b = float(cuota) - 1.0
+        
+        if b <= 0 or p <= 0:
+            return {"kelly_pct": 0.0, "monto_sugerido": 0.0, "es_viable": False}
+            
+        f_full = (b * p - q) / b
+        if f_full <= 0:
+            return {"kelly_pct": 0.0, "monto_sugerido": 0.0, "es_viable": False}
+            
+        f_frac = f_full * fraccion
+        # Topar apuesta máxima sugerida al 10% del bankroll para evitar sobreexposición
+        f_frac = min(0.10, f_frac)
+        
+        monto = round(bankroll * f_frac, 2)
+        pct = round(f_frac * 100.0, 2)
+        
+        return {
+            "kelly_pct": pct,
+            "monto_sugerido": monto,
+            "es_viable": True,
+            "full_kelly_pct": round(f_full * 100.0, 2)
+        }
+    except Exception:
+        return {"kelly_pct": 0.0, "monto_sugerido": 0.0, "es_viable": False}
 
 def generar_bet_builder_dinamico(equipo_local: str, equipo_visita: str, stats_poisson: dict) -> list[dict]:
     picks = []
@@ -460,6 +516,7 @@ def generar_bet_builder_dinamico(equipo_local: str, equipo_visita: str, stats_po
     return picks
 
 def evaluar_necesidad(posicion, league_id="262", *args, **kwargs) -> str:
+    """Evalúa el contexto y factor necesidad según la posición en tabla y la liga"""
     try:
         pos = int(posicion)
     except (ValueError, TypeError):
@@ -481,10 +538,10 @@ def evaluar_necesidad(posicion, league_id="262", *args, **kwargs) -> str:
             return "🔥 <b>Zona de Liguilla Directa (Top 4):</b> Urgencia de sumar de a 3 para asegurar pase directo a Cuartos de Final."
         elif pos <= 10:
             return "⚡ <b>Zona de Play-In / Reclasificación (Puestos 5-10):</b> Presión por ganar para amarrar boleto a la Liguilla."
-        elif pos <= 15:
-            return "⚠️ <b>Zona Media Baja:</b> Necesidad de estabilidad en el cociente y acumulación de puntos."
+        elif pos <= 14:
+            return "⚠️ <b>Zona Media-Baja (Puestos 11-14):</b> Necesidad urgente de cortar racha negativa para alcanzar puestos de Play-In."
         else:
-            return "🚨 <b>Fondo de Tabla:</b> Necesidad crítica de victoria para evitar la quema y multas de porcentaje."
+            return "🚨 <b>Zona de Cociente (Tabla Porcentual):</b> Urgencia absoluta de puntos en la tabla de cociente para evitar multas."
 
 def evaluar_xg_y_peligro_real(equipo_local: str, equipo_visita: str, stats_poisson: dict) -> dict:
     """
@@ -493,7 +550,6 @@ def evaluar_xg_y_peligro_real(equipo_local: str, equipo_visita: str, stats_poiss
     lh = stats_poisson.get("lambda_home", 1.5)
     la = stats_poisson.get("lambda_away", 1.1)
 
-    import zlib
     seed_l = zlib.crc32(equipo_local.encode('utf-8')) / 100.0
     seed_v = zlib.crc32(equipo_visita.encode('utf-8')) / 100.0
 
