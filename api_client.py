@@ -150,115 +150,150 @@ EQUIPOS_INTERNACIONALES_LOGOS = {
     "sevilla": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
     "manchester city": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
     "man city": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
+    "manchester united": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
+    "man united": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
+    "man utd": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
     "liverpool": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
     "arsenal": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
     "chelsea": "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
+    "tottenham": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
+    "spurs": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
     "bayern": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
+    "bayern münchen": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
+    "bayern munich": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
     "dortmund": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
     "psg": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
     "paris": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+    "paris saint germain": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+    "marseille": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
+    "marsella": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
+    "juventus": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+    "juve": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+    "inter milan": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+    "inter de milan": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+    "milan": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
+    "ac milan": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
     "boca": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
+    "boca jrs": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
+    "boca juniors": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
     "river": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png",
-    "inter miami": "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png"
+    "river plate": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png",
+    "racing": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
+    "racing club": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
+    "inter miami": "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png",
+    "houston": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
+    "houston dynamo": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
+    "st. luis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
+    "st louis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
+    "st. louis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
+    "colo colo": "https://a.espncdn.com/i/teamlogos/soccer/500/3147.png",
+    "u. de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
+    "u de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
+    "universidad de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
+    "vitoria": "https://a.espncdn.com/i/teamlogos/soccer/500/3457.png",
+    "vitoria ba": "https://a.espncdn.com/i/teamlogos/soccer/500/3457.png",
+    "bahia": "https://a.espncdn.com/i/teamlogos/soccer/500/3436.png",
+    "flamengo": "https://a.espncdn.com/i/teamlogos/soccer/500/819.png",
+    "palmeiras": "https://a.espncdn.com/i/teamlogos/soccer/500/824.png"
 }
 
-# DICCIONARIO COMPLETO Y EXACTO DE ESCUDOS DE SELECCIONES NACIONALES (FEDERACIONES OFICIALES)
+# DICCIONARIO COMPLETO Y EXACTO DE ESCUDOS DE SELECCIONES NACIONALES (FEDERACIONES OFICIALES HD)
 SELECCIONES_NACIONALES_LOGOS = {
     # México
-    "mexico": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "méxico": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "seleccion mexicana": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "selección mexicana": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "el tri": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "fmf": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
+    "mexico": "https://media.api-sports.io/football/teams/16.png",
+    "méxico": "https://media.api-sports.io/football/teams/16.png",
+    "seleccion mexicana": "https://media.api-sports.io/football/teams/16.png",
+    "selección mexicana": "https://media.api-sports.io/football/teams/16.png",
+    "el tri": "https://media.api-sports.io/football/teams/16.png",
+    "fmf": "https://media.api-sports.io/football/teams/16.png",
 
     # Estados Unidos
-    "estados unidos": "https://a.espncdn.com/i/teamlogos/soccer/500/119.png",
-    "usa": "https://a.espncdn.com/i/teamlogos/soccer/500/119.png",
-    "united states": "https://a.espncdn.com/i/teamlogos/soccer/500/119.png",
-    "usmnt": "https://a.espncdn.com/i/teamlogos/soccer/500/119.png",
+    "estados unidos": "https://media.api-sports.io/football/teams/2384.png",
+    "usa": "https://media.api-sports.io/football/teams/2384.png",
+    "united states": "https://media.api-sports.io/football/teams/2384.png",
+    "usmnt": "https://media.api-sports.io/football/teams/2384.png",
 
     # Argentina
-    "argentina": "https://a.espncdn.com/i/teamlogos/soccer/500/202.png",
-    "albiceleste": "https://a.espncdn.com/i/teamlogos/soccer/500/202.png",
-    "afa": "https://a.espncdn.com/i/teamlogos/soccer/500/202.png",
+    "argentina": "https://media.api-sports.io/football/teams/26.png",
+    "albiceleste": "https://media.api-sports.io/football/teams/26.png",
+    "afa": "https://media.api-sports.io/football/teams/26.png",
 
     # Brasil
-    "brasil": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "brazil": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "canarinha": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "cbf": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
+    "brasil": "https://media.api-sports.io/football/teams/6.png",
+    "brazil": "https://media.api-sports.io/football/teams/6.png",
+    "canarinha": "https://media.api-sports.io/football/teams/6.png",
+    "cbf": "https://media.api-sports.io/football/teams/6.png",
 
     # España
-    "españa": "https://a.espncdn.com/i/teamlogos/soccer/500/164.png",
-    "spain": "https://a.espncdn.com/i/teamlogos/soccer/500/164.png",
-    "la roja": "https://a.espncdn.com/i/teamlogos/soccer/500/164.png",
-    "rfef": "https://a.espncdn.com/i/teamlogos/soccer/500/164.png",
+    "españa": "https://media.api-sports.io/football/teams/9.png",
+    "spain": "https://media.api-sports.io/football/teams/9.png",
+    "la roja": "https://media.api-sports.io/football/teams/9.png",
+    "rfef": "https://media.api-sports.io/football/teams/9.png",
 
     # Alemania
-    "alemania": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
-    "germany": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
-    "dfb": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
+    "alemania": "https://media.api-sports.io/football/teams/25.png",
+    "germany": "https://media.api-sports.io/football/teams/25.png",
+    "dfb": "https://media.api-sports.io/football/teams/25.png",
 
     # Francia
-    "francia": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "france": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "les bleus": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "fff": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+    "francia": "https://media.api-sports.io/football/teams/2.png",
+    "france": "https://media.api-sports.io/football/teams/2.png",
+    "les bleus": "https://media.api-sports.io/football/teams/2.png",
+    "fff": "https://media.api-sports.io/football/teams/2.png",
 
     # Inglaterra
-    "inglaterra": "https://a.espncdn.com/i/teamlogos/soccer/500/448.png",
-    "england": "https://a.espncdn.com/i/teamlogos/soccer/500/448.png",
-    "three lions": "https://a.espncdn.com/i/teamlogos/soccer/500/448.png",
+    "inglaterra": "https://media.api-sports.io/football/teams/10.png",
+    "england": "https://media.api-sports.io/football/teams/10.png",
+    "three lions": "https://media.api-sports.io/football/teams/10.png",
 
     # Portugal
-    "portugal": "https://a.espncdn.com/i/teamlogos/soccer/500/479.png",
-    "fpf": "https://a.espncdn.com/i/teamlogos/soccer/500/479.png",
+    "portugal": "https://media.api-sports.io/football/teams/27.png",
+    "fpf": "https://media.api-sports.io/football/teams/27.png",
 
     # Italia
-    "italia": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
-    "italy": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
-    "azzurri": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
+    "italia": "https://media.api-sports.io/football/teams/768.png",
+    "italy": "https://media.api-sports.io/football/teams/768.png",
+    "azzurri": "https://media.api-sports.io/football/teams/768.png",
 
     # Colombia
-    "colombia": "https://a.espncdn.com/i/teamlogos/soccer/500/204.png",
-    "cafeteros": "https://a.espncdn.com/i/teamlogos/soccer/500/204.png",
+    "colombia": "https://media.api-sports.io/football/teams/8.png",
+    "cafeteros": "https://media.api-sports.io/football/teams/8.png",
 
     # Uruguay
-    "uruguay": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "la celeste": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
+    "uruguay": "https://media.api-sports.io/football/teams/7.png",
+    "la celeste": "https://media.api-sports.io/football/teams/7.png",
 
     # Chile
-    "chile": "https://a.espncdn.com/i/teamlogos/soccer/500/206.png",
+    "chile": "https://media.api-sports.io/football/teams/17.png",
 
     # Países Bajos / Holanda
-    "paises bajos": "https://a.espncdn.com/i/teamlogos/soccer/500/139.png",
-    "países bajos": "https://a.espncdn.com/i/teamlogos/soccer/500/139.png",
-    "holanda": "https://a.espncdn.com/i/teamlogos/soccer/500/139.png",
-    "netherlands": "https://a.espncdn.com/i/teamlogos/soccer/500/139.png",
+    "paises bajos": "https://media.api-sports.io/football/teams/1118.png",
+    "países bajos": "https://media.api-sports.io/football/teams/1118.png",
+    "holanda": "https://media.api-sports.io/football/teams/1118.png",
+    "netherlands": "https://media.api-sports.io/football/teams/1118.png",
 
     # Japón
-    "japon": "https://a.espncdn.com/i/teamlogos/soccer/500/627.png",
-    "japón": "https://a.espncdn.com/i/teamlogos/soccer/500/627.png",
-    "japan": "https://a.espncdn.com/i/teamlogos/soccer/500/627.png",
+    "japon": "https://media.api-sports.io/football/teams/12.png",
+    "japón": "https://media.api-sports.io/football/teams/12.png",
+    "japan": "https://media.api-sports.io/football/teams/12.png",
 
     # Canadá
-    "canada": "https://a.espncdn.com/i/teamlogos/soccer/500/61.png",
-    "canadá": "https://a.espncdn.com/i/teamlogos/soccer/500/61.png",
+    "canada": "https://media.api-sports.io/football/teams/31.png",
+    "canadá": "https://media.api-sports.io/football/teams/31.png",
 
     # Perú
-    "peru": "https://a.espncdn.com/i/teamlogos/soccer/500/207.png",
-    "perú": "https://a.espncdn.com/i/teamlogos/soccer/500/207.png",
+    "peru": "https://media.api-sports.io/football/teams/11.png",
+    "perú": "https://media.api-sports.io/football/teams/11.png",
 
     # Ecuador
-    "ecuador": "https://a.espncdn.com/i/teamlogos/soccer/500/208.png",
+    "ecuador": "https://media.api-sports.io/football/teams/13.png",
 
     # Venezuela
-    "venezuela": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
-    "vinotinto": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
+    "venezuela": "https://media.api-sports.io/football/teams/14.png",
+    "vinotinto": "https://media.api-sports.io/football/teams/14.png",
 
     # Paraguay
-    "paraguay": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png"
+    "paraguay": "https://media.api-sports.io/football/teams/18.png"
 }
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
