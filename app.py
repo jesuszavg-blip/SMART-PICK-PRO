@@ -187,6 +187,23 @@ st.markdown("""
         color: #0E1117 !important;
         box-shadow: 0 0 15px rgba(0, 230, 118, 0.5) !important;
     }
+
+    /* Cuadro de texto Ficha VIP / Textarea con fondo blanco y texto NEGRO intenso */
+    .stTextArea textarea, [data-baseweb="textarea"] textarea, div[data-baseweb="textarea"] > div > textarea {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        line-height: 1.5 !important;
+        border: 2px solid #00E676 !important;
+        border-radius: 10px !important;
+    }
+    
+    .stTextArea label, .stTextArea p {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
