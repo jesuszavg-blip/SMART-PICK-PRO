@@ -1,10 +1,12 @@
 import sqlite3
 import hashlib
+import json
 import os
 from pathlib import Path
 import config
 
 DB_PATH = Path(__file__).parent / "users.db"
+USER_BACKUP_PATH = Path(__file__).parent / "users_backup.json"
 
 try:
     import bcrypt
@@ -12,12 +14,17 @@ try:
 except ImportError:
     HAS_BCRYPT = False
 
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
+
 def _hash_password(password: str) -> str:
     if HAS_BCRYPT:
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
     else:
-        # Fallback a SHA-256 con salt si bcrypt no está instalado
         salt = "smart_pick_salt_2026"
         return f"sha256:{hashlib.sha256((password + salt).encode('utf-8')).hexdigest()}"
 
@@ -31,13 +38,67 @@ def _verify_password(password: str, hashed: str) -> bool:
         expected = f"sha256:{hashlib.sha256((password + salt).encode('utf-8')).hexdigest()}"
         return expected == hashed
     else:
-        # Comparación texto plano para compatibilidad de migración inicial
         return password == hashed
 
-USER_BACKUP_PATH = Path(__file__).parent / "users_backup.json"
+def _get_remote_sync_config():
+    """Detecta si hay configuración remota en .env o Streamlit secrets"""
+    remote_url = os.getenv("REMOTE_USERS_URL", "")
+    remote_key = os.getenv("REMOTE_USERS_KEY", "")
+    
+    # Intentar leer desde streamlit.secrets si está disponible
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets"):
+            if "REMOTE_USERS_URL" in st.secrets:
+                remote_url = st.secrets["REMOTE_USERS_URL"]
+            if "REMOTE_USERS_KEY" in st.secrets:
+                remote_key = st.secrets["REMOTE_USERS_KEY"]
+    except Exception:
+        pass
+        
+    return remote_url, remote_key
+
+def _sincronizar_remoto_push(users_list: list[dict]):
+    """Envía la lista actualizada de usuarios al almacenamiento remoto si está configurado"""
+    remote_url, remote_key = _get_remote_sync_config()
+    if not remote_url or not HAS_REQUESTS:
+        return False
+    try:
+        headers = {"Content-Type": "application/json"}
+        if remote_key:
+            headers["Authorization"] = f"Bearer {remote_key}"
+            headers["X-Master-Key"] = remote_key
+            headers["apikey"] = remote_key
+        resp = requests.put(remote_url, json=users_list, headers=headers, timeout=5)
+        return resp.status_code in [200, 201, 204]
+    except Exception as e:
+        print(f"Error al sincronizar usuarios con la nube: {e}")
+        return False
+
+def _sincronizar_remoto_pull() -> list[dict]:
+    """Obtiene la lista de usuarios desde el almacenamiento remoto si está configurado"""
+    remote_url, remote_key = _get_remote_sync_config()
+    if not remote_url or not HAS_REQUESTS:
+        return []
+    try:
+        headers = {}
+        if remote_key:
+            headers["Authorization"] = f"Bearer {remote_key}"
+            headers["X-Master-Key"] = remote_key
+            headers["apikey"] = remote_key
+        resp = requests.get(remote_url, headers=headers, timeout=5)
+        if resp.status_code == 200:
+            data = resp.json()
+            if isinstance(data, dict) and "record" in data:
+                data = data["record"]
+            if isinstance(data, list):
+                return data
+    except Exception as e:
+        print(f"Error al descargar usuarios de la nube: {e}")
+    return []
 
 def _respaldar_usuarios_json():
-    """Guarda un respaldo persistente de todos los usuarios en JSON"""
+    """Guarda un respaldo persistente de todos los usuarios en JSON local y remoto"""
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -49,13 +110,48 @@ def _respaldar_usuarios_json():
         for u, p, r, a in rows:
             users_list.append({"username": u, "password": p, "role": r, "is_active": a})
             
-        import json
         with open(USER_BACKUP_PATH, "w", encoding="utf-8") as f:
             json.dump(users_list, f, ensure_ascii=False, indent=2)
+            
+        _sincronizar_remoto_push(users_list)
     except Exception as e:
         print(f"Error al respaldar usuarios: {e}")
 
+def _cargar_usuarios_secrets() -> list[dict]:
+    """Carga usuarios declarados como persistentes en Streamlit secrets o .env"""
+    secrets_users = []
+    
+    # 1. Desde .env
+    env_users = os.getenv("PERSISTENT_USERS", "")
+    if env_users:
+        try:
+            data = json.loads(env_users)
+            if isinstance(data, list):
+                secrets_users.extend(data)
+        except Exception:
+            pass
+
+    # 2. Desde st.secrets
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "PERSISTENT_USERS" in st.secrets:
+            raw = st.secrets["PERSISTENT_USERS"]
+            if isinstance(raw, list):
+                secrets_users.extend(raw)
+            elif isinstance(raw, str):
+                try:
+                    data = json.loads(raw)
+                    if isinstance(data, list):
+                        secrets_users.extend(data)
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    return secrets_users
+
 def init_db():
+    """Inicializa la base de datos y restaura usuarios desde todas las fuentes persistentes"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
@@ -70,7 +166,7 @@ def init_db():
     ''')
     conn.commit()
 
-    # Asegurar cuenta de Administrador por defecto
+    # 1. Asegurar cuenta de Administrador por defecto
     cursor.execute("SELECT * FROM users WHERE username = ?", (config.ADMIN_INIT_USER.lower(),))
     admin_user = cursor.fetchone()
     if not admin_user:
@@ -81,17 +177,52 @@ def init_db():
         )
         conn.commit()
 
-    # Auto-Restaurar usuarios del respaldo JSON si el servidor en la nube se reinició
+    # 2. Restaurar desde Almacenamiento Remoto (Nube) si está activo
+    cloud_users = _sincronizar_remoto_pull()
+    if cloud_users:
+        for u_data in cloud_users:
+            u_name = str(u_data.get("username", "")).strip().lower()
+            u_pw = str(u_data.get("password", ""))
+            u_role = str(u_data.get("role", "VIP"))
+            u_active = int(u_data.get("is_active", 1))
+            if u_name and u_pw:
+                cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                if not cursor.fetchone():
+                    pw_to_insert = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
+                    cursor.execute(
+                        "INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)",
+                        (u_name, pw_to_insert, u_role, u_active)
+                    )
+        conn.commit()
+
+    # 3. Restaurar desde Secrets de Streamlit / .env si están definidos
+    secrets_users = _cargar_usuarios_secrets()
+    if secrets_users:
+        for u_data in secrets_users:
+            u_name = str(u_data.get("username", "")).strip().lower()
+            u_pw = str(u_data.get("password", ""))
+            u_role = str(u_data.get("role", "VIP"))
+            u_active = int(u_data.get("is_active", 1))
+            if u_name and u_pw:
+                cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                if not cursor.fetchone():
+                    pw_to_insert = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
+                    cursor.execute(
+                        "INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)",
+                        (u_name, pw_to_insert, u_role, u_active)
+                    )
+        conn.commit()
+
+    # 4. Restaurar desde respaldo JSON local si existe
     if USER_BACKUP_PATH.exists():
         try:
-            import json
             with open(USER_BACKUP_PATH, "r", encoding="utf-8") as f:
                 saved_users = json.load(f)
                 for u_data in saved_users:
-                    u_name = u_data.get("username", "").strip().lower()
-                    u_pw = u_data.get("password", "")
-                    u_role = u_data.get("role", "VIP")
-                    u_active = u_data.get("is_active", 1)
+                    u_name = str(u_data.get("username", "")).strip().lower()
+                    u_pw = str(u_data.get("password", ""))
+                    u_role = str(u_data.get("role", "VIP"))
+                    u_active = int(u_data.get("is_active", 1))
                     if u_name and u_pw:
                         cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
                         if not cursor.fetchone():
@@ -166,6 +297,91 @@ def cambiar_estado_usuario(user_id: int, nuevo_estado: int):
     conn.commit()
     conn.close()
     _respaldar_usuarios_json()
+
+def eliminar_usuario(user_id: int) -> bool:
+    """Elimina permanentemente un usuario por ID (evitando eliminar al admin principal)"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    if not row or row[0].lower() == config.ADMIN_INIT_USER.lower():
+        conn.close()
+        return False
+        
+    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    _respaldar_usuarios_json()
+    return True
+
+def exportar_usuarios_json() -> str:
+    """Exporta todos los usuarios en formato JSON formateado listo para descarga/respaldo"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, password, role, is_active FROM users")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    users_list = []
+    for u, p, r, a in rows:
+        users_list.append({"username": u, "password": p, "role": r, "is_active": a})
+        
+    return json.dumps(users_list, ensure_ascii=False, indent=2)
+
+def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
+    """Importa usuarios desde un texto JSON, restaurándolos en la base de datos sin duplicar"""
+    try:
+        users_data = json.loads(json_str)
+        if not isinstance(users_data, list):
+            return 0, 0, "El archivo JSON debe contener una lista de usuarios."
+            
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        insertados = 0
+        actualizados = 0
+        
+        for u in users_data:
+            u_name = str(u.get("username", "")).strip().lower()
+            u_pw = str(u.get("password", ""))
+            u_role = str(u.get("role", "VIP"))
+            u_active = int(u.get("is_active", 1))
+            
+            if u_name and u_pw:
+                pw_val = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
+                cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                existing = cursor.fetchone()
+                if existing:
+                    cursor.execute(
+                        "UPDATE users SET password = ?, role = ?, is_active = ? WHERE id = ?",
+                        (pw_val, u_role, u_active, existing[0])
+                    )
+                    actualizados += 1
+                else:
+                    cursor.execute(
+                        "INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)",
+                        (u_name, pw_val, u_role, u_active)
+                    )
+                    insertados += 1
+                    
+        conn.commit()
+        conn.close()
+        _respaldar_usuarios_json()
+        return insertados, actualizados, f"Éxito: {insertados} usuarios añadidos, {actualizados} actualizados."
+    except Exception as e:
+        return 0, 0, f"Error al importar JSON: {e}"
+
+def obtener_estado_persistencia() -> dict:
+    """Devuelve el estado de las capas de persistencia activas"""
+    remote_url, _ = _get_remote_sync_config()
+    secrets_users = _cargar_usuarios_secrets()
+    
+    return {
+        "nube_activa": bool(remote_url),
+        "secrets_activos": len(secrets_users) > 0,
+        "backup_local_existe": USER_BACKUP_PATH.exists(),
+        "total_usuarios": len(listar_usuarios())
+    }
 
 # Inicializar DB al importar
 init_db()
