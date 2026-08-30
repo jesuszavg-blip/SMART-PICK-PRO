@@ -35,60 +35,60 @@ EQUIPOS_MEXICO_LOGOS = {
     "cementero": "https://a.espncdn.com/i/teamlogos/soccer/500/11148.png",
 
     # 4. Pumas UNAM
-    "pumas": "https://a.espncdn.com/i/teamlogos/soccer/500/208.png",
-    "unam": "https://a.espncdn.com/i/teamlogos/soccer/500/208.png",
-    "universidad nacional": "https://a.espncdn.com/i/teamlogos/soccer/500/208.png",
-    "auriazul": "https://a.espncdn.com/i/teamlogos/soccer/500/208.png",
+    "pumas": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
+    "unam": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
+    "universidad nacional": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
+    "auriazul": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
 
     # 5. Tigres UANL / Amazonas / Felinas
-    "tigres": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "uanl": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "amazonas": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
-    "felinas": "https://a.espncdn.com/i/teamlogos/soccer/500/203.png",
+    "tigres": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
+    "uanl": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
+    "amazonas": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
+    "felinas": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
 
     # 6. Monterrey / Rayados / Rayadas
-    "monterrey": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "rayadas": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "rayada": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "rayados": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
-    "pandilla": "https://a.espncdn.com/i/teamlogos/soccer/500/205.png",
+    "monterrey": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
+    "rayadas": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
+    "rayada": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
+    "rayados": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
+    "pandilla": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
 
     # 7. Pachuca / Tuzos / Tuzas
-    "pachuca": "https://a.espncdn.com/i/teamlogos/soccer/500/213.png",
-    "tuzas": "https://a.espncdn.com/i/teamlogos/soccer/500/213.png",
-    "tuzos": "https://a.espncdn.com/i/teamlogos/soccer/500/213.png",
-    "tuza": "https://a.espncdn.com/i/teamlogos/soccer/500/213.png",
-    "tuzo": "https://a.espncdn.com/i/teamlogos/soccer/500/213.png",
+    "pachuca": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
+    "tuzas": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
+    "tuzos": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
+    "tuza": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
+    "tuzo": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
 
     # 8. Toluca / Diablos / Diablas
-    "toluca": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "diablas": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "diablos": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "diabla": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "diablo": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
-    "choricero": "https://a.espncdn.com/i/teamlogos/soccer/500/209.png",
+    "toluca": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    "diablas": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    "diablos": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    "diabla": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    "diablo": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    "choricero": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
 
     # 9. Santos Laguna / Guerreros / Guerreras
-    "santos": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
-    "guerreras": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
-    "guerreros": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
-    "laguna": "https://a.espncdn.com/i/teamlogos/soccer/500/210.png",
+    "santos": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
+    "guerreras": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
+    "guerreros": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
+    "laguna": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
 
     # 10. Atlas / Zorros / Rojinegras
-    "atlas": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "rojinegras": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "rojinegros": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "rojinegra": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "rojinegro": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "zorros": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
-    "zorras": "https://a.espncdn.com/i/teamlogos/soccer/500/211.png",
+    "atlas": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "rojinegras": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "rojinegros": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "rojinegra": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "rojinegro": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "zorros": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    "zorras": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
 
     # 11. León / Fieras / Esmeraldas
-    "leon": "https://a.espncdn.com/i/teamlogos/soccer/500/216.png",
-    "león": "https://a.espncdn.com/i/teamlogos/soccer/500/216.png",
-    "fieras": "https://a.espncdn.com/i/teamlogos/soccer/500/216.png",
-    "fiera": "https://a.espncdn.com/i/teamlogos/soccer/500/216.png",
-    "esmeraldas": "https://a.espncdn.com/i/teamlogos/soccer/500/216.png",
+    "leon": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
+    "león": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
+    "fieras": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
+    "fiera": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
+    "esmeraldas": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
 
     # 12. Puebla / Camoteros / Camoteras / La Franja
     "puebla": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
@@ -119,27 +119,28 @@ EQUIPOS_MEXICO_LOGOS = {
     "xola": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
 
     # 16. Atlético San Luis / Potosinos / Potosinas
-    "san luis": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
-    "atletico san luis": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
-    "atlético san luis": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
-    "atletico de san luis": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
-    "potosino": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
-    "potosina": "https://a.espncdn.com/i/teamlogos/soccer/500/18386.png",
+    "san luis": "https://media.api-sports.io/football/teams/2298.png",
+    "atletico san luis": "https://media.api-sports.io/football/teams/2298.png",
+    "atlético san luis": "https://media.api-sports.io/football/teams/2298.png",
+    "atletico de san luis": "https://media.api-sports.io/football/teams/2298.png",
+    "atlético de san luis": "https://media.api-sports.io/football/teams/2298.png",
+    "potosino": "https://media.api-sports.io/football/teams/2298.png",
+    "potosina": "https://media.api-sports.io/football/teams/2298.png",
 
     # 17. Querétaro / Gallos / Gallas
-    "queretaro": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
-    "querétaro": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
-    "gallas": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
-    "gallos": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
-    "galla": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
-    "gallo": "https://a.espncdn.com/i/teamlogos/soccer/500/217.png",
+    "queretaro": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    "querétaro": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    "gallas": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    "gallos": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    "galla": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    "gallo": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
 
     # 18. Necaxa / Rayos / Centellas
-    "necaxa": "https://a.espncdn.com/i/teamlogos/soccer/500/215.png",
-    "centellas": "https://a.espncdn.com/i/teamlogos/soccer/500/215.png",
-    "centella": "https://a.espncdn.com/i/teamlogos/soccer/500/215.png",
-    "rayos": "https://a.espncdn.com/i/teamlogos/soccer/500/215.png",
-    "hidrorayos": "https://a.espncdn.com/i/teamlogos/soccer/500/215.png"
+    "necaxa": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
+    "centellas": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
+    "centella": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
+    "rayos": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
+    "hidrorayos": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png"
 }
 
 EQUIPOS_INTERNACIONALES_LOGOS = {
