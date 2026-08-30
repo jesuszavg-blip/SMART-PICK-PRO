@@ -1,7 +1,6 @@
 import random
 import streamlit as st
 
-# Importación segura de pandas para evitar fallos de inicialización en módulo progol
 try:
     import pandas as pd
     HAS_PANDAS = True
@@ -31,7 +30,6 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
     """
     Genera una sugerencia DETERMINÍSTICA Y MATEMÁTICAMENTE CONSISTENTE de quiniela Progol 
     de 14 casilleros asignando la cantidad solicitada de dobles y triples.
-    Siempre entrega exactamente el mismo resultado para la misma combinación y jornada.
     """
     seed_val = 2026
     if jornada_oficial:
@@ -39,7 +37,6 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
         if concat_str:
             seed_val = sum(ord(c) for c in concat_str)
 
-    # Orden de prioridad determinista para asignar Triples y Dobles
     prioridad_casillas = [3, 6, 1, 10, 4, 7, 12, 2, 8, 9, 5, 11, 13, 14]
     
     triples_set = set(prioridad_casillas[:num_triples])
@@ -75,9 +72,7 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
     return sorted(boleta, key=lambda x: x["casilla"])
 
 def obtener_reduccion_predefinida(nombre_estrat: str) -> list[dict]:
-    """
-    Genera la estructura de combinaciones para una estrategia de reducción predefinida.
-    """
+    """Genera la estructura de combinaciones para una estrategia de reducción predefinida."""
     config_estrat = REDUCCIONES_PREDEFINIDAS.get(nombre_estrat, {"triples": [], "dobles": []})
     triples_config = set(config_estrat["triples"])
     dobles_config = set(config_estrat["dobles"])
@@ -117,7 +112,7 @@ def obtener_reduccion_predefinida(nombre_estrat: str) -> list[dict]:
 def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estrat: str, n_boletas: int = None) -> list[dict]:
     """
     Genera N boletas sencillas reducidas (cada una con 14 pronósticos individuales '1', 'X', '2')
-    matemáticamente optimizadas según la estrategia de reducción elegida y la cobertura deseada.
+    matemáticamente optimizadas según la estrategia de reducción elegida.
     """
     if n_boletas is None or n_boletas <= 0:
         n_boletas = CANTIDAD_BOLETAS_REDUCCION_OPTIMA.get(nombre_estrat, 16)
@@ -163,10 +158,65 @@ def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estr
 
     return boletas
 
+def verificar_aciertos_quiniela(boletas: list[dict], resultados_oficiales: list[str]) -> list[dict]:
+    """
+    Compara las boletas generadas contra los 14 resultados oficiales ('1', 'X', '2')
+    y calcula el número de aciertos, ordenando de mayor a menor éxito.
+    """
+    if not resultados_oficiales or len(resultados_oficiales) < 14:
+        return []
+
+    evaluaciones = []
+    for b in boletas:
+        aciertos = 0
+        detalle = []
+        
+        for idx, p in enumerate(b.get("pronosticos", [])):
+            if idx < len(resultados_oficiales):
+                real = resultados_oficiales[idx].upper().strip()
+                pick = p.get("pick", "").upper().strip()
+                es_acierto = (pick == real)
+                if es_acierto:
+                    aciertos += 1
+                detalle.append({
+                    "casilla": idx + 1,
+                    "pick": pick,
+                    "resultado": real,
+                    "acierto": es_acierto
+                })
+
+        evaluaciones.append({
+            "numero_boleta": b.get("numero_boleta", 1),
+            "cadena_corta": b.get("cadena_corta", ""),
+            "aciertos": aciertos,
+            "detalle": detalle,
+            "es_ganadora_1er": aciertos == 14,
+            "es_ganadora_2do": aciertos == 13,
+            "es_ganadora_3er": aciertos == 12,
+            "es_premio": aciertos >= 10
+        })
+
+    return sorted(evaluaciones, key=lambda x: x["aciertos"], reverse=True)
+
+def exportar_boletas_texto_plano(boletas: list[dict], jornada_oficial: list[dict] = None) -> str:
+    """Genera un reporte en texto limpio con todas las boletas para copiar o imprimir"""
+    lineas = [
+        "🏆 SMART PICK PRO - REPORTE DE BOLETAS REDUCIDAS PROGOL 🏆",
+        f"Total de boletas generadas: {len(boletas)}",
+        "============================================================"
+    ]
+    
+    for b in boletas:
+        lineas.append(f"\n🎟️ BOLETA #{b['numero_boleta']} | Secuencia: {b['cadena_corta']}")
+        for p in b.get("pronosticos", []):
+            lineas.append(f"  Casilla {p['casilla']:02d}: {p['partido']} -> [{p['pick']}]")
+            
+    lineas.append("\n============================================================")
+    lineas.append("¡Mucha suerte en tu quiniela!")
+    return "\n".join(lineas)
+
 def procesar_reducciones_excel(file_path_or_buffer):
-    """
-    Carga y procesa las hojas de un archivo Excel de reducciones de quinielas.
-    """
+    """Carga y procesa las hojas de un archivo Excel de reducciones de quinielas."""
     if not HAS_PANDAS or pd is None:
         return None, []
         
