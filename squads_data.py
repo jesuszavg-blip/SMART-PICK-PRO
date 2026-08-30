@@ -50,7 +50,25 @@ PLANTILLAS_POR_EQUIPO = {
     "psg": ["G. Donnarumma (POR)", "A. Hakimi (DEF)", "Marquinhos (DEF)", "W. Pacho (DEF)", "N. Mendes (DEF)", "W. Zaïre-Emery (MED)", "Vitinha (MED)", "J. Neves (MED)", "O. Dembélé (DEL)", "R. Kolo Muani (DEL)", "B. Barcola (DEL)"],
     "boca": ["S. Romero (POR)", "L. Advíncula (DEF)", "C. Lema (DEF)", "M. Rojo (DEF)", "L. Blanco (DEF)", "E. Fernández (MED)", "P. Fernández (MED)", "K. Zenón (MED)", "C. Medina (DEL)", "M. Merentiel (DEL)", "E. Cavani (DEL)"],
     "river": ["F. Armani (POR)", "A. Sant'Anna (DEF)", "G. Pezzella (DEF)", "P. Díaz (DEF)", "M. Acuña (DEF)", "M. Kranevitter (MED)", "I. Fernández (MED)", "M. Meza (MED)", "C. Echeverri (DEL)", "F. Colidio (DEL)", "M. Borja (DEL)"],
-    "inter miami": ["D. Callender (POR)", "M. Weigandt (DEF)", "T. Avilés (DEF)", "H. Martínez (DEF)", "J. Alba (DEF)", "S. Busquets (MED)", "F. Redondo (MED)", "D. Gómez (MED)", "L. Messi (DEL)", "L. Suárez (DEL)", "R. Taylor (DEL)"],
+    # SELECCIONES NACIONALES TOP (FIFA / ELIMINATORIAS / AMISTOSOS)
+    "mexico": ["L. Malagón (POR)", "J. Sánchez (DEF)", "C. Montes (DEF)", "J. Vásquez (DEF)", "J. Gallardo (DEF)", "E. Álvarez (MED)", "L. Chávez (MED)", "L. Romo (MED)", "U. Antuna (DEL)", "S. Giménez (DEL)", "J. Quiñones (DEL)"],
+    "méxico": ["L. Malagón (POR)", "J. Sánchez (DEF)", "C. Montes (DEF)", "J. Vásquez (DEF)", "J. Gallardo (DEF)", "E. Álvarez (MED)", "L. Chávez (MED)", "L. Romo (MED)", "U. Antuna (DEL)", "S. Giménez (DEL)", "J. Quiñones (DEL)"],
+    "estados unidos": ["M. Turner (POR)", "S. Dest (DEF)", "C. Richards (DEF)", "T. Ream (DEF)", "A. Robinson (DEF)", "W. McKennie (MED)", "Y. Musah (MED)", "T. Adams (MED)", "T. Weah (DEL)", "F. Balogun (DEL)", "C. Pulisic (DEL)"],
+    "usa": ["M. Turner (POR)", "S. Dest (DEF)", "C. Richards (DEF)", "T. Ream (DEF)", "A. Robinson (DEF)", "W. McKennie (MED)", "Y. Musah (MED)", "T. Adams (MED)", "T. Weah (DEL)", "F. Balogun (DEL)", "C. Pulisic (DEL)"],
+    "argentina": ["E. Martínez (POR)", "N. Molina (DEF)", "C. Romero (DEF)", "N. Otamendi (DEF)", "N. Tagliafico (DEF)", "R. De Paul (MED)", "E. Fernández (MED)", "A. Mac Allister (MED)", "L. Messi (DEL)", "L. Martínez (DEL)", "J. Álvarez (DEL)"],
+    "brasil": ["Alisson (POR)", "Danilo (DEF)", "Marquinhos (DEF)", "G. Magalhães (DEF)", "Wendell (DEF)", "B. Guimarães (MED)", "L. Paquetá (MED)", "Rodrygo (MED)", "Raphinha (DEL)", "Endrick (DEL)", "Vinícius Jr. (DEL)"],
+    "brazil": ["Alisson (POR)", "Danilo (DEF)", "Marquinhos (DEF)", "G. Magalhães (DEF)", "Wendell (DEF)", "B. Guimarães (MED)", "L. Paquetá (MED)", "Rodrygo (MED)", "Raphinha (DEL)", "Endrick (DEL)", "Vinícius Jr. (DEL)"],
+    "españa": ["U. Simón (POR)", "D. Carvajal (DEF)", "R. Le Normand (DEF)", "A. Laporte (DEF)", "M. Cucurella (DEF)", "Rodri (MED)", "F. Ruiz (MED)", "D. Olmo (MED)", "L. Yamal (DEL)", "A. Morata (DEL)", "N. Williams (DEL)"],
+    "spain": ["U. Simón (POR)", "D. Carvajal (DEF)", "R. Le Normand (DEF)", "A. Laporte (DEF)", "M. Cucurella (DEF)", "Rodri (MED)", "F. Ruiz (MED)", "D. Olmo (MED)", "L. Yamal (DEL)", "A. Morata (DEL)", "N. Williams (DEL)"],
+    "francia": ["M. Maignan (POR)", "J. Koundé (DEF)", "W. Saliba (DEF)", "D. Upamecano (DEF)", "T. Hernández (DEF)", "A. Tchouaméni (MED)", "E. Camavinga (MED)", "A. Griezmann (MED)", "O. Dembélé (DEL)", "K. Mbappé (DEL)", "B. Barcola (DEL)"],
+    "france": ["M. Maignan (POR)", "J. Koundé (DEF)", "W. Saliba (DEF)", "D. Upamecano (DEF)", "T. Hernández (DEF)", "A. Tchouaméni (MED)", "E. Camavinga (MED)", "A. Griezmann (MED)", "O. Dembélé (DEL)", "K. Mbappé (DEL)", "B. Barcola (DEL)"],
+    "alemania": ["M. ter Stegen (POR)", "J. Kimmich (DEF)", "A. Rüdiger (DEF)", "J. Tah (DEF)", "M. Mittelstädt (DEF)", "R. Andrich (MED)", "P. Gross (MED)", "J. Musiala (MED)", "F. Wirtz (DEL)", "K. Havertz (DEL)", "N. Füllkrug (DEL)"],
+    "germany": ["M. ter Stegen (POR)", "J. Kimmich (DEF)", "A. Rüdiger (DEF)", "J. Tah (DEF)", "M. Mittelstädt (DEF)", "R. Andrich (MED)", "P. Gross (MED)", "J. Musiala (MED)", "F. Wirtz (DEL)", "K. Havertz (DEL)", "N. Füllkrug (DEL)"],
+    "inglaterra": ["J. Pickford (POR)", "K. Walker (DEF)", "J. Stones (DEF)", "M. Guéhi (DEF)", "K. Trippier (DEF)", "D. Rice (MED)", "K. Mainoo (MED)", "B. Saka (MED)", "J. Bellingham (DEL)", "P. Foden (DEL)", "H. Kane (DEL)"],
+    "england": ["J. Pickford (POR)", "K. Walker (DEF)", "J. Stones (DEF)", "M. Guéhi (DEF)", "K. Trippier (DEF)", "D. Rice (MED)", "K. Mainoo (MED)", "B. Saka (MED)", "J. Bellingham (DEL)", "P. Foden (DEL)", "H. Kane (DEL)"],
+    "colombia": ["C. Vargas (POR)", "D. Muñoz (DEF)", "D. Sánchez (DEF)", "C. Cuesta (DEF)", "J. Mojica (DEF)", "R. Ríos (MED)", "J. Lerma (MED)", "J. Arias (MED)", "J. Rodríguez (DEL)", "L. Díaz (DEL)", "J. Córdoba (DEL)"],
+    "uruguay": ["S. Rochet (POR)", "N. Nández (DEF)", "J. Giménez (DEF)", "M. Olivera (DEF)", "M. Viña (DEF)", "F. Valverde (MED)", "M. Ugarte (MED)", "N. De la Cruz (MED)", "F. Pellistri (DEL)", "D. Núñez (DEL)", "M. Araújo (DEL)"],
+    "portugal": ["D. Costa (POR)", "J. Cancelo (DEF)", "R. Dias (DEF)", "Pepe (DEF)", "N. Mendes (DEF)", "J. Palhinha (MED)", "Vitinha (MED)", "B. Fernandes (MED)", "B. Silva (DEL)", "C. Ronaldo (DEL)", "R. Leão (DEL)"],
 }
 
 def obtener_plantilla_probable_equipo(nombre_equipo: str) -> list[str]:
