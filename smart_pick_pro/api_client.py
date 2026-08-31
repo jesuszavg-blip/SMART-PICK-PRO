@@ -21,126 +21,126 @@ EQUIPOS_MEXICO_LOGOS = {
     "club america": "https://media.api-sports.io/football/teams/2287.png",
     "club américa": "https://media.api-sports.io/football/teams/2287.png",
 
-    # 2. Guadalajara / Chivas (ID: 2291)
-    "guadalajara": "https://media.api-sports.io/football/teams/2291.png",
-    "chivas": "https://media.api-sports.io/football/teams/2291.png",
-    "rebaño": "https://media.api-sports.io/football/teams/2291.png",
-    "rojiblanco": "https://media.api-sports.io/football/teams/2291.png",
-    "c.d. guadalajara": "https://media.api-sports.io/football/teams/2291.png",
+    # 2. Guadalajara / Chivas (ID: 2278)
+    "guadalajara": "https://media.api-sports.io/football/teams/2278.png",
+    "chivas": "https://media.api-sports.io/football/teams/2278.png",
+    "rebaño": "https://media.api-sports.io/football/teams/2278.png",
+    "rojiblanco": "https://media.api-sports.io/football/teams/2278.png",
+    "c.d. guadalajara": "https://media.api-sports.io/football/teams/2278.png",
 
-    # 3. Cruz Azul / La Máquina (ID: 2286)
-    "cruz azul": "https://media.api-sports.io/football/teams/2286.png",
-    "maquina": "https://media.api-sports.io/football/teams/2286.png",
-    "máquina": "https://media.api-sports.io/football/teams/2286.png",
-    "cementero": "https://media.api-sports.io/football/teams/2286.png",
+    # 3. Cruz Azul / La Máquina (ID: 2295)
+    "cruz azul": "https://media.api-sports.io/football/teams/2295.png",
+    "maquina": "https://media.api-sports.io/football/teams/2295.png",
+    "máquina": "https://media.api-sports.io/football/teams/2295.png",
+    "cementero": "https://media.api-sports.io/football/teams/2295.png",
 
-    # 4. Pumas UNAM (ID: 2288)
-    "pumas": "https://media.api-sports.io/football/teams/2288.png",
-    "unam": "https://media.api-sports.io/football/teams/2288.png",
-    "universidad nacional": "https://media.api-sports.io/football/teams/2288.png",
-    "auriazul": "https://media.api-sports.io/football/teams/2288.png",
+    # 4. Pumas UNAM (ID: 2286)
+    "pumas": "https://media.api-sports.io/football/teams/2286.png",
+    "unam": "https://media.api-sports.io/football/teams/2286.png",
+    "universidad nacional": "https://media.api-sports.io/football/teams/2286.png",
+    "auriazul": "https://media.api-sports.io/football/teams/2286.png",
 
-    # 5. Tigres UANL (ID: 2289)
-    "tigres": "https://media.api-sports.io/football/teams/2289.png",
-    "uanl": "https://media.api-sports.io/football/teams/2289.png",
-    "amazonas": "https://media.api-sports.io/football/teams/2289.png",
-    "felinas": "https://media.api-sports.io/football/teams/2289.png",
+    # 5. Tigres UANL / Amazonas / Felinas (ID: 2279)
+    "tigres": "https://media.api-sports.io/football/teams/2279.png",
+    "uanl": "https://media.api-sports.io/football/teams/2279.png",
+    "amazonas": "https://media.api-sports.io/football/teams/2279.png",
+    "felinas": "https://media.api-sports.io/football/teams/2279.png",
 
-    # 6. Monterrey / Rayados / Rayadas (ID: 2290)
-    "monterrey": "https://media.api-sports.io/football/teams/2290.png",
-    "rayadas": "https://media.api-sports.io/football/teams/2290.png",
-    "rayada": "https://media.api-sports.io/football/teams/2290.png",
-    "rayados": "https://media.api-sports.io/football/teams/2290.png",
-    "pandilla": "https://media.api-sports.io/football/teams/2290.png",
+    # 6. Monterrey / Rayados / Rayadas (ID: 2282)
+    "monterrey": "https://media.api-sports.io/football/teams/2282.png",
+    "rayadas": "https://media.api-sports.io/football/teams/2282.png",
+    "rayada": "https://media.api-sports.io/football/teams/2282.png",
+    "rayados": "https://media.api-sports.io/football/teams/2282.png",
+    "pandilla": "https://media.api-sports.io/football/teams/2282.png",
 
-    # 7. Pachuca / Tuzos / Tuzas (ID: 2285)
-    "pachuca": "https://media.api-sports.io/football/teams/2285.png",
-    "tuzas": "https://media.api-sports.io/football/teams/2285.png",
-    "tuzos": "https://media.api-sports.io/football/teams/2285.png",
-    "tuza": "https://media.api-sports.io/football/teams/2285.png",
-    "tuzo": "https://media.api-sports.io/football/teams/2285.png",
+    # 7. Pachuca / Tuzos / Tuzas (ID: 2292)
+    "pachuca": "https://media.api-sports.io/football/teams/2292.png",
+    "tuzas": "https://media.api-sports.io/football/teams/2292.png",
+    "tuzos": "https://media.api-sports.io/football/teams/2292.png",
+    "tuza": "https://media.api-sports.io/football/teams/2292.png",
+    "tuzo": "https://media.api-sports.io/football/teams/2292.png",
 
-    # 8. Toluca / Diablos / Diablas (ID: 2293)
-    "toluca": "https://media.api-sports.io/football/teams/2293.png",
-    "diablas": "https://media.api-sports.io/football/teams/2293.png",
-    "diablos": "https://media.api-sports.io/football/teams/2293.png",
-    "diabla": "https://media.api-sports.io/football/teams/2293.png",
-    "diablo": "https://media.api-sports.io/football/teams/2293.png",
-    "choricero": "https://media.api-sports.io/football/teams/2293.png",
+    # 8. Toluca / Diablos / Diablas (ID: 2281)
+    "toluca": "https://media.api-sports.io/football/teams/2281.png",
+    "diablas": "https://media.api-sports.io/football/teams/2281.png",
+    "diablos": "https://media.api-sports.io/football/teams/2281.png",
+    "diabla": "https://media.api-sports.io/football/teams/2281.png",
+    "diablo": "https://media.api-sports.io/football/teams/2281.png",
+    "choricero": "https://media.api-sports.io/football/teams/2281.png",
 
-    # 9. Santos Laguna / Guerreros / Guerreras (ID: 2294)
-    "santos": "https://media.api-sports.io/football/teams/2294.png",
-    "guerreras": "https://media.api-sports.io/football/teams/2294.png",
-    "guerreros": "https://media.api-sports.io/football/teams/2294.png",
-    "laguna": "https://media.api-sports.io/football/teams/2294.png",
+    # 9. Santos Laguna / Guerreros / Guerreras (ID: 2285)
+    "santos": "https://media.api-sports.io/football/teams/2285.png",
+    "guerreras": "https://media.api-sports.io/football/teams/2285.png",
+    "guerreros": "https://media.api-sports.io/football/teams/2285.png",
+    "laguna": "https://media.api-sports.io/football/teams/2285.png",
 
-    # 10. Atlas / Zorros / Rojinegras (ID: 2295)
-    "atlas": "https://media.api-sports.io/football/teams/2295.png",
-    "rojinegras": "https://media.api-sports.io/football/teams/2295.png",
-    "rojinegros": "https://media.api-sports.io/football/teams/2295.png",
-    "rojinegra": "https://media.api-sports.io/football/teams/2295.png",
-    "rojinegro": "https://media.api-sports.io/football/teams/2295.png",
-    "zorros": "https://media.api-sports.io/football/teams/2295.png",
-    "zorras": "https://media.api-sports.io/football/teams/2295.png",
+    # 10. Atlas / Zorros / Rojinegras (ID: 2283)
+    "atlas": "https://media.api-sports.io/football/teams/2283.png",
+    "rojinegras": "https://media.api-sports.io/football/teams/2283.png",
+    "rojinegros": "https://media.api-sports.io/football/teams/2283.png",
+    "rojinegra": "https://media.api-sports.io/football/teams/2283.png",
+    "rojinegro": "https://media.api-sports.io/football/teams/2283.png",
+    "zorros": "https://media.api-sports.io/football/teams/2283.png",
+    "zorras": "https://media.api-sports.io/football/teams/2283.png",
 
-    # 11. León / Fieras / Esmeraldas (ID: 2283)
-    "leon": "https://media.api-sports.io/football/teams/2283.png",
-    "león": "https://media.api-sports.io/football/teams/2283.png",
-    "fieras": "https://media.api-sports.io/football/teams/2283.png",
-    "fiera": "https://media.api-sports.io/football/teams/2283.png",
-    "esmeraldas": "https://media.api-sports.io/football/teams/2283.png",
+    # 11. León / Fieras / Esmeraldas (ID: 2289)
+    "leon": "https://media.api-sports.io/football/teams/2289.png",
+    "león": "https://media.api-sports.io/football/teams/2289.png",
+    "fieras": "https://media.api-sports.io/football/teams/2289.png",
+    "fiera": "https://media.api-sports.io/football/teams/2289.png",
+    "esmeraldas": "https://media.api-sports.io/football/teams/2289.png",
 
-    # 12. Puebla / Camoteros / Camoteras / La Franja (ID: 2284)
-    "puebla": "https://media.api-sports.io/football/teams/2284.png",
-    "camoteras": "https://media.api-sports.io/football/teams/2284.png",
-    "camoteros": "https://media.api-sports.io/football/teams/2284.png",
-    "la franja": "https://media.api-sports.io/football/teams/2284.png",
-    "franja": "https://media.api-sports.io/football/teams/2284.png",
+    # 12. Puebla / Camoteros / Camoteras / La Franja (ID: 2291)
+    "puebla": "https://media.api-sports.io/football/teams/2291.png",
+    "camoteras": "https://media.api-sports.io/football/teams/2291.png",
+    "camoteros": "https://media.api-sports.io/football/teams/2291.png",
+    "la franja": "https://media.api-sports.io/football/teams/2291.png",
+    "franja": "https://media.api-sports.io/football/teams/2291.png",
 
-    # 13. FC Juárez / Bravos / Bravas (ID: 2292)
-    "juarez": "https://media.api-sports.io/football/teams/2292.png",
-    "juárez": "https://media.api-sports.io/football/teams/2292.png",
-    "bravas": "https://media.api-sports.io/football/teams/2292.png",
-    "bravos": "https://media.api-sports.io/football/teams/2292.png",
-    "brava": "https://media.api-sports.io/football/teams/2292.png",
-    "bravo": "https://media.api-sports.io/football/teams/2292.png",
+    # 13. FC Juárez / Bravos / Bravas (ID: 2298)
+    "juarez": "https://media.api-sports.io/football/teams/2298.png",
+    "juárez": "https://media.api-sports.io/football/teams/2298.png",
+    "bravas": "https://media.api-sports.io/football/teams/2298.png",
+    "bravos": "https://media.api-sports.io/football/teams/2298.png",
+    "brava": "https://media.api-sports.io/football/teams/2298.png",
+    "bravo": "https://media.api-sports.io/football/teams/2298.png",
 
-    # 14. Mazatlán / Cañoneros / Cañoneras (ID: 2296)
-    "mazatlan": "https://media.api-sports.io/football/teams/2296.png",
-    "mazatlán": "https://media.api-sports.io/football/teams/2296.png",
-    "cañoneras": "https://media.api-sports.io/football/teams/2296.png",
-    "cañoneros": "https://media.api-sports.io/football/teams/2296.png",
+    # 14. Mazatlán / Cañoneros / Cañoneras (ID: 14002)
+    "mazatlan": "https://media.api-sports.io/football/teams/14002.png",
+    "mazatlán": "https://media.api-sports.io/football/teams/14002.png",
+    "cañoneras": "https://media.api-sports.io/football/teams/14002.png",
+    "cañoneros": "https://media.api-sports.io/football/teams/14002.png",
 
-    # 15. Tijuana / Xolos / Xolas (ID: 2297)
-    "tijuana": "https://media.api-sports.io/football/teams/2297.png",
-    "xolas": "https://media.api-sports.io/football/teams/2297.png",
-    "xolos": "https://media.api-sports.io/football/teams/2297.png",
-    "xolo": "https://media.api-sports.io/football/teams/2297.png",
-    "xola": "https://media.api-sports.io/football/teams/2297.png",
+    # 15. Tijuana / Xolos / Xolas (ID: 2280)
+    "tijuana": "https://media.api-sports.io/football/teams/2280.png",
+    "xolas": "https://media.api-sports.io/football/teams/2280.png",
+    "xolos": "https://media.api-sports.io/football/teams/2280.png",
+    "xolo": "https://media.api-sports.io/football/teams/2280.png",
+    "xola": "https://media.api-sports.io/football/teams/2280.png",
 
-    # 16. Atlético San Luis / Potosinos / Potosinas (ID: 2298)
-    "san luis": "https://media.api-sports.io/football/teams/2298.png",
-    "atletico san luis": "https://media.api-sports.io/football/teams/2298.png",
-    "atlético san luis": "https://media.api-sports.io/football/teams/2298.png",
-    "atletico de san luis": "https://media.api-sports.io/football/teams/2298.png",
-    "atlético de san luis": "https://media.api-sports.io/football/teams/2298.png",
-    "potosino": "https://media.api-sports.io/football/teams/2298.png",
-    "potosina": "https://media.api-sports.io/football/teams/2298.png",
+    # 16. Atlético San Luis / Potosinos / Potosinas (ID: 2314)
+    "san luis": "https://media.api-sports.io/football/teams/2314.png",
+    "atletico san luis": "https://media.api-sports.io/football/teams/2314.png",
+    "atlético san luis": "https://media.api-sports.io/football/teams/2314.png",
+    "atletico de san luis": "https://media.api-sports.io/football/teams/2314.png",
+    "atlético de san luis": "https://media.api-sports.io/football/teams/2314.png",
+    "potosino": "https://media.api-sports.io/football/teams/2314.png",
+    "potosina": "https://media.api-sports.io/football/teams/2314.png",
 
-    # 17. Querétaro / Gallos / Gallas (ID: 2299)
-    "queretaro": "https://media.api-sports.io/football/teams/2299.png",
-    "querétaro": "https://media.api-sports.io/football/teams/2299.png",
-    "gallas": "https://media.api-sports.io/football/teams/2299.png",
-    "gallos": "https://media.api-sports.io/football/teams/2299.png",
-    "galla": "https://media.api-sports.io/football/teams/2299.png",
-    "gallo": "https://media.api-sports.io/football/teams/2299.png",
+    # 17. Querétaro / Gallos / Gallas (ID: 2290)
+    "queretaro": "https://media.api-sports.io/football/teams/2290.png",
+    "querétaro": "https://media.api-sports.io/football/teams/2290.png",
+    "gallas": "https://media.api-sports.io/football/teams/2290.png",
+    "gallos": "https://media.api-sports.io/football/teams/2290.png",
+    "galla": "https://media.api-sports.io/football/teams/2290.png",
+    "gallo": "https://media.api-sports.io/football/teams/2290.png",
 
-    # 18. Necaxa / Rayos / Centellas (ID: 2282)
-    "necaxa": "https://media.api-sports.io/football/teams/2282.png",
-    "centellas": "https://media.api-sports.io/football/teams/2282.png",
-    "centella": "https://media.api-sports.io/football/teams/2282.png",
-    "rayos": "https://media.api-sports.io/football/teams/2282.png",
-    "hidrorayos": "https://media.api-sports.io/football/teams/2282.png"
+    # 18. Necaxa / Rayos / Centellas (ID: 2288)
+    "necaxa": "https://media.api-sports.io/football/teams/2288.png",
+    "centellas": "https://media.api-sports.io/football/teams/2288.png",
+    "centella": "https://media.api-sports.io/football/teams/2288.png",
+    "rayos": "https://media.api-sports.io/football/teams/2288.png",
+    "hidrorayos": "https://media.api-sports.io/football/teams/2288.png"
 }
 
 EQUIPOS_INTERNACIONALES_LOGOS = {
@@ -484,26 +484,26 @@ def obtener_partidos_jornada(league_id: str):
     if (not partidos_dict or len(partidos_dict) < 6) and league_id in ["868", "1065"]:
         femenil_fixture_list = [
             # 1. PARTIDOS PRÓXIMOS DE LA JORNADA ACTUAL
-            {"tag": "⏳ [PRÓXIMO 29-AGO 19:00]", "id": 120001, "local": "Guadalajara Femenil (Chivas)", "visita": "América Femenil", "loc_id": 2291, "vis_id": 2287, "st": "Estadio Akron", "ct": "Guadalajara"},
-            {"tag": "⏳ [PRÓXIMO 29-AGO 21:00]", "id": 120002, "local": "Tigres UANL Femenil", "visita": "Monterrey Femenil (Rayadas)", "loc_id": 2289, "vis_id": 2290, "st": "Estadio Universitario", "ct": "Monterrey"},
-            {"tag": "⏳ [PRÓXIMO 30-AGO 17:00]", "id": 120003, "local": "Cruz Azul Femenil", "visita": "Pumas UNAM Femenil", "loc_id": 2286, "vis_id": 2288, "st": "Instalaciones La Noria", "ct": "CDMX"},
-            {"tag": "⏳ [PRÓXIMO 30-AGO 19:00]", "id": 120004, "local": "Toluca Femenil (Diablas)", "visita": "Pachuca Femenil (Tuzas)", "loc_id": 2293, "vis_id": 2285, "st": "Estadio Nemesio Díez", "ct": "Toluca"},
-            {"tag": "⏳ [PRÓXIMO 30-AGO 21:00]", "id": 120005, "local": "Santos Laguna Femenil", "visita": "Atlas Femenil (Rojinegras)", "loc_id": 2294, "vis_id": 2295, "st": "Estadio Corona", "ct": "Torreón"},
-            {"tag": "⏳ [PRÓXIMO 31-AGO 17:00]", "id": 120006, "local": "León Femenil (Fieras)", "visita": "FC Juárez Femenil (Bravas)", "loc_id": 2283, "vis_id": 2292, "st": "Estadio León", "ct": "León"},
-            {"tag": "⏳ [PRÓXIMO 31-AGO 19:00]", "id": 120007, "local": "Puebla Femenil (Camoteras)", "visita": "Tijuana Femenil (Xolas)", "loc_id": 2284, "vis_id": 2297, "st": "Estadio Cuauhtémoc", "ct": "Puebla"},
-            {"tag": "⏳ [PRÓXIMO 31-AGO 21:00]", "id": 120008, "local": "Mazatlán Femenil (Cañoneras)", "visita": "Querétaro Femenil (Gallas)", "loc_id": 2296, "vis_id": 2299, "st": "Estadio El Encanto", "ct": "Mazatlán"},
-            {"tag": "⏳ [PRÓXIMO 01-SEP 17:00]", "id": 120009, "local": "Necaxa Femenil (Centellas)", "visita": "Atlético San Luis Femenil", "loc_id": 2282, "vis_id": 2298, "st": "Estadio Victoria", "ct": "Aguascalientes"},
+            {"tag": "⏳ [PRÓXIMO 29-AGO 19:00]", "id": 120001, "local": "Guadalajara Femenil (Chivas)", "visita": "América Femenil", "loc_id": 2278, "vis_id": 2287, "st": "Estadio Akron", "ct": "Guadalajara"},
+            {"tag": "⏳ [PRÓXIMO 29-AGO 21:00]", "id": 120002, "local": "Tigres UANL Femenil", "visita": "Monterrey Femenil (Rayadas)", "loc_id": 2279, "vis_id": 2282, "st": "Estadio Universitario", "ct": "Monterrey"},
+            {"tag": "⏳ [PRÓXIMO 30-AGO 17:00]", "id": 120003, "local": "Cruz Azul Femenil", "visita": "Pumas UNAM Femenil", "loc_id": 2295, "vis_id": 2286, "st": "Instalaciones La Noria", "ct": "CDMX"},
+            {"tag": "⏳ [PRÓXIMO 30-AGO 19:00]", "id": 120004, "local": "Toluca Femenil (Diablas)", "visita": "Pachuca Femenil (Tuzas)", "loc_id": 2281, "vis_id": 2292, "st": "Estadio Nemesio Díez", "ct": "Toluca"},
+            {"tag": "⏳ [PRÓXIMO 30-AGO 21:00]", "id": 120005, "local": "Santos Laguna Femenil", "visita": "Atlas Femenil (Rojinegras)", "loc_id": 2285, "vis_id": 2283, "st": "Estadio Corona", "ct": "Torreón"},
+            {"tag": "⏳ [PRÓXIMO 31-AGO 17:00]", "id": 120006, "local": "León Femenil (Fieras)", "visita": "FC Juárez Femenil (Bravas)", "loc_id": 2289, "vis_id": 2298, "st": "Estadio León", "ct": "León"},
+            {"tag": "⏳ [PRÓXIMO 31-AGO 19:00]", "id": 120007, "local": "Puebla Femenil (Camoteras)", "visita": "Tijuana Femenil (Xolas)", "loc_id": 2291, "vis_id": 2280, "st": "Estadio Cuauhtémoc", "ct": "Puebla"},
+            {"tag": "⏳ [PRÓXIMO 31-AGO 21:00]", "id": 120008, "local": "Mazatlán Femenil (Cañoneras)", "visita": "Querétaro Femenil (Gallas)", "loc_id": 14002, "vis_id": 2290, "st": "Estadio El Encanto", "ct": "Mazatlán"},
+            {"tag": "⏳ [PRÓXIMO 01-SEP 17:00]", "id": 120009, "local": "Necaxa Femenil (Centellas)", "visita": "Atlético San Luis Femenil", "loc_id": 2288, "vis_id": 2314, "st": "Estadio Victoria", "ct": "Aguascalientes"},
 
             # 2. PARTIDOS FINALIZADOS DE LA JORNADA ANTERIOR
-            {"tag": "🏁 [FINALIZADO 24-AGO 19:00] (2-1)", "id": 120010, "local": "América Femenil", "visita": "Tigres UANL Femenil", "loc_id": 2287, "vis_id": 2289, "st": "Estadio Ciudad de los Deportes", "ct": "CDMX"},
-            {"tag": "🏁 [FINALIZADO 24-AGO 21:00] (3-1)", "id": 120011, "local": "Monterrey Femenil (Rayadas)", "visita": "Guadalajara Femenil (Chivas)", "loc_id": 2290, "vis_id": 2291, "st": "Estadio BBVA", "ct": "Monterrey"},
-            {"tag": "🏁 [FINALIZADO 25-AGO 17:00] (2-0)", "id": 120012, "local": "Pachuca Femenil (Tuzas)", "visita": "Toluca Femenil (Diablas)", "loc_id": 2285, "vis_id": 2293, "st": "Estadio Hidalgo", "ct": "Pachuca"},
-            {"tag": "🏁 [FINALIZADO 25-AGO 19:00] (1-1)", "id": 120013, "local": "Pumas UNAM Femenil", "visita": "Cruz Azul Femenil", "loc_id": 2288, "vis_id": 2286, "st": "Estadio Olímpico Universitario", "ct": "CDMX"},
-            {"tag": "🏁 [FINALIZADO 25-AGO 21:00] (2-1)", "id": 120014, "local": "Atlas Femenil (Rojinegras)", "visita": "Santos Laguna Femenil", "loc_id": 2295, "vis_id": 2294, "st": "Estadio Jalisco", "ct": "Guadalajara"},
-            {"tag": "🏁 [FINALIZADO 26-AGO 17:00] (3-2)", "id": 120015, "local": "Tijuana Femenil (Xolas)", "visita": "León Femenil (Fieras)", "loc_id": 2297, "vis_id": 2283, "st": "Estadio Caliente", "ct": "Tijuana"},
-            {"tag": "🏁 [FINALIZADO 26-AGO 19:00] (1-0)", "id": 120016, "local": "FC Juárez Femenil (Bravas)", "visita": "Mazatlán Femenil (Cañoneras)", "loc_id": 2292, "vis_id": 2296, "st": "Estadio Olímpico Benito Juárez", "ct": "Juárez"},
-            {"tag": "🏁 [FINALIZADO 26-AGO 21:00] (1-1)", "id": 120017, "local": "Querétaro Femenil (Gallas)", "visita": "Necaxa Femenil (Centellas)", "loc_id": 2299, "vis_id": 2282, "st": "Estadio Corregidora", "ct": "Querétaro"},
-            {"tag": "🏁 [FINALIZADO 27-AGO 17:00] (2-0)", "id": 120018, "local": "Atlético San Luis Femenil", "visita": "Puebla Femenil (Camoteras)", "loc_id": 2298, "vis_id": 2284, "st": "Estadio Alfonso Lastras", "ct": "San Luis Potosí"}
+            {"tag": "🏁 [FINALIZADO 24-AGO 19:00] (2-1)", "id": 120010, "local": "América Femenil", "visita": "Tigres UANL Femenil", "loc_id": 2287, "vis_id": 2279, "st": "Estadio Ciudad de los Deportes", "ct": "CDMX"},
+            {"tag": "🏁 [FINALIZADO 24-AGO 21:00] (3-1)", "id": 120011, "local": "Monterrey Femenil (Rayadas)", "visita": "Guadalajara Femenil (Chivas)", "loc_id": 2282, "vis_id": 2278, "st": "Estadio BBVA", "ct": "Monterrey"},
+            {"tag": "🏁 [FINALIZADO 25-AGO 17:00] (2-0)", "id": 120012, "local": "Pachuca Femenil (Tuzas)", "visita": "Toluca Femenil (Diablas)", "loc_id": 2292, "vis_id": 2281, "st": "Estadio Hidalgo", "ct": "Pachuca"},
+            {"tag": "🏁 [FINALIZADO 25-AGO 19:00] (1-1)", "id": 120013, "local": "Pumas UNAM Femenil", "visita": "Cruz Azul Femenil", "loc_id": 2286, "vis_id": 2295, "st": "Estadio Olímpico Universitario", "ct": "CDMX"},
+            {"tag": "🏁 [FINALIZADO 25-AGO 21:00] (2-1)", "id": 120014, "local": "Atlas Femenil (Rojinegras)", "visita": "Santos Laguna Femenil", "loc_id": 2283, "vis_id": 2285, "st": "Estadio Jalisco", "ct": "Guadalajara"},
+            {"tag": "🏁 [FINALIZADO 26-AGO 17:00] (3-2)", "id": 120015, "local": "Tijuana Femenil (Xolas)", "visita": "León Femenil (Fieras)", "loc_id": 2280, "vis_id": 2289, "st": "Estadio Caliente", "ct": "Tijuana"},
+            {"tag": "🏁 [FINALIZADO 26-AGO 19:00] (1-0)", "id": 120016, "local": "FC Juárez Femenil (Bravas)", "visita": "Mazatlán Femenil (Cañoneras)", "loc_id": 2298, "vis_id": 14002, "st": "Estadio Olímpico Benito Juárez", "ct": "Juárez"},
+            {"tag": "🏁 [FINALIZADO 26-AGO 21:00] (1-1)", "id": 120017, "local": "Querétaro Femenil (Gallas)", "visita": "Necaxa Femenil (Centellas)", "loc_id": 2290, "vis_id": 2288, "st": "Estadio Corregidora", "ct": "Querétaro"},
+            {"tag": "🏁 [FINALIZADO 27-AGO 17:00] (2-0)", "id": 120018, "local": "Atlético San Luis Femenil", "visita": "Puebla Femenil (Camoteras)", "loc_id": 2314, "vis_id": 2291, "st": "Estadio Alfonso Lastras", "ct": "San Luis Potosí"}
         ]
         
         for m in femenil_fixture_list:
