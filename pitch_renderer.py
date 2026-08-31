@@ -223,7 +223,7 @@ def render_minuto_a_minuto_dividido(
 
     # Formatear lista de eventos visita
     html_ev_vis = ""
-    for ev in eventos_vis:
+    for ev in eventos_visita:
         if isinstance(ev, str):
             partes = ev.split(" - ")
             m_str = partes[0] if len(partes) > 0 else "0'"
