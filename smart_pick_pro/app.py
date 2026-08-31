@@ -171,21 +171,52 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* Estilos Globales para Botones */
-    .stButton > button {
+    /* --- TODOS LOS BOTONES DEL SISTEMA Y SIDEBAR (ALTO CONTRASTE PERMANENTE) --- */
+    button,
+    .stButton > button,
+    .stDownloadButton > button,
+    [data-testid="stDownloadButton"] > button,
+    [data-testid="stDownloadButton"] a,
+    [data-testid="baseButton-secondary"],
+    [data-testid="baseButton-primary"],
+    [data-testid="stSidebar"] button,
+    [data-testid="stSidebar"] .stDownloadButton button,
+    [data-testid="stSidebar"] [data-testid="baseButton-secondary"],
+    [data-testid="stSidebar"] [data-testid="baseButton-primary"] {
         background-color: #1E2130 !important;
-        color: #FFFFFF !important;
-        border: 1.5px solid #00E676 !important;
+        color: #00E676 !important;
+        -webkit-text-fill-color: #00E676 !important;
+        border: 2px solid #00E676 !important;
         border-radius: 10px !important;
-        font-weight: 800 !important;
+        font-weight: 900 !important;
         font-size: 14px !important;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+        transition: all 0.25s ease !important;
     }
 
-    .stButton > button:hover {
+    button:hover,
+    .stButton > button:hover,
+    .stDownloadButton > button:hover,
+    [data-testid="stDownloadButton"] > button:hover,
+    [data-testid="baseButton-secondary"]:hover,
+    [data-testid="baseButton-primary"]:hover,
+    [data-testid="stSidebar"] button:hover,
+    [data-testid="stSidebar"] .stDownloadButton button:hover {
         background-color: #00E676 !important;
         color: #0E1117 !important;
-        box-shadow: 0 0 15px rgba(0, 230, 118, 0.5) !important;
+        -webkit-text-fill-color: #0E1117 !important;
+        border-color: #00E676 !important;
+        box-shadow: 0 0 18px rgba(0, 230, 118, 0.7) !important;
+    }
+
+    button p, button span,
+    .stButton > button p,
+    .stDownloadButton > button p,
+    [data-testid="stSidebar"] button p,
+    [data-testid="stSidebar"] button span {
+        color: inherit !important;
+        -webkit-text-fill-color: inherit !important;
+        font-weight: 900 !important;
     }
 
     /* Cuadro de texto Ficha VIP / Textarea con fondo blanco y texto NEGRO intenso */
@@ -223,6 +254,15 @@ st.markdown("""
     [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] li {
         color: #FFFFFF !important;
         font-weight: 700 !important;
+    }
+
+    [data-testid="stSidebar"] code {
+        background-color: #1E2130 !important;
+        color: #00E676 !important;
+        border: 1px solid #00E676 !important;
+        font-weight: 800 !important;
+        border-radius: 6px !important;
+        padding: 2px 6px !important;
     }
 
     [data-testid="stSidebar"] h4 {
@@ -277,6 +317,7 @@ st.markdown("""
     [data-testid="stSidebar"] [data-testid="stFileUploader"] section button {
         background-color: #00E676 !important;
         color: #0E1117 !important;
+        -webkit-text-fill-color: #0E1117 !important;
         font-weight: 900 !important;
     }
 
