@@ -15,14 +15,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "smart_pick_pro_super_secret_jwt_key_2026")
 ADMIN_INIT_USER = os.getenv("ADMIN_INIT_USER", "admin")
 ADMIN_INIT_PASS = os.getenv("ADMIN_INIT_PASS", "SmartVIP2026!")
 
-# Enlaces de Casas de Apuestas (Afiliados)
+# Enlaces de Casas de Apuestas (Afiliados / Referencia)
 ENLACES_CASINOS = {
     "Caliente": "https://www.caliente.mx/ofertas/raf/?member=CALIRAF&var1=undefined",
-    "Playdoit": "https://www.playdoit.mx",
-    "Bet365": "https://www.bet365.mx",
-    "1xBet": "https://1xbet.com.mx",
-    "Betway": "https://betway.mx",
-    "Codere": "https://www.codere.mx",
+    "Betmaster": "https://betmaster.net/?rsd=UmRoJ7BQ",
+    "Winpot": "https://winpot.mx/r/5296706_0Socp8oK",
 }
 
 ENLACE_POR_DEFECTO = ENLACES_CASINOS["Caliente"]
