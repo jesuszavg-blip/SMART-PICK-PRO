@@ -24,6 +24,7 @@ import importlib
 import config
 importlib.reload(config)
 import auth
+importlib.reload(auth)
 import api_client
 importlib.reload(api_client)
 import analytics
@@ -31,8 +32,10 @@ importlib.reload(analytics)
 import progol
 importlib.reload(progol)
 import jornada_manager
+importlib.reload(jornada_manager)
 import squads_data
 import pitch_renderer
+importlib.reload(pitch_renderer)
 
 # Configuración de Página
 st.set_page_config(
@@ -534,6 +537,51 @@ if st.session_state['rol'] == 'ADMIN':
                         auth.eliminar_usuario(u_id)
                         st.rerun()
 
+def render_tarjeta_live_segura(p_item):
+    if hasattr(pitch_renderer, 'render_tarjeta_partido_live_radar'):
+        return pitch_renderer.render_tarjeta_partido_live_radar(p_item)
+    
+    loc = html.escape(str(p_item.get('local', 'Local')))
+    vis = html.escape(str(p_item.get('visita', 'Visita')))
+    logo_l = p_item.get('logo_local', 'https://media.api-sports.io/football/teams/2287.png')
+    logo_v = p_item.get('logo_visita', 'https://media.api-sports.io/football/teams/2291.png')
+    g_l = p_item.get('goles_local', 0)
+    g_v = p_item.get('goles_visita', 0)
+    st_val = str(p_item.get('status', 'LIVE')).upper()
+    min_val = p_item.get('minuto', 0)
+    venue = html.escape(str(p_item.get('venue', 'Estadio')))
+
+    if st_val in ['1H', '2H', 'LIVE']:
+        st_badge = f'<span style="background:rgba(231,76,60,0.2); color:#E74C3C; border:1px solid #E74C3C; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:0.5px;">🔴 {st_val} {min_val}\'</span>'
+    elif st_val == 'HT':
+        st_badge = '<span style="background:rgba(255,215,0,0.2); color:#FFD700; border:1px solid #FFD700; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
+    elif st_val in ['FT', 'AET', 'PEN']:
+        st_badge = '<span style="background:rgba(0,230,118,0.2); color:#00E676; border:1px solid #00E676; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
+    else:
+        st_badge = f'<span style="background:rgba(255,255,255,0.1); color:#aaa; border:1px solid #444; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:11px;">⏳ {st_val}</span>'
+
+    return f'''
+    <div style="background:linear-gradient(135deg, #161922 0%, #1E2130 100%); border:1px solid #2D3245; border-radius:14px; padding:14px 18px; margin-bottom:10px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #252836; padding-bottom:6px;">
+            <div style="color:#aaa; font-size:11px; font-weight:bold;">📍 {venue}</div>
+            <div>{st_badge}</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; margin-bottom:6px;">
+            <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; text-align:right;">
+                <span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{loc}</span>
+                <img src="{logo_l}" style="width:36px; height:36px; object-fit:contain; flex-shrink:0;">
+            </div>
+            <div style="background:#0E1117; border:1.5px solid #00E676; padding:4px 16px; border-radius:8px; font-size:22px; font-weight:900; color:#00E676; letter-spacing:2px; text-align:center; min-width:70px;">
+                {g_l} - {g_v}
+            </div>
+            <div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; text-align:left;">
+                <img src="{logo_v}" style="width:36px; height:36px; object-fit:contain; flex-shrink:0;">
+                <span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{vis}</span>
+            </div>
+        </div>
+    </div>
+    '''
+
 # --- MODO 0: RADAR DE PARTIDOS EN VIVO MULTILIGAS ---
 if liga_elegida_val == "LIVE_RADAR_MODE":
     if not st.session_state.get('live_partido_detalle'):
@@ -612,7 +660,7 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
                 for idx_p, p_item in enumerate(p_lista):
                     col_target = cols_live[idx_p % 2]
                     with col_target:
-                        st.markdown(pitch_renderer.render_tarjeta_partido_live_radar(p_item), unsafe_allow_html=True)
+                        st.markdown(render_tarjeta_live_segura(p_item), unsafe_allow_html=True)
                         if st.button(f"🔍 Abrir Minuto a Minuto & Análisis VIP ({p_item['local']} vs {p_item['visita']})", key=f"live_btn_{p_item['id']}", use_container_width=True):
                             st.session_state['live_partido_detalle'] = p_item
                             st.rerun()
