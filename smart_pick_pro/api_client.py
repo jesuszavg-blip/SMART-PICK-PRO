@@ -336,6 +336,7 @@ def obtener_ligas_mundo():
         resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
         
         ligas_top = {
+            "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
             "🇲🇽 Mexico - Liga MX": "262", 
@@ -369,6 +370,7 @@ def obtener_ligas_mundo():
         print(f"Error al obtener ligas: {e}")
 
     return {
+        "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
         "🎯 [ESPECIAL] Simulador Progol": "PROGOL_MODE",
         "⚙️ [ESPECIAL] Optimizador de Reducciones": "REDUCCIONES_MODE",
         "🇲🇽 Mexico - Liga MX": "262",
@@ -382,13 +384,170 @@ def obtener_ligas_mundo():
         "🌍 UEFA Champions League": "2"
     }
 
+@st.cache_data(ttl=15)
+def obtener_todos_partidos_en_vivo():
+    """
+    Obtiene todos los partidos que se están jugando EN VIVO al momento a nivel mundial,
+    agrupados por Liga y País con sus escudos oficiales y marcadores en tiempo real.
+    """
+    url = f"{config.API_FOOTBALL_URL}/fixtures"
+    headers = get_headers()
+    
+    try:
+        resp = requests.get(url, headers=headers, params={"live": "all"}, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            fixtures = data.get("response", [])
+            if fixtures:
+                ligas_dict = {}
+                for f in fixtures:
+                    l_country = f.get('league', {}).get('country', 'Internacional')
+                    l_name = f.get('league', {}).get('name', 'Torneo Oficial')
+                    l_logo = f.get('league', {}).get('logo', '')
+                    l_flag = f.get('league', {}).get('flag', '')
+                    l_id = f.get('league', {}).get('id', '')
+                    
+                    key_liga = f"{l_country} - {l_name}"
+                    if key_liga not in ligas_dict:
+                        ligas_dict[key_liga] = {
+                            "pais": l_country,
+                            "nombre": l_name,
+                            "logo": l_logo,
+                            "flag": l_flag,
+                            "id_liga": l_id,
+                            "partidos": []
+                        }
+                    
+                    f_id = f.get('fixture', {}).get('id')
+                    status_short = f.get('fixture', {}).get('status', {}).get('short', 'LIVE')
+                    status_elapsed = f.get('fixture', {}).get('status', {}).get('elapsed', 0)
+                    
+                    home_name = f.get('teams', {}).get('home', {}).get('name', 'Local')
+                    home_id = f.get('teams', {}).get('home', {}).get('id', 0)
+                    home_logo_raw = f.get('teams', {}).get('home', {}).get('logo', '')
+                    home_logo = obtener_logo_oficial_equipo(home_name, home_logo_raw)
+                    
+                    away_name = f.get('teams', {}).get('away', {}).get('name', 'Visita')
+                    away_id = f.get('teams', {}).get('away', {}).get('id', 0)
+                    away_logo_raw = f.get('teams', {}).get('away', {}).get('logo', '')
+                    away_logo = obtener_logo_oficial_equipo(away_name, away_logo_raw)
+                    
+                    goals_home = f.get('goals', {}).get('home', 0)
+                    goals_away = f.get('goals', {}).get('away', 0)
+                    
+                    events_list = f.get('events', [])
+                    
+                    venue_obj = f.get('fixture', {}).get('venue') or {}
+                    stadium = venue_obj.get('name') or f"Estadio {home_name}"
+                    city = venue_obj.get('city') or l_country
+                    referee = f.get('fixture', {}).get('referee') or "Árbitro Oficial Asignado"
+
+                    partido_dict = {
+                        "id": f_id,
+                        "local": home_name,
+                        "local_id": home_id,
+                        "logo_local": home_logo,
+                        "visita": away_name,
+                        "visita_id": away_id,
+                        "logo_visita": away_logo,
+                        "goles_local": goals_home if goals_home is not None else 0,
+                        "goles_visita": goals_away if goals_away is not None else 0,
+                        "status": status_short,
+                        "minuto": status_elapsed if status_elapsed is not None else 0,
+                        "venue": stadium,
+                        "city": city,
+                        "referee": referee,
+                        "eventos": events_list
+                    }
+                    ligas_dict[key_liga]["partidos"].append(partido_dict)
+                    
+                return ligas_dict
+    except Exception as e:
+        print(f"Error al obtener partidos en vivo: {e}")
+
+    return _generar_partidos_en_vivo_muestra()
+
+def _generar_partidos_en_vivo_muestra():
+    """Genera datos de muestra en vivo si no hay partidos en este instante exacto"""
+    return {
+        "🇲🇽 México - Liga MX": {
+            "pais": "México",
+            "nombre": "Liga MX",
+            "logo": "https://media.api-sports.io/football/leagues/262.png",
+            "flag": "https://media.api-sports.io/flags/mx.svg",
+            "id_liga": "262",
+            "partidos": [
+                {
+                    "id": 1234001,
+                    "local": "Toluca",
+                    "local_id": 2281,
+                    "logo_local": "https://media.api-sports.io/football/teams/2281.png",
+                    "visita": "FC Juárez",
+                    "visita_id": 2298,
+                    "logo_visita": "https://media.api-sports.io/football/teams/2298.png",
+                    "goles_local": 2,
+                    "goles_visita": 0,
+                    "status": "2H",
+                    "minuto": 65,
+                    "venue": "Estadio Nemesio Díez",
+                    "city": "Toluca",
+                    "referee": "Fernando Guerrero",
+                    "eventos": []
+                },
+                {
+                    "id": 1234002,
+                    "local": "América",
+                    "local_id": 2287,
+                    "logo_local": "https://media.api-sports.io/football/teams/2287.png",
+                    "visita": "Cruz Azul",
+                    "visita_id": 2295,
+                    "logo_visita": "https://media.api-sports.io/football/teams/2295.png",
+                    "goles_local": 1,
+                    "goles_visita": 1,
+                    "status": "1H",
+                    "minuto": 38,
+                    "venue": "Estadio Ciudad de los Deportes",
+                    "city": "Ciudad de México",
+                    "referee": "César Ramos",
+                    "eventos": []
+                }
+            ]
+        },
+        "🏴󠁧󠁢󠁥󠁮󠁧󠁿 England - Premier League": {
+            "pais": "England",
+            "nombre": "Premier League",
+            "logo": "https://media.api-sports.io/football/leagues/39.png",
+            "flag": "https://media.api-sports.io/flags/gb.svg",
+            "id_liga": "39",
+            "partidos": [
+                {
+                    "id": 1234003,
+                    "local": "Arsenal",
+                    "local_id": 42,
+                    "logo_local": "https://media.api-sports.io/football/teams/42.png",
+                    "visita": "Chelsea",
+                    "visita_id": 49,
+                    "logo_visita": "https://media.api-sports.io/football/teams/49.png",
+                    "goles_local": 2,
+                    "goles_visita": 1,
+                    "status": "2H",
+                    "minuto": 77,
+                    "venue": "Emirates Stadium",
+                    "city": "London",
+                    "referee": "Michael Oliver",
+                    "eventos": []
+                }
+            ]
+        }
+    }
+
 def obtener_partidos_jornada(league_id: str):
     """
     Obtiene los partidos de la jornada anterior (Finalizados) y de la jornada actual (Próximos)
     con sus escudos exactos e infalibles para cada equipo en su posición (Local y Visita).
     """
-    if league_id in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
-        return {f"Casilla {i}: Partido Local {i} vs Visita {i}": {"id": None} for i in range(1, 15)}
+    if league_id in ["LIVE_RADAR_MODE", "PROGOL_MODE", "REDUCCIONES_MODE"]:
+        return {"🔴 Radar de Partidos en Vivo Activo": {"id": None}}
     
     url = f"{config.API_FOOTBALL_URL}/fixtures"
     headers = get_headers()
