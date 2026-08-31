@@ -798,16 +798,39 @@ else:
         ''', unsafe_allow_html=True)
 
         # --- ESTRUCTURA EN PESTAÑAS (ST.TABS) ---
-        tab_resumen, tab_modelos, tab_h2h, tab_cancha, tab_cuotas = st.tabs([
-            "📊 1. Resumen & Picks VIP",
-            "🧠 2. Modelos & Simulación",
-            "⚔️ 3. Estadísticas & H2H",
-            "🏟️ 4. Cancha, Clima & Árbitro",
-            "💰 5. Cuotas & Bankroll"
+        tab_vivo, tab_resumen, tab_modelos, tab_h2h, tab_cancha, tab_cuotas = st.tabs([
+            "🔴 1. Minuto a Minuto En Vivo",
+            "📊 2. Resumen & Picks VIP",
+            "🧠 3. Modelos & Simulación",
+            "⚔️ 4. Estadísticas & H2H",
+            "🏟️ 5. Cancha, Clima & Árbitro",
+            "💰 6. Cuotas & Bankroll"
         ])
 
         # =========================================================
-        # PESTAÑA 1: RESUMEN & PICKS VIP
+        # PESTAÑA 1: MINUTO A MINUTO EN PANTALLA DIVIDIDA
+        # =========================================================
+        with tab_vivo:
+            html_minuto_a_minuto = pitch_renderer.render_minuto_a_minuto_dividido(
+                equipo_local=equipo_local_real,
+                equipo_visita=equipo_visita_real,
+                logo_local=logo_local_render,
+                logo_visita=logo_visita_render,
+                status=status,
+                minuto_actual=min_j,
+                goles_local=g_h,
+                goles_visita=g_a,
+                eventos_local=eventos_loc,
+                eventos_visita=eventos_vis,
+                pos_local=55 if p_win_h >= p_win_a else 45,
+                pos_visita=45 if p_win_h >= p_win_a else 55,
+                tiros_local=max(3, int(float(gl) * 3.5)),
+                tiros_visita=max(2, int(float(gv) * 3.2))
+            )
+            st.markdown(html_minuto_a_minuto, unsafe_allow_html=True)
+
+        # =========================================================
+        # PESTAÑA 2: RESUMEN & PICKS VIP
         # =========================================================
         with tab_resumen:
             col_b1, col_b2 = st.columns(2)
