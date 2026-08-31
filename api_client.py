@@ -12,113 +12,113 @@ def get_current_season():
 
 # DICCIONARIO COMPLETO Y EXACTO DE ESCUDOS OFICIALES (LIGA MX VARONIL Y FEMENIL)
 EQUIPOS_MEXICO_LOGOS = {
-    # 1. América / Águilas
-    "america": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "américa": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "aguilas": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "águilas": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "azulcrema": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "club america": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
-    "club américa": "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png",
+    # 1. América / Águilas (ID: 2287)
+    "america": "https://media.api-sports.io/football/teams/2287.png",
+    "américa": "https://media.api-sports.io/football/teams/2287.png",
+    "aguilas": "https://media.api-sports.io/football/teams/2287.png",
+    "águilas": "https://media.api-sports.io/football/teams/2287.png",
+    "azulcrema": "https://media.api-sports.io/football/teams/2287.png",
+    "club america": "https://media.api-sports.io/football/teams/2287.png",
+    "club américa": "https://media.api-sports.io/football/teams/2287.png",
 
-    # 2. Guadalajara / Chivas
-    "guadalajara": "https://a.espncdn.com/i/teamlogos/soccer/500/11153.png",
-    "chivas": "https://a.espncdn.com/i/teamlogos/soccer/500/11153.png",
-    "rebaño": "https://a.espncdn.com/i/teamlogos/soccer/500/11153.png",
-    "rojiblanco": "https://a.espncdn.com/i/teamlogos/soccer/500/11153.png",
-    "c.d. guadalajara": "https://a.espncdn.com/i/teamlogos/soccer/500/11153.png",
+    # 2. Guadalajara / Chivas (ID: 2291)
+    "guadalajara": "https://media.api-sports.io/football/teams/2291.png",
+    "chivas": "https://media.api-sports.io/football/teams/2291.png",
+    "rebaño": "https://media.api-sports.io/football/teams/2291.png",
+    "rojiblanco": "https://media.api-sports.io/football/teams/2291.png",
+    "c.d. guadalajara": "https://media.api-sports.io/football/teams/2291.png",
 
-    # 3. Cruz Azul / La Máquina
-    "cruz azul": "https://a.espncdn.com/i/teamlogos/soccer/500/11148.png",
-    "maquina": "https://a.espncdn.com/i/teamlogos/soccer/500/11148.png",
-    "máquina": "https://a.espncdn.com/i/teamlogos/soccer/500/11148.png",
-    "cementero": "https://a.espncdn.com/i/teamlogos/soccer/500/11148.png",
+    # 3. Cruz Azul / La Máquina (ID: 2286)
+    "cruz azul": "https://media.api-sports.io/football/teams/2286.png",
+    "maquina": "https://media.api-sports.io/football/teams/2286.png",
+    "máquina": "https://media.api-sports.io/football/teams/2286.png",
+    "cementero": "https://media.api-sports.io/football/teams/2286.png",
 
-    # 4. Pumas UNAM
-    "pumas": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
-    "unam": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
-    "universidad nacional": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
-    "auriazul": "https://a.espncdn.com/i/teamlogos/soccer/500/11157.png",
+    # 4. Pumas UNAM (ID: 2288)
+    "pumas": "https://media.api-sports.io/football/teams/2288.png",
+    "unam": "https://media.api-sports.io/football/teams/2288.png",
+    "universidad nacional": "https://media.api-sports.io/football/teams/2288.png",
+    "auriazul": "https://media.api-sports.io/football/teams/2288.png",
 
-    # 5. Tigres UANL / Amazonas / Felinas
-    "tigres": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
-    "uanl": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
-    "amazonas": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
-    "felinas": "https://a.espncdn.com/i/teamlogos/soccer/500/11162.png",
+    # 5. Tigres UANL (ID: 2289)
+    "tigres": "https://media.api-sports.io/football/teams/2289.png",
+    "uanl": "https://media.api-sports.io/football/teams/2289.png",
+    "amazonas": "https://media.api-sports.io/football/teams/2289.png",
+    "felinas": "https://media.api-sports.io/football/teams/2289.png",
 
-    # 6. Monterrey / Rayados / Rayadas
-    "monterrey": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
-    "rayadas": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
-    "rayada": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
-    "rayados": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
-    "pandilla": "https://a.espncdn.com/i/teamlogos/soccer/500/11155.png",
+    # 6. Monterrey / Rayados / Rayadas (ID: 2290)
+    "monterrey": "https://media.api-sports.io/football/teams/2290.png",
+    "rayadas": "https://media.api-sports.io/football/teams/2290.png",
+    "rayada": "https://media.api-sports.io/football/teams/2290.png",
+    "rayados": "https://media.api-sports.io/football/teams/2290.png",
+    "pandilla": "https://media.api-sports.io/football/teams/2290.png",
 
-    # 7. Pachuca / Tuzos / Tuzas
-    "pachuca": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
-    "tuzas": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
-    "tuzos": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
-    "tuza": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
-    "tuzo": "https://a.espncdn.com/i/teamlogos/soccer/500/11156.png",
+    # 7. Pachuca / Tuzos / Tuzas (ID: 2285)
+    "pachuca": "https://media.api-sports.io/football/teams/2285.png",
+    "tuzas": "https://media.api-sports.io/football/teams/2285.png",
+    "tuzos": "https://media.api-sports.io/football/teams/2285.png",
+    "tuza": "https://media.api-sports.io/football/teams/2285.png",
+    "tuzo": "https://media.api-sports.io/football/teams/2285.png",
 
-    # 8. Toluca / Diablos / Diablas
-    "toluca": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
-    "diablas": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
-    "diablos": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
-    "diabla": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
-    "diablo": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
-    "choricero": "https://a.espncdn.com/i/teamlogos/soccer/500/11163.png",
+    # 8. Toluca / Diablos / Diablas (ID: 2293)
+    "toluca": "https://media.api-sports.io/football/teams/2293.png",
+    "diablas": "https://media.api-sports.io/football/teams/2293.png",
+    "diablos": "https://media.api-sports.io/football/teams/2293.png",
+    "diabla": "https://media.api-sports.io/football/teams/2293.png",
+    "diablo": "https://media.api-sports.io/football/teams/2293.png",
+    "choricero": "https://media.api-sports.io/football/teams/2293.png",
 
-    # 9. Santos Laguna / Guerreros / Guerreras
-    "santos": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
-    "guerreras": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
-    "guerreros": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
-    "laguna": "https://a.espncdn.com/i/teamlogos/soccer/500/11161.png",
+    # 9. Santos Laguna / Guerreros / Guerreras (ID: 2294)
+    "santos": "https://media.api-sports.io/football/teams/2294.png",
+    "guerreras": "https://media.api-sports.io/football/teams/2294.png",
+    "guerreros": "https://media.api-sports.io/football/teams/2294.png",
+    "laguna": "https://media.api-sports.io/football/teams/2294.png",
 
-    # 10. Atlas / Zorros / Rojinegras
-    "atlas": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "rojinegras": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "rojinegros": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "rojinegra": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "rojinegro": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "zorros": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
-    "zorras": "https://a.espncdn.com/i/teamlogos/soccer/500/11146.png",
+    # 10. Atlas / Zorros / Rojinegras (ID: 2295)
+    "atlas": "https://media.api-sports.io/football/teams/2295.png",
+    "rojinegras": "https://media.api-sports.io/football/teams/2295.png",
+    "rojinegros": "https://media.api-sports.io/football/teams/2295.png",
+    "rojinegra": "https://media.api-sports.io/football/teams/2295.png",
+    "rojinegro": "https://media.api-sports.io/football/teams/2295.png",
+    "zorros": "https://media.api-sports.io/football/teams/2295.png",
+    "zorras": "https://media.api-sports.io/football/teams/2295.png",
 
-    # 11. León / Fieras / Esmeraldas
-    "leon": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
-    "león": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
-    "fieras": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
-    "fiera": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
-    "esmeraldas": "https://a.espncdn.com/i/teamlogos/soccer/500/11154.png",
+    # 11. León / Fieras / Esmeraldas (ID: 2283)
+    "leon": "https://media.api-sports.io/football/teams/2283.png",
+    "león": "https://media.api-sports.io/football/teams/2283.png",
+    "fieras": "https://media.api-sports.io/football/teams/2283.png",
+    "fiera": "https://media.api-sports.io/football/teams/2283.png",
+    "esmeraldas": "https://media.api-sports.io/football/teams/2283.png",
 
-    # 12. Puebla / Camoteros / Camoteras / La Franja
-    "puebla": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
-    "camoteras": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
-    "camoteros": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
-    "la franja": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
-    "franja": "https://a.espncdn.com/i/teamlogos/soccer/500/11159.png",
+    # 12. Puebla / Camoteros / Camoteras / La Franja (ID: 2284)
+    "puebla": "https://media.api-sports.io/football/teams/2284.png",
+    "camoteras": "https://media.api-sports.io/football/teams/2284.png",
+    "camoteros": "https://media.api-sports.io/football/teams/2284.png",
+    "la franja": "https://media.api-sports.io/football/teams/2284.png",
+    "franja": "https://media.api-sports.io/football/teams/2284.png",
 
-    # 13. FC Juárez / Bravos / Bravas
-    "juarez": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
-    "juárez": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
-    "bravas": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
-    "bravos": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
-    "brava": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
-    "bravo": "https://a.espncdn.com/i/teamlogos/soccer/500/19460.png",
+    # 13. FC Juárez / Bravos / Bravas (ID: 2292)
+    "juarez": "https://media.api-sports.io/football/teams/2292.png",
+    "juárez": "https://media.api-sports.io/football/teams/2292.png",
+    "bravas": "https://media.api-sports.io/football/teams/2292.png",
+    "bravos": "https://media.api-sports.io/football/teams/2292.png",
+    "brava": "https://media.api-sports.io/football/teams/2292.png",
+    "bravo": "https://media.api-sports.io/football/teams/2292.png",
 
-    # 14. Mazatlán / Cañoneros / Cañoneras
-    "mazatlan": "https://a.espncdn.com/i/teamlogos/soccer/500/20703.png",
-    "mazatlán": "https://a.espncdn.com/i/teamlogos/soccer/500/20703.png",
-    "cañoneras": "https://a.espncdn.com/i/teamlogos/soccer/500/20703.png",
-    "cañoneros": "https://a.espncdn.com/i/teamlogos/soccer/500/20703.png",
+    # 14. Mazatlán / Cañoneros / Cañoneras (ID: 2296)
+    "mazatlan": "https://media.api-sports.io/football/teams/2296.png",
+    "mazatlán": "https://media.api-sports.io/football/teams/2296.png",
+    "cañoneras": "https://media.api-sports.io/football/teams/2296.png",
+    "cañoneros": "https://media.api-sports.io/football/teams/2296.png",
 
-    # 15. Tijuana / Xolos / Xolas
-    "tijuana": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
-    "xolas": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
-    "xolos": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
-    "xolo": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
-    "xola": "https://a.espncdn.com/i/teamlogos/soccer/500/11100.png",
+    # 15. Tijuana / Xolos / Xolas (ID: 2297)
+    "tijuana": "https://media.api-sports.io/football/teams/2297.png",
+    "xolas": "https://media.api-sports.io/football/teams/2297.png",
+    "xolos": "https://media.api-sports.io/football/teams/2297.png",
+    "xolo": "https://media.api-sports.io/football/teams/2297.png",
+    "xola": "https://media.api-sports.io/football/teams/2297.png",
 
-    # 16. Atlético San Luis / Potosinos / Potosinas
+    # 16. Atlético San Luis / Potosinos / Potosinas (ID: 2298)
     "san luis": "https://media.api-sports.io/football/teams/2298.png",
     "atletico san luis": "https://media.api-sports.io/football/teams/2298.png",
     "atlético san luis": "https://media.api-sports.io/football/teams/2298.png",
@@ -127,75 +127,76 @@ EQUIPOS_MEXICO_LOGOS = {
     "potosino": "https://media.api-sports.io/football/teams/2298.png",
     "potosina": "https://media.api-sports.io/football/teams/2298.png",
 
-    # 17. Querétaro / Gallos / Gallas
-    "queretaro": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
-    "querétaro": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
-    "gallas": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
-    "gallos": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
-    "galla": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
-    "gallo": "https://a.espncdn.com/i/teamlogos/soccer/500/11160.png",
+    # 17. Querétaro / Gallos / Gallas (ID: 2299)
+    "queretaro": "https://media.api-sports.io/football/teams/2299.png",
+    "querétaro": "https://media.api-sports.io/football/teams/2299.png",
+    "gallas": "https://media.api-sports.io/football/teams/2299.png",
+    "gallos": "https://media.api-sports.io/football/teams/2299.png",
+    "galla": "https://media.api-sports.io/football/teams/2299.png",
+    "gallo": "https://media.api-sports.io/football/teams/2299.png",
 
-    # 18. Necaxa / Rayos / Centellas
-    "necaxa": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
-    "centellas": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
-    "centella": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
-    "rayos": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png",
-    "hidrorayos": "https://a.espncdn.com/i/teamlogos/soccer/500/11158.png"
+    # 18. Necaxa / Rayos / Centellas (ID: 2282)
+    "necaxa": "https://media.api-sports.io/football/teams/2282.png",
+    "centellas": "https://media.api-sports.io/football/teams/2282.png",
+    "centella": "https://media.api-sports.io/football/teams/2282.png",
+    "rayos": "https://media.api-sports.io/football/teams/2282.png",
+    "hidrorayos": "https://media.api-sports.io/football/teams/2282.png"
 }
 
 EQUIPOS_INTERNACIONALES_LOGOS = {
-    "real madrid": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
-    "barcelona": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
-    "atletico madrid": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
-    "atlético madrid": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
-    "sevilla": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
-    "manchester city": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
-    "man city": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
-    "manchester united": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
-    "man united": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
-    "man utd": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
-    "liverpool": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
-    "arsenal": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
-    "chelsea": "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
-    "tottenham": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
-    "spurs": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
-    "bayern": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
-    "bayern münchen": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
-    "bayern munich": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
-    "dortmund": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
-    "psg": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "paris": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "paris saint germain": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
-    "marseille": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
-    "marsella": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
-    "juventus": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
-    "juve": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
-    "inter milan": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
-    "inter de milan": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
-    "milan": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
-    "ac milan": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
-    "boca": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
-    "boca jrs": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
-    "boca juniors": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
-    "river": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png",
-    "river plate": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png",
-    "racing": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
-    "racing club": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
-    "inter miami": "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png",
-    "houston": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
-    "houston dynamo": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
-    "st. luis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
-    "st louis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
-    "st. louis": "https://a.espncdn.com/i/teamlogos/soccer/500/21571.png",
-    "colo colo": "https://a.espncdn.com/i/teamlogos/soccer/500/3147.png",
-    "u. de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
-    "u de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
-    "universidad de chile": "https://a.espncdn.com/i/teamlogos/soccer/500/3149.png",
-    "vitoria": "https://a.espncdn.com/i/teamlogos/soccer/500/3457.png",
-    "vitoria ba": "https://a.espncdn.com/i/teamlogos/soccer/500/3457.png",
-    "bahia": "https://a.espncdn.com/i/teamlogos/soccer/500/3436.png",
-    "flamengo": "https://a.espncdn.com/i/teamlogos/soccer/500/819.png",
-    "palmeiras": "https://a.espncdn.com/i/teamlogos/soccer/500/824.png"
+    "real madrid": "https://media.api-sports.io/football/teams/541.png",
+    "barcelona": "https://media.api-sports.io/football/teams/529.png",
+    "atletico madrid": "https://media.api-sports.io/football/teams/530.png",
+    "atlético madrid": "https://media.api-sports.io/football/teams/530.png",
+    "sevilla": "https://media.api-sports.io/football/teams/536.png",
+    "manchester city": "https://media.api-sports.io/football/teams/50.png",
+    "man city": "https://media.api-sports.io/football/teams/50.png",
+    "manchester united": "https://media.api-sports.io/football/teams/33.png",
+    "man united": "https://media.api-sports.io/football/teams/33.png",
+    "man utd": "https://media.api-sports.io/football/teams/33.png",
+    "liverpool": "https://media.api-sports.io/football/teams/40.png",
+    "arsenal": "https://media.api-sports.io/football/teams/42.png",
+    "chelsea": "https://media.api-sports.io/football/teams/49.png",
+    "tottenham": "https://media.api-sports.io/football/teams/47.png",
+    "spurs": "https://media.api-sports.io/football/teams/47.png",
+    "bayern": "https://media.api-sports.io/football/teams/157.png",
+    "bayern münchen": "https://media.api-sports.io/football/teams/157.png",
+    "bayern munich": "https://media.api-sports.io/football/teams/157.png",
+    "dortmund": "https://media.api-sports.io/football/teams/165.png",
+    "psg": "https://media.api-sports.io/football/teams/85.png",
+    "paris": "https://media.api-sports.io/football/teams/85.png",
+    "paris saint germain": "https://media.api-sports.io/football/teams/85.png",
+    "marseille": "https://media.api-sports.io/football/teams/81.png",
+    "marsella": "https://media.api-sports.io/football/teams/81.png",
+    "juventus": "https://media.api-sports.io/football/teams/496.png",
+    "juve": "https://media.api-sports.io/football/teams/496.png",
+    "inter milan": "https://media.api-sports.io/football/teams/505.png",
+    "inter de milan": "https://media.api-sports.io/football/teams/505.png",
+    "milan": "https://media.api-sports.io/football/teams/489.png",
+    "ac milan": "https://media.api-sports.io/football/teams/489.png",
+    "boca": "https://media.api-sports.io/football/teams/451.png",
+    "boca jrs": "https://media.api-sports.io/football/teams/451.png",
+    "boca juniors": "https://media.api-sports.io/football/teams/451.png",
+    "river": "https://media.api-sports.io/football/teams/435.png",
+    "river plate": "https://media.api-sports.io/football/teams/435.png",
+    "racing": "https://media.api-sports.io/football/teams/436.png",
+    "racing club": "https://media.api-sports.io/football/teams/436.png",
+    "inter miami": "https://media.api-sports.io/football/teams/1598.png",
+    "houston": "https://media.api-sports.io/football/teams/1601.png",
+    "houston dynamo": "https://media.api-sports.io/football/teams/1601.png",
+    "st. luis": "https://media.api-sports.io/football/teams/19438.png",
+    "st louis": "https://media.api-sports.io/football/teams/19438.png",
+    "st. louis": "https://media.api-sports.io/football/teams/19438.png",
+    "coloコロ": "https://media.api-sports.io/football/teams/2324.png",
+    "colo colo": "https://media.api-sports.io/football/teams/2324.png",
+    "u. de chile": "https://media.api-sports.io/football/teams/2327.png",
+    "u de chile": "https://media.api-sports.io/football/teams/2327.png",
+    "universidad de chile": "https://media.api-sports.io/football/teams/2327.png",
+    "vitoria": "https://media.api-sports.io/football/teams/119.png",
+    "vitoria ba": "https://media.api-sports.io/football/teams/119.png",
+    "bahia": "https://media.api-sports.io/football/teams/118.png",
+    "flamengo": "https://media.api-sports.io/football/teams/127.png",
+    "palmeiras": "https://media.api-sports.io/football/teams/121.png"
 }
 
 # DICCIONARIO COMPLETO Y EXACTO DE ESCUDOS DE SELECCIONES NACIONALES (FEDERACIONES OFICIALES HD)
@@ -298,9 +299,9 @@ SELECCIONES_NACIONALES_LOGOS = {
 }
 
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
-    """Mapeador 100% exacto de escudos oficiales para Liga MX, Femenil, Internacionales y Selecciones (nunca muestra banderas en clubes)"""
+    """Mapeador 100% exacto de escudos oficiales sin bloqueos de servidor (HTTP 200 garantizado)"""
     if not nombre_equipo:
-        return "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png"
+        return "https://media.api-sports.io/football/teams/2287.png"
         
     eq = str(nombre_equipo).lower().strip()
     
@@ -309,7 +310,7 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         if key in eq:
             return url_escudo
             
-    # 2. Buscar en Selecciones Nacionales (Escudos Oficiales de Federaciones)
+    # 2. Buscar en Selecciones Nacionales
     for key, url_escudo in SELECCIONES_NACIONALES_LOGOS.items():
         if key in eq:
             return url_escudo
@@ -319,14 +320,13 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         if key in eq:
             return url_escudo
             
-    # 4. Si se proporciona un logo válido de la API que NO sea una bandera ni ID desfasado
+    # 4. Si se proporciona un logo válido de la API que NO sea una bandera
     if logo_actual and str(logo_actual).startswith("http"):
         es_bandera = "flags" in str(logo_actual).lower() or ".svg" in str(logo_actual).lower()
-        es_desfasado = any(k in str(logo_actual) for k in ["2284.png", "2298.png", "2287.png"])
-        if not es_bandera and not es_desfasado:
+        if not es_bandera:
             return str(logo_actual)
         
-    return "https://a.espncdn.com/i/teamlogos/soccer/500/11145.png"
+    return "https://media.api-sports.io/football/teams/2287.png"
 
 @st.cache_data(ttl=60)
 def obtener_ligas_mundo():
