@@ -337,6 +337,7 @@ def obtener_ligas_mundo():
         
         ligas_top = {
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
+            "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
             "🇲🇽 Mexico - Liga MX": "262", 
@@ -371,6 +372,7 @@ def obtener_ligas_mundo():
 
     return {
         "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
+        "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
         "🎯 [ESPECIAL] Simulador Progol": "PROGOL_MODE",
         "⚙️ [ESPECIAL] Optimizador de Reducciones": "REDUCCIONES_MODE",
         "🇲🇽 Mexico - Liga MX": "262",
@@ -546,8 +548,8 @@ def obtener_partidos_jornada(league_id: str):
     Obtiene los partidos de la jornada anterior (Finalizados) y de la jornada actual (Próximos)
     con sus escudos exactos e infalibles para cada equipo en su posición (Local y Visita).
     """
-    if league_id in ["LIVE_RADAR_MODE", "PROGOL_MODE", "REDUCCIONES_MODE"]:
-        return {"🔴 Radar de Partidos en Vivo Activo": {"id": None}}
+    if league_id in ["LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE"]:
+        return {"🎯 Módulo Especial Activo": {"id": None}}
     
     url = f"{config.API_FOOTBALL_URL}/fixtures"
     headers = get_headers()
