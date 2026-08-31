@@ -204,6 +204,87 @@ st.markdown("""
         color: #FFFFFF !important;
         font-weight: 700 !important;
     }
+
+    /* --- SIDEBAR & PANEL DE ADMINISTRACIÓN (ALTO CONTRASTE TOTAL) --- */
+    [data-testid="stSidebar"] {
+        background-color: #0E1117 !important;
+        border-right: 1px solid #1E2130 !important;
+    }
+
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3, 
+    [data-testid="stSidebar"] h4, 
+    [data-testid="stSidebar"] h5,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p,
+    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] li {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+
+    [data-testid="stSidebar"] h4 {
+        color: #00E676 !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        margin-top: 14px !important;
+        margin-bottom: 6px !important;
+        text-shadow: 0 0 10px rgba(0, 230, 118, 0.3) !important;
+    }
+
+    /* Expander en Sidebar */
+    [data-testid="stSidebar"] [data-testid="stExpander"] {
+        background-color: #161922 !important;
+        border: 1.5px solid #00E676 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stExpander"] summary {
+        color: #00E676 !important;
+        font-weight: 900 !important;
+        font-size: 15px !important;
+    }
+
+    /* Entradas de Texto y Selectores en Sidebar */
+    [data-testid="stSidebar"] .stTextInput input,
+    [data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] {
+        background-color: #1E2130 !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        border: 1.5px solid #00E676 !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+    }
+
+    [data-testid="stSidebar"] .stTextInput input:focus,
+    [data-testid="stSidebar"] .stSelectbox [data-baseweb="select"]:focus {
+        border-color: #FFD700 !important;
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
+    }
+
+    /* Subida de Archivos en Sidebar */
+    [data-testid="stSidebar"] [data-testid="stFileUploader"] section {
+        background-color: #1E2130 !important;
+        border: 2px dashed #00E676 !important;
+        border-radius: 10px !important;
+        padding: 10px !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stFileUploader"] section button {
+        background-color: #00E676 !important;
+        color: #0E1117 !important;
+        font-weight: 900 !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stFileUploader"] span,
+    [data-testid="stSidebar"] [data-testid="stFileUploader"] small {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -338,14 +419,21 @@ if st.session_state['rol'] == 'ADMIN':
     with st.sidebar.expander("🔑 Panel de Administración VIP", expanded=False):
         # 1. Estado de Persistencia
         est_pers = auth.obtener_estado_persistencia()
-        st.write("#### 🛡️ Estado de Persistencia")
+        st.write("#### 🛡️ Persistencia y Base de Datos")
         st.markdown(f"""
-        - 👥 **Total Usuarios:** `{est_pers['total_usuarios']}`
+        - 👥 **Total Usuarios Activos:** `{est_pers['total_usuarios']}`
         - 📁 **Respaldo Local JSON:** `{'✅ Activo' if est_pers['backup_local_existe'] else '❌ Inactivo'}`
-        - ☁️ **Sincronización Nube:** `{'✅ Conectado' if est_pers['nube_activa'] else '🟡 Modo Local'}`
-        - 🔑 **Streamlit Secrets:** `{'✅ Activo' if est_pers['secrets_activos'] else '⚪ No definido'}`
+        - ☁️ **GitHub Cloud Permanente:** `{'✅ Conectado' if est_pers['nube_activa'] else '❌ Sin Token'}`
         """)
 
+        if st.button("☁️ Sincronizar en GitHub Cloud Ahora", use_container_width=True, help="Guarda permanentemente todos los usuarios en GitHub"):
+            ok_sync, msg_sync = auth.sincronizar_con_github_cloud()
+            if ok_sync:
+                st.success("✅ ¡Base de datos sincronizada permanentemente con GitHub!")
+            else:
+                st.error(f"❌ Error al sincronizar: {msg_sync}")
+
+        st.markdown("---")
         # 2. Respaldo y Restauración en 1 Clic
         st.write("#### 💾 Respaldos de Base de Datos")
         json_backup_data = auth.exportar_usuarios_json()
