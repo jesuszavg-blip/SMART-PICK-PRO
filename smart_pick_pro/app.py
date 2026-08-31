@@ -667,6 +667,93 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 
         st.stop()
 
+# --- MODO 0.5: CAZADOR DE PARLAYS VIP (TOP 15 ALTAS & TOP 5 EMPATES) ---
+elif liga_elegida_val == "PARLAY_HUNTER_MODE":
+    st.markdown('''
+    <div style="background: linear-gradient(135deg, #1E2130 0%, #00E676 100%); padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0, 230, 118, 0.25);">
+        <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">💎 CAZADOR DE PARLAYS VIP (+ALTAS & EMPATES DE ORO)</h2>
+        <p style="color: white; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Parlays de Alta Probabilidad y Cuotas de Valor.</p>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    subtab_altas, subtab_empates = st.tabs([
+        "🔥 1. Parlay Maestro de Altas (Top 15 Partidos)",
+        "⚖️ 2. Radar de Empates de Oro (Top 5 Partidos)"
+    ])
+    
+    with subtab_altas:
+        col_pa1, col_pa2 = st.columns([1, 1])
+        with col_pa1:
+            top_n_altas = st.slider("Cantidad de Partidos en el Parlay de Altas:", 5, 20, 15, key="slider_altas_n")
+        with col_pa2:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("🚀 RECALCULAR PARLAY DE ALTAS", use_container_width=True):
+                st.rerun()
+
+        with st.spinner("Procesando matriz de goles esperados y xG en ligas mundiales..."):
+            parlay_altas_data = analytics.generar_parlay_top_altas(top_n=top_n_altas)
+
+        # Renderizar boleto visual
+        st.markdown(pitch_renderer.render_ticket_parlay_altas(parlay_altas_data), unsafe_allow_html=True)
+
+        # Opciones de Difusión y Compartir
+        ficha_altas = analytics.generar_ficha_parlay_altas_whatsapp(parlay_altas_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickpro.com'))
+        import urllib.parse
+        encoded_altas = urllib.parse.quote(ficha_altas)
+
+        col_w1, col_w2 = st.columns(2)
+        with col_w1:
+            st.markdown(f'''
+            <a href="https://wa.me/?text={encoded_altas}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(37,211,102,0.4);">
+                💬 COMPARTIR PARLAY DE ALTAS EN WHATSAPP (1 CLIC)
+            </a>
+            ''', unsafe_allow_html=True)
+        with col_w2:
+            st.download_button(
+                label="📥 Descargar Ficha de Altas (.txt)",
+                data=ficha_altas,
+                file_name="parlay_maestro_altas_top15.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+
+    with subtab_empates:
+        col_pe1, col_pe2 = st.columns([1, 1])
+        with col_pe1:
+            top_n_emp = st.slider("Cantidad de Partidos en el Radar de Empates:", 3, 10, 5, key="slider_emp_n")
+        with col_pe2:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("🚀 RECALCULAR RADAR DE EMPATES", use_container_width=True):
+                st.rerun()
+
+        with st.spinner("Procesando matriz Dixon-Coles de paridad táctica..."):
+            empates_data = analytics.generar_top_empates_oro(top_n=top_n_emp)
+
+        # Renderizar boleto visual de empates
+        st.markdown(pitch_renderer.render_ticket_empates_oro(empates_data), unsafe_allow_html=True)
+
+        # Ficha WhatsApp de Empates
+        ficha_empates = analytics.generar_ficha_empates_whatsapp(empates_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickpro.com'))
+        encoded_empates = urllib.parse.quote(ficha_empates)
+
+        col_we1, col_we2 = st.columns(2)
+        with col_we1:
+            st.markdown(f'''
+            <a href="https://wa.me/?text={encoded_empates}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(37,211,102,0.4);">
+                💬 COMPARTIR RADAR DE EMPATES EN WHATSAPP (1 CLIC)
+            </a>
+            ''', unsafe_allow_html=True)
+        with col_we2:
+            st.download_button(
+                label="📥 Descargar Reporte de Empates (.txt)",
+                data=ficha_empates,
+                file_name="radar_empates_oro_top5.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+
+    st.stop()
+
 # --- MODO 1: PROGOL TRADICIONAL ---
 elif liga_elegida_val == "PROGOL_MODE":
     st.markdown('''
@@ -973,7 +1060,7 @@ else:
         # PESTAÑA 2: RESUMEN & PICKS VIP
         # =========================================================
         with tab_resumen:
-            col_b1, col_b2 = st.columns(2)
+            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
             with col_b1:
                 if st.button("⚡ PICK SENCILLO SEGURO", use_container_width=True):
                     v_p1x = stats_poisson.get("p_1X", 70.0)
@@ -983,8 +1070,24 @@ else:
                     else:
                         st.success(f"🎯 **PICK SEGURO:** {equipo_visita_real} o Empate (X2) | Confianza: **{v_px2:.1f}%**")
             with col_b2:
-                if st.button("🎫 PARLAY DE ORO CONSERVADOR", use_container_width=True):
+                if st.button("🎫 PARLAY DE ORO", use_container_width=True):
                     st.success(f"🎟️ **PARLAY RECOMENDADO:** Doble Oportunidad ({equipo_local_real if p_win_h >= p_win_a else equipo_visita_real} o Empate) + Más de 1.5 Goles")
+            with col_b3:
+                if st.button("🔥 TOP 15 ALTAS (PARLAY)", use_container_width=True):
+                    st.session_state['ver_top_altas_match'] = not st.session_state.get('ver_top_altas_match', False)
+            with col_b4:
+                if st.button("⚖️ TOP 5 EMPATES (VALOR)", use_container_width=True):
+                    st.session_state['ver_top_empates_match'] = not st.session_state.get('ver_top_empates_match', False)
+
+            if st.session_state.get('ver_top_altas_match'):
+                st.markdown("### 🔥 Parlay Maestro de Altas en Goles (Top 15 Partidos)")
+                p_altas_box = analytics.generar_parlay_top_altas(top_n=15)
+                st.markdown(pitch_renderer.render_ticket_parlay_altas(p_altas_box), unsafe_allow_html=True)
+
+            if st.session_state.get('ver_top_empates_match'):
+                st.markdown("### ⚖️ Radar de Empates de Oro (Top 5 Choques con Paridad)")
+                p_empates_box = analytics.generar_top_empates_oro(top_n=5)
+                st.markdown(pitch_renderer.render_ticket_empates_oro(p_empates_box), unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
 
