@@ -534,8 +534,93 @@ if st.session_state['rol'] == 'ADMIN':
                         auth.eliminar_usuario(u_id)
                         st.rerun()
 
+# --- MODO 0: RADAR DE PARTIDOS EN VIVO MULTILIGAS ---
+if liga_elegida_val == "LIVE_RADAR_MODE":
+    if not st.session_state.get('live_partido_detalle'):
+        st.markdown('''
+        <div style="background: linear-gradient(135deg, #1E2130 0%, #E74C3C 100%); padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);">
+            <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">🔴 RADAR DE PARTIDOS EN VIVO MULTILIGAS</h2>
+            <p style="color: white; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Marcadores en tiempo real, minutos jugados y eventos de todos los encuentros activos en el mundo.</p>
+        </div>
+        ''', unsafe_allow_html=True)
+        
+        col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.5, 1])
+        with col_ctl1:
+            filtro_busqueda = st.text_input("🔍 Buscar por Equipo o Liga:", placeholder="Ej. Toluca, Premier, Cali, Chile...")
+        with col_ctl2:
+            filtro_tiempo = st.selectbox("⏱️ Filtrar por Estado:", ["Todos los Estados", "🔴 1er Tiempo (1H)", "🔴 2do Tiempo (2H)", "⏸️ Entretiempo (HT)"])
+        with col_ctl3:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("🔄 ACTUALIZAR EN VIVO", use_container_width=True, help="Refresca los marcadores en vivo de todas las ligas"):
+                api_client.obtener_todos_partidos_en_vivo.clear()
+                st.rerun()
+
+        with st.spinner("📡 Conectando con API-Sports y escaneando partidos en vivo en todo el mundo..."):
+            ligas_en_vivo = api_client.obtener_todos_partidos_en_vivo()
+
+        total_partidos = sum(len(d.get("partidos", [])) for d in ligas_en_vivo.values())
+        
+        st.markdown(f'''
+        <div style="background:#161922; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #2D3245; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">📡 Conexión Satelital API-Sports: <span style="color:#00E676; font-weight:900;">ACTIVA (HTTP 200 OK)</span></span>
+            <span style="background:#00E676; color:#0E1117; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">🟢 {total_partidos} Partidos en Juego</span>
+        </div>
+        ''', unsafe_allow_html=True)
+
+        ligas_filtradas = {}
+        for l_key, l_data in ligas_en_vivo.items():
+            partidos_filtrados = []
+            for p in l_data.get("partidos", []):
+                if filtro_busqueda:
+                    txt_b = filtro_busqueda.lower().strip()
+                    if txt_b not in p['local'].lower() and txt_b not in p['visita'].lower() and txt_b not in l_key.lower():
+                        continue
+                
+                if filtro_tiempo == "🔴 1er Tiempo (1H)" and p['status'] != '1H':
+                    continue
+                elif filtro_tiempo == "🔴 2do Tiempo (2H)" and p['status'] != '2H':
+                    continue
+                elif filtro_tiempo == "⏸️ Entretiempo (HT)" and p['status'] != 'HT':
+                    continue
+                
+                partidos_filtrados.append(p)
+            
+            if partidos_filtrados:
+                ligas_filtradas[l_key] = {
+                    **l_data,
+                    "partidos": partidos_filtrados
+                }
+
+        if not ligas_filtradas:
+            st.info("ℹ️ No se encontraron partidos activos con los filtros seleccionados.")
+        else:
+            for l_key, l_data in ligas_filtradas.items():
+                p_lista = l_data["partidos"]
+                pais_nombre = l_data.get("pais", "Internacional")
+                liga_nombre = l_data.get("nombre", "Torneo")
+                
+                st.markdown(f'''
+                <div style="display:flex; align-items:center; justify-content:space-between; background:#161922; border-left:5px solid #00E676; border-radius:10px; padding:10px 16px; margin:20px 0 12px 0; border-top:1px solid #2D3245; border-right:1px solid #2D3245; border-bottom:1px solid #2D3245;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:16px; font-weight:900; color:#FFFFFF;">🏆 {pais_nombre} - {liga_nombre}</span>
+                    </div>
+                    <span style="background:#00E676; color:#0E1117; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">{len(p_lista)} en juego</span>
+                </div>
+                ''', unsafe_allow_html=True)
+                
+                cols_live = st.columns(2)
+                for idx_p, p_item in enumerate(p_lista):
+                    col_target = cols_live[idx_p % 2]
+                    with col_target:
+                        st.markdown(pitch_renderer.render_tarjeta_partido_live_radar(p_item), unsafe_allow_html=True)
+                        if st.button(f"🔍 Abrir Minuto a Minuto & Análisis VIP ({p_item['local']} vs {p_item['visita']})", key=f"live_btn_{p_item['id']}", use_container_width=True):
+                            st.session_state['live_partido_detalle'] = p_item
+                            st.rerun()
+
+        st.stop()
+
 # --- MODO 1: PROGOL TRADICIONAL ---
-if liga_elegida_val == "PROGOL_MODE":
+elif liga_elegida_val == "PROGOL_MODE":
     st.markdown('''
     <div style="background: linear-gradient(135deg, #1E2130 0%, #FFD700 100%); padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
         <h2 style="color: #1E2130; margin: 0; font-weight: 900;">🎯 OPTIMIZADOR INTELIGENTE DE QUINIELA PROGOL</h2>
@@ -713,9 +798,16 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
     st.stop()
 
 # --- MODO 3: ANÁLISIS INTEGRAL DE PARTIDO (CON PESTAÑAS ST.TABS) ---
-datos_partido = datos_partido_custom if datos_partido_custom else partidos_dict.get(partido_seleccionado)
-if not partido_seleccionado or not datos_partido or not datos_partido.get("id"):
-    st.info("💡 Selecciona un encuentro en la barra lateral para ver su análisis detallado.")
+if st.session_state.get('live_partido_detalle'):
+    col_back, _ = st.columns([1, 2])
+    with col_back:
+        if st.button("⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO", use_container_width=True):
+            st.session_state['live_partido_detalle'] = None
+            st.rerun()
+
+datos_partido = datos_partido_custom if datos_partido_custom else (st.session_state.get('live_partido_detalle') if st.session_state.get('live_partido_detalle') else partidos_dict.get(partido_seleccionado))
+if (not partido_seleccionado and not st.session_state.get('live_partido_detalle')) or not datos_partido or not datos_partido.get("id"):
+    st.info("💡 Selecciona un encuentro en la barra lateral o en el Radar en Vivo para ver su análisis detallado.")
 else:
     with st.spinner("Procesando Modelo Multifactorial (Poisson + Dixon-Coles + Monte Carlo + H2H + Clima + Árbitro)..."):
         fixture_id = datos_partido["id"]
