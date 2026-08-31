@@ -201,25 +201,9 @@ def render_minuto_a_minuto_dividido(
             det_str = partes[1] if len(partes) > 1 else ev
             ev_icon = "⚽" if "GOL" in det_str else ("🟨" if "Amarilla" in det_str else ("🟥" if "Roja" in det_str else ("🔄" if "Cambio" in det_str else "📌")))
             m_val = m_str.replace("'", "")
-            html_ev_loc += f'''
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;">
-                <div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;">
-                    <div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div>
-                </div>
-                <div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{m_val}'</div>
-            </div>
-            '''
+            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div><div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{m_val}\'</div></div>'
         elif isinstance(ev, dict):
-            html_ev_loc += f'''
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;">
-                <div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;">
-                    <div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get('icon', '📌')} <b>{html.escape(ev.get('title', ''))}</b></div>
-                    <div style="font-size:12px; color:#00E676; font-weight:bold;">{html.escape(ev.get('player', ''))}</div>
-                    <div style="font-size:11px; color:#aaa;">{html.escape(ev.get('detail', ''))}</div>
-                </div>
-                <div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{ev.get('min', 0)}'</div>
-            </div>
-            '''
+            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#00E676; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div><div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{ev.get("min", 0)}\'</div></div>'
 
     # Formatear lista de eventos visita
     html_ev_vis = ""
@@ -230,106 +214,35 @@ def render_minuto_a_minuto_dividido(
             det_str = partes[1] if len(partes) > 1 else ev
             ev_icon = "⚽" if "GOL" in det_str else ("🟨" if "Amarilla" in det_str else ("🟥" if "Roja" in det_str else ("🔄" if "Cambio" in det_str else "📌")))
             m_val = m_str.replace("'", "")
-            html_ev_vis += f'''
-            <div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;">
-                <div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{m_val}'</div>
-                <div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;">
-                    <div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div>
-                </div>
-            </div>
-            '''
+            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{m_val}\'</div><div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div></div>'
         elif isinstance(ev, dict):
-            html_ev_vis += f'''
-            <div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;">
-                <div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{ev.get('min', 0)}'</div>
-                <div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;">
-                    <div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get('icon', '📌')} <b>{html.escape(ev.get('title', ''))}</b></div>
-                    <div style="font-size:12px; color:#FF7675; font-weight:bold;">{html.escape(ev.get('player', ''))}</div>
-                    <div style="font-size:11px; color:#aaa;">{html.escape(ev.get('detail', ''))}</div>
-                </div>
-            </div>
-            '''
+            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{ev.get("min", 0)}\'</div><div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#FF7675; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div></div>'
 
-    html_full = f'''
-    <div style="background: linear-gradient(180deg, #12151E 0%, #0E1117 100%); border: 2px solid #00E676; border-radius: 16px; padding: 20px; color: white; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        
-        <!-- Header del Minuto a Minuto -->
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">
-            <div style="font-size:18px; font-weight:900; color:#FFD700;">⏱️ CENTRO DE PARTIDO: MINUTO A MINUTO EN VIVO</div>
-            <div style="background:{status_color}; color:#0E1117; font-weight:900; padding:5px 14px; border-radius:20px; font-size:13px; letter-spacing:1px;">{status_label}</div>
-        </div>
+    pct_tiros_l = int((tiros_local / max(1, tiros_local + tiros_visita)) * 100)
+    pct_tiros_v = 100 - pct_tiros_l
 
-        <!-- Marcador y Nombres Divididos -->
-        <div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:15px; margin-bottom:20px; background:#161922; padding:15px; border-radius:12px; border:1px solid #2A2D3E;">
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;">
-                <span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:right;">{loc_name}</span>
-                <img src="{logo_local}" style="width:48px; height:48px; object-fit:contain;">
-            </div>
-            <div style="text-align:center; padding:0 15px;">
-                <div style="background:#0E1117; border:2px solid #00E676; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#00E676; letter-spacing:4px;">
-                    {g_l} - {g_v}
-                </div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:flex-start; gap:12px;">
-                <img src="{logo_visita}" style="width:48px; height:48px; object-fit:contain;">
-                <span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:left;">{vis_name}</span>
-            </div>
-        </div>
-
-        <!-- Barra de Estadísticas en Vivo Comparativas -->
-        <div style="background:#161922; padding:14px; border-radius:12px; margin-bottom:20px; border:1px solid #2A2D3E;">
-            <div style="font-size:12px; font-weight:800; color:#00E676; text-transform:uppercase; margin-bottom:10px; text-align:center;">📊 ESTADÍSTICAS DEL PARTIDO EN TIEMPO REAL</div>
-            
-            <!-- Posesión -->
-            <div style="margin-bottom:10px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;">
-                    <span style="color:#00E676;">{pos_local}%</span>
-                    <span style="color:#aaa;">Posesión de Balón</span>
-                    <span style="color:#E74C3C;">{pos_visita}%</span>
-                </div>
-                <div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;">
-                    <div style="width:{pos_local}%; background:#00E676;"></div>
-                    <div style="width:{pos_visita}%; background:#E74C3C;"></div>
-                </div>
-            </div>
-
-            <!-- Tiros a Puerta -->
-            <div style="margin-bottom:6px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;">
-                    <span style="color:#00E676;">{tiros_local} Tiros</span>
-                    <span style="color:#aaa;">Disparos al Arco</span>
-                    <span style="color:#E74C3C;">{tiros_visita} Tiros</span>
-                </div>
-                <div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;">
-                    <div style="width:{(tiros_local / max(1, tiros_local + tiros_visita)) * 100}%; background:#00E676;"></div>
-                    <div style="width:{(tiros_visita / max(1, tiros_local + tiros_visita)) * 100}%; background:#E74C3C;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cronología Minuto a Minuto en Pantalla Dividida -->
-        <div style="display:grid; grid-template-columns: 1fr 2px 1fr; gap:16px; position:relative; margin-top:10px;">
-            <!-- Lado Local -->
-            <div>
-                <div style="text-align:right; font-size:14px; font-weight:900; color:#00E676; margin-bottom:12px; border-bottom:2px solid #00E676; padding-bottom:4px;">
-                    🔵 ACCIONES {loc_name.upper()}
-                </div>
-                {html_ev_loc}
-            </div>
-
-            <!-- Línea Central Divisoria -->
-            <div style="background: linear-gradient(180deg, #00E676 0%, #2D3245 50%, #E74C3C 100%); width:2px; border-radius:2px;"></div>
-
-            <!-- Lado Visita -->
-            <div>
-                <div style="text-align:left; font-size:14px; font-weight:900; color:#E74C3C; margin-bottom:12px; border-bottom:2px solid #E74C3C; padding-bottom:4px;">
-                    🔴 ACCIONES {vis_name.upper()}
-                </div>
-                {html_ev_vis}
-            </div>
-        </div>
-
-    </div>
-    '''
+    html_full = (
+        f'<div style="background: linear-gradient(180deg, #12151E 0%, #0E1117 100%); border: 2px solid #00E676; border-radius: 16px; padding: 20px; color: white; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div style="font-size:18px; font-weight:900; color:#FFD700;">⏱️ CENTRO DE PARTIDO: MINUTO A MINUTO EN VIVO</div>'
+        f'<div style="background:{status_color}; color:#0E1117; font-weight:900; padding:5px 14px; border-radius:20px; font-size:13px; letter-spacing:1px;">{status_label}</div>'
+        f'</div>'
+        f'<div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:15px; margin-bottom:20px; background:#161922; padding:15px; border-radius:12px; border:1px solid #2A2D3E;">'
+        f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:right;">{loc_name}</span><img src="{logo_local}" style="width:48px; height:48px; object-fit:contain;"></div>'
+        f'<div style="text-align:center; padding:0 15px;"><div style="background:#0E1117; border:2px solid #00E676; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#00E676; letter-spacing:4px;">{g_l} - {g_v}</div></div>'
+        f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:12px;"><img src="{logo_visita}" style="width:48px; height:48px; object-fit:contain;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:left;">{vis_name}</span></div>'
+        f'</div>'
+        f'<div style="background:#161922; padding:14px; border-radius:12px; margin-bottom:20px; border:1px solid #2A2D3E;">'
+        f'<div style="font-size:12px; font-weight:800; color:#00E676; text-transform:uppercase; margin-bottom:10px; text-align:center;">📊 ESTADÍSTICAS DEL PARTIDO EN TIEMPO REAL</div>'
+        f'<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#00E676;">{pos_local}%</span><span style="color:#aaa;">Posesión de Balón</span><span style="color:#E74C3C;">{pos_visita}%</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;"><div style="width:{pos_local}%; background:#00E676;"></div><div style="width:{pos_visita}%; background:#E74C3C;"></div></div></div>'
+        f'<div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#00E676;">{tiros_local} Tiros</span><span style="color:#aaa;">Disparos al Arco</span><span style="color:#E74C3C;">{tiros_visita} Tiros</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;"><div style="width:{pct_tiros_l}%; background:#00E676;"></div><div style="width:{pct_tiros_v}%; background:#E74C3C;"></div></div></div>'
+        f'</div>'
+        f'<div style="display:grid; grid-template-columns: 1fr 2px 1fr; gap:16px; position:relative; margin-top:10px;">'
+        f'<div><div style="text-align:right; font-size:14px; font-weight:900; color:#00E676; margin-bottom:12px; border-bottom:2px solid #00E676; padding-bottom:4px;">🔵 ACCIONES {loc_name.upper()}</div>{html_ev_loc}</div>'
+        f'<div style="background: linear-gradient(180deg, #00E676 0%, #2D3245 50%, #E74C3C 100%); width:2px; border-radius:2px;"></div>'
+        f'<div><div style="text-align:left; font-size:14px; font-weight:900; color:#E74C3C; margin-bottom:12px; border-bottom:2px solid #E74C3C; padding-bottom:4px;">🔴 ACCIONES {vis_name.upper()}</div>{html_ev_vis}</div>'
+        f'</div>'
+        f'</div>'
+    )
     return html_full
 
