@@ -36,14 +36,30 @@ importlib.reload(jornada_manager)
 import squads_data
 import pitch_renderer
 importlib.reload(pitch_renderer)
+try:
+    import assets_data
+    importlib.reload(assets_data)
+except ImportError:
+    assets_data = None
 
 # Configuración de Página
 st.set_page_config(
-    page_title="Smart Pick Pro - Escáner Estadístico VIP",
+    page_title="Smart Pick Pro VIP - Data Intelligence",
     page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Inyección de Meta-tags PWA para instalación móvil nativa (iOS / Android)
+st.markdown("""
+<head>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SmartPick VIP">
+    <link rel="manifest" href="manifest.json">
+</head>
+""", unsafe_allow_html=True)
 
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
@@ -342,15 +358,22 @@ if 'rol' not in st.session_state:
 
 # --- PANTALLA DE INICIO DE SESIÓN ---
 if not st.session_state['autenticado']:
-    st.markdown('''
-    <div class="hero-banner" style="margin-top: 25px;">
-        <h1 style="color: white; margin: 0; font-weight: 900; font-size: 38px; letter-spacing: 1px;">🏆 SMART PICK PRO VIP</h1>
-        <p style="color: white; margin: 8px 0 0 0; font-size: 18px; opacity: 0.95;">Sistema de IA Predictiva • Optimizador de Reducciones Progol • Buscador $+EV$</p>
-        <div style="margin-top: 12px; display: inline-block; background: rgba(0, 230, 118, 0.2); border: 2px solid #00E676; border-radius: 20px; padding: 6px 18px; color: #00E676; font-weight: 900; font-size: 14px;">
-            ⭐ +85.4% de Efectividad Comprobada en Quinielas y Parlays VIP
+    if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
+        st.markdown(f'''
+        <div style="text-align:center; margin-top:20px; margin-bottom:20px;">
+            <img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-width:550px; width:95%; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.7); border:1px solid #2D3245;" />
         </div>
-    </div>
-    ''', unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
+    else:
+        st.markdown('''
+        <div class="hero-banner" style="margin-top: 25px;">
+            <h1 style="color: white; margin: 0; font-weight: 900; font-size: 38px; letter-spacing: 1px;">🏆 SMART PICK PRO VIP</h1>
+            <p style="color: white; margin: 8px 0 0 0; font-size: 18px; opacity: 0.95;">Sistema de IA Predictiva • Optimizador de Reducciones Progol • Buscador $+EV$</p>
+            <div style="margin-top: 12px; display: inline-block; background: rgba(0, 230, 118, 0.2); border: 2px solid #00E676; border-radius: 20px; padding: 6px 18px; color: #00E676; font-weight: 900; font-size: 14px;">
+                ⭐ +85.4% de Efectividad Comprobada en Quinielas y Parlays VIP
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
     
     col_log1, col_log2, col_log3 = st.columns([1, 2.5, 1])
     with col_log2:
@@ -426,6 +449,29 @@ with col_top2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # --- BARRA LATERAL ---
+if assets_data and hasattr(assets_data, 'APP_ICON_B64') and assets_data.APP_ICON_B64:
+    st.sidebar.markdown(f'''
+    <div style="text-align:center; padding:6px 0 14px 0;">
+        <img src="data:image/jpeg;base64,{assets_data.APP_ICON_B64}" style="width:75px; height:75px; border-radius:18px; box-shadow:0 4px 15px rgba(0,230,118,0.3); border:1.5px solid #00E676;" />
+        <div style="color:#00E676; font-weight:900; font-size:16px; margin-top:6px; letter-spacing:0.5px;">SMART PICK PRO</div>
+        <div style="color:#FFD700; font-size:11px; font-weight:bold; letter-spacing:1px;">DATA INTELLIGENCE VIP</div>
+    </div>
+    ''', unsafe_allow_html=True)
+
+with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
+    st.markdown('''
+    <div style="background:#161922; padding:12px; border-radius:10px; border:1px solid #2D3245; font-size:13px; line-height:1.4;">
+        <b style="color:#00E676;">🍏 En iPhone / iPad (Safari):</b><br>
+        1. Toca el botón <b>Compartir</b> (ícono <span style="font-size:14px;">⬆️</span> abajo).<br>
+        2. Selecciona <b>"Agregar a inicio"</b> ➕.<br>
+        3. Toca <b>"Agregar"</b> y se creará la app con el logo oficial.<br><br>
+        <b style="color:#00E676;">🤖 En Android (Chrome):</b><br>
+        1. Toca los <b>3 puntos (⋮)</b> arriba a la derecha.<br>
+        2. Elige <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b> 📥.<br>
+        3. ¡Listo! Se abrirá a pantalla completa.
+    </div>
+    ''', unsafe_allow_html=True)
+
 dict_ligas_globales = api_client.obtener_ligas_mundo()
 liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", list(dict_ligas_globales.keys()))
 liga_elegida_val = dict_ligas_globales[liga_elegida]
