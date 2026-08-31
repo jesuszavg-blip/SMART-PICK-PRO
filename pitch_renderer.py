@@ -298,6 +298,7 @@ def render_tarjeta_partido_live_radar(partido: dict) -> str:
 def render_ticket_parlay_altas(parlay_data: dict) -> str:
     """
     Renderiza el boleto de Parlay Maestro de Altas en Goles (Top 15) con diseño deportivo VIP.
+    Sin indentaciones de 4 espacios para evitar falsos bloques de código en Markdown.
     """
     import html
     total_p = parlay_data.get("total_partidos", 15)
@@ -313,49 +314,42 @@ def render_ticket_parlay_altas(parlay_data: dict) -> str:
         prob = p.get("probabilidad", 75.0)
         cuota = p.get("cuota", 1.30)
 
-        html_items += f'''
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#161922; border:1px solid #2D3245; border-left:4px solid #00E676; padding:10px 14px; border-radius:8px; margin-bottom:8px;">
-            <div style="flex:1;">
-                <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx+1}. {liga}</div>
-                <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
-            </div>
-            <div style="text-align:right; display:flex; align-items:center; gap:10px;">
-                <div style="background:rgba(0,230,118,0.15); border:1px solid #00E676; color:#00E676; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px;">
-                    ⚽ {mercado}
-                </div>
-                <div style="background:#1E2130; border:1px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px; min-width:65px; text-align:center;">
-                    @{cuota:.2f}
-                </div>
-                <div style="background:#0E1117; color:#FFFFFF; font-weight:bold; font-size:11px; padding:4px 8px; border-radius:4px; border:1px solid #333;">
-                    {prob}%
-                </div>
-            </div>
-        </div>
-        '''
+        html_items += (
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#161922; border:1px solid #2D3245; border-left:4px solid #00E676; padding:10px 14px; border-radius:8px; margin-bottom:8px;">'
+            f'<div style="flex:1;">'
+            f'<div style="color:#aaa; font-size:11px; font-weight:bold;">{idx+1}. {liga}</div>'
+            f'<div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>'
+            f'</div>'
+            f'<div style="text-align:right; display:flex; align-items:center; gap:10px;">'
+            f'<div style="background:rgba(0,230,118,0.15); border:1px solid #00E676; color:#00E676; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px;">⚽ {mercado}</div>'
+            f'<div style="background:#1E2130; border:1px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px; min-width:65px; text-align:center;">@{cuota:.2f}</div>'
+            f'<div style="background:#0E1117; color:#FFFFFF; font-weight:bold; font-size:11px; padding:4px 8px; border-radius:4px; border:1px solid #333;">{prob}%</div>'
+            f'</div>'
+            f'</div>'
+        )
 
-    html_ticket = f'''
-    <div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #00E676; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(0,230,118,0.2);">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">
-            <div>
-                <div style="font-size:20px; font-weight:900; color:#00E676;">🔥 BOLETO PARLAY MAESTRO DE ALTAS</div>
-                <div style="color:#aaa; font-size:13px;">Selección de los {total_p} partidos con mayor volumen ofensivo y xG esperado</div>
-            </div>
-            <div style="text-align:right; background:#161922; border:1.5px solid #FFD700; padding:8px 18px; border-radius:10px;">
-                <div style="font-size:11px; color:#FFD700; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>
-                <div style="font-size:24px; font-weight:900; color:#00E676; letter-spacing:1px;">x{cuota_tot:,.2f}</div>
-            </div>
-        </div>
-        <div>
-            {html_items}
-        </div>
-    </div>
-    '''
+    html_ticket = (
+        f'<div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #00E676; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(0,230,118,0.2);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div>'
+        f'<div style="font-size:20px; font-weight:900; color:#00E676;">🔥 BOLETO PARLAY MAESTRO DE ALTAS</div>'
+        f'<div style="color:#aaa; font-size:13px;">Selección de los {total_p} partidos con mayor volumen ofensivo y xG esperado</div>'
+        f'</div>'
+        f'<div style="text-align:right; background:#161922; border:1.5px solid #FFD700; padding:8px 18px; border-radius:10px;">'
+        f'<div style="font-size:11px; color:#FFD700; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>'
+        f'<div style="font-size:24px; font-weight:900; color:#00E676; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
+        f'</div>'
+        f'</div>'
+        f'<div>{html_items}</div>'
+        f'</div>'
+    )
     return html_ticket
 
 
 def render_ticket_empates_oro(empates_data: dict) -> str:
     """
     Renderiza el boleto de Radar de Empates de Oro (Top 5) con diseño deportivo VIP.
+    Sin indentaciones de 4 espacios para evitar falsos bloques de código en Markdown.
     """
     import html
     total_p = empates_data.get("total_partidos", 5)
@@ -372,41 +366,40 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         marcador = html.escape(str(e.get("marcador_probable", "1 - 1")))
         doble_op = html.escape(str(e.get("doble_oportunidad", "")))
 
-        html_items += f'''
-        <div style="background:#161922; border:1px solid #2D3245; border-left:4px solid #FFD700; padding:14px 18px; border-radius:10px; margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="color:#aaa; font-size:12px; font-weight:bold;">{idx+1}. {liga}</span>
-                <span style="background:rgba(255,215,0,0.15); color:#FFD700; border:1px solid #FFD700; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">⚖️ Paridad Extrema</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="color:#FFFFFF; font-weight:900; font-size:16px;">{loc} vs {vis}</span>
-                <span style="background:#0E1117; border:2px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 14px; border-radius:8px; font-size:16px;">Cuota @{cuota:.2f}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#1E2130; padding:8px 12px; border-radius:6px; font-size:12px;">
-                <span style="color:#00E676; font-weight:bold;">🎯 Marcador Probable: <b>{marcador}</b> (Prob: {prob}%)</span>
-                <span style="color:#ddd;">🛡️ Opción Segura: <b>{doble_op}</b></span>
-            </div>
-        </div>
-        '''
+        html_items += (
+            f'<div style="background:#161922; border:1px solid #2D3245; border-left:4px solid #FFD700; padding:14px 18px; border-radius:10px; margin-bottom:12px;">'
+            f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">'
+            f'<span style="color:#aaa; font-size:12px; font-weight:bold;">{idx+1}. {liga}</span>'
+            f'<span style="background:rgba(255,215,0,0.15); color:#FFD700; border:1px solid #FFD700; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">⚖️ Paridad Extrema</span>'
+            f'</div>'
+            f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">'
+            f'<span style="color:#FFFFFF; font-weight:900; font-size:16px;">{loc} vs {vis}</span>'
+            f'<span style="background:#0E1117; border:2px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 14px; border-radius:8px; font-size:16px;">Cuota @{cuota:.2f}</span>'
+            f'</div>'
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1E2130; padding:8px 12px; border-radius:6px; font-size:12px;">'
+            f'<span style="color:#00E676; font-weight:bold;">🎯 Marcador Probable: <b>{marcador}</b> (Prob: {prob}%)</span>'
+            f'<span style="color:#ddd;">🛡️ Opción Segura: <b>{doble_op}</b></span>'
+            f'</div>'
+            f'</div>'
+        )
 
-    html_ticket = f'''
-    <div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #FFD700; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(255,215,0,0.2);">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">
-            <div>
-                <div style="font-size:20px; font-weight:900; color:#FFD700;">⚖️ RADAR DE EMPATES DE ORO (TOP 5 DE ALTO VALOR)</div>
-                <div style="color:#aaa; font-size:13px;">5 encuentros de máxima paridad táctica con cuotas superiores a 3.00</div>
-            </div>
-            <div style="text-align:right; background:#161922; border:1.5px solid #00E676; padding:8px 18px; border-radius:10px;">
-                <div style="font-size:11px; color:#00E676; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>
-                <div style="font-size:24px; font-weight:900; color:#FFD700; letter-spacing:1px;">x{cuota_tot:,.2f}</div>
-            </div>
-        </div>
-        <div>
-            {html_items}
-        </div>
-    </div>
-    '''
+    html_ticket = (
+        f'<div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #FFD700; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(255,215,0,0.2);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div>'
+        f'<div style="font-size:20px; font-weight:900; color:#FFD700;">⚖️ RADAR DE EMPATES DE ORO (TOP 5 DE ALTO VALOR)</div>'
+        f'<div style="color:#aaa; font-size:13px;">5 encuentros de máxima paridad táctica con cuotas superiores a 3.00</div>'
+        f'</div>'
+        f'<div style="text-align:right; background:#161922; border:1.5px solid #00E676; padding:8px 18px; border-radius:10px;">'
+        f'<div style="font-size:11px; color:#00E676; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>'
+        f'<div style="font-size:24px; font-weight:900; color:#FFD700; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
+        f'</div>'
+        f'</div>'
+        f'<div>{html_items}</div>'
+        f'</div>'
+    )
     return html_ticket
+
 
 
 
