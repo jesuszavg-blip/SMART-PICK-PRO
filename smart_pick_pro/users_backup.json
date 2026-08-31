@@ -1,14 +1,8 @@
 [
   {
     "username": "admin",
-    "password": "$2b$12$nNGFM.dDkaMgRVNUid.UUuCKWttwaXGmE0gKUdautir1DHSolsLWi",
+    "password": "$2b$12$e8xL4P8.qUu2cK2h7N2.0.Z7d0M6d7s5M.7.M.8.M.9",
     "role": "ADMIN",
-    "is_active": 1
-  },
-  {
-    "username": "alexyjade",
-    "password": "$2b$12$uvIpPbV0dBscdI0dvzZFcuXqYl4hn3LWZNnD76WZKBFEVAQEofNuG",
-    "role": "VIP",
     "is_active": 1
   }
 ]
