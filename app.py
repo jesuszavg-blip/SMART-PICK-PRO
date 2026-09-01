@@ -1195,7 +1195,7 @@ else:
                 pass
 
             # Ficha de Difusión WhatsApp
-            ficha_txt = analytics.generar_ficha_vip_whatsapp(equipo_local_real, equipo_visita_real, stats_poisson, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickpro.com'), caliente_url=config.ENLACE_POR_DEFECTO)
+            ficha_txt = analytics.generar_ficha_vip_whatsapp(equipo_local_real, equipo_visita_real, stats_poisson, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'), caliente_url=config.ENLACE_POR_DEFECTO)
             if st.session_state['rol'] == 'ADMIN':
                 st.write("#### 📲 Ficha VIP para Difusión en Canales (Herramienta Admin)")
                 st.text_area("📋 Reporte VIP copiable:", value=ficha_txt, height=200, key=f"admin_ficha_{fixture_id}")
