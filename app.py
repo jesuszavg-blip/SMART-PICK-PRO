@@ -72,20 +72,23 @@ st.markdown("""
     [data-testid="stStatusWidget"] { display: none !important; }
     .stDeployButton { display: none !important; }
 
-    /* Header transparente sin interferir */
+    /* Header transparente sin interferir con el contenido */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
-        height: 0px !important;
         z-index: 99999 !important;
     }
 
-    /* Botón flotante VIP para abrir la barra lateral en celular y PC */
-    [data-testid="collapsedControl"] {
+    /* Botón flotante VIP para abrir la barra lateral en celular y PC (Todos los selectores de Streamlit) */
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapsedControl"],
+    button[aria-label="Expand sidebar"],
+    button[kind="header"] {
         display: flex !important;
         visibility: visible !important;
+        opacity: 1 !important;
         position: fixed !important;
-        top: 16px !important;
-        left: 16px !important;
+        top: 14px !important;
+        left: 14px !important;
         z-index: 1000000 !important;
         background: #161922 !important;
         border: 2px solid #00E676 !important;
@@ -94,15 +97,19 @@ st.markdown("""
         height: 44px !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4) !important;
+        box-shadow: 0 4px 18px rgba(0, 230, 118, 0.5) !important;
         cursor: pointer !important;
     }
 
-    [data-testid="collapsedControl"] svg {
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stSidebarCollapsedControl"] svg,
+    button[aria-label="Expand sidebar"] svg {
         display: none !important;
     }
 
-    [data-testid="collapsedControl"]::after {
+    [data-testid="collapsedControl"]::after,
+    [data-testid="stSidebarCollapsedControl"]::after,
+    button[aria-label="Expand sidebar"]::after {
         content: "⚽" !important;
         font-size: 20px !important;
         line-height: 1 !important;
