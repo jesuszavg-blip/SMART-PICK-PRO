@@ -74,79 +74,71 @@ st.markdown("""
 
     /* Header transparente sin bloquear clicks */
     header[data-testid="stHeader"] {
-        background-color: transparent !important;
-        height: 60px !important;
-        z-index: 999999 !important;
+        background: transparent !important;
         pointer-events: none !important;
     }
 
-    /* El botón nativo de Streamlit recibe clicks y flota arriba a la izquierda */
-    [data-testid="stSidebarCollapsedControl"],
-    [data-testid="collapsedControl"],
-    header[data-testid="stHeader"] > div:first-child {
-        display: flex !important;
-        visibility: visible !important;
+    /* 1. CUANDO LA BARRA LATERAL ESTÁ CERRADA: Botón único flotante Balón ⚽ arriba a la izquierda */
+    [data-testid="stSidebarCollapsedControl"] {
+        display: block !important;
         position: fixed !important;
         top: 14px !important;
         left: 14px !important;
-        z-index: 10000000 !important;
+        z-index: 1000000 !important;
         pointer-events: auto !important;
     }
 
-    /* Estilo del botón nativo: Balón ⚽ con borde verde neón interactivo */
-    [data-testid="stSidebarCollapsedControl"] button,
-    [data-testid="collapsedControl"] button,
-    header[data-testid="stHeader"] button {
-        display: flex !important;
-        visibility: visible !important;
+    [data-testid="stSidebarCollapsedControl"] button {
         background: #161922 !important;
         border: 2px solid #00E676 !important;
         border-radius: 50% !important;
         width: 46px !important;
         height: 46px !important;
+        display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 4px 18px rgba(0, 230, 118, 0.6) !important;
         cursor: pointer !important;
-        pointer-events: auto !important;
         padding: 0 !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] button svg,
-    [data-testid="collapsedControl"] button svg,
-    header[data-testid="stHeader"] button svg {
+    [data-testid="stSidebarCollapsedControl"] button svg {
         display: none !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] button::after,
-    [data-testid="collapsedControl"] button::after,
-    header[data-testid="stHeader"] button::after {
+    [data-testid="stSidebarCollapsedControl"] button::after {
         content: "⚽" !important;
         font-size: 22px !important;
         line-height: 1 !important;
     }
 
-    /* Botón de repliegue de barra lateral (cuando está abierta) */
-    [data-testid="stSidebarCollapseButton"] svg {
+    /* 2. CUANDO LA BARRA LATERAL ESTÁ ABIERTA: Botón de Cerrar claro y visible dentro del menú */
+    [data-testid="stSidebarCollapseButton"] {
+        display: block !important;
+        pointer-events: auto !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] button {
+        background: #1E2130 !important;
+        border: 1.5px solid #FF5252 !important;
+        border-radius: 8px !important;
+        padding: 6px 14px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] button svg {
         display: none !important;
     }
 
-    [data-testid="stSidebarCollapseButton"]::after {
-        content: "« ⚽" !important;
-        color: #00E676 !important;
-        font-size: 16px !important;
+    [data-testid="stSidebarCollapseButton"] button::after {
+        content: "✖ CERRAR" !important;
+        color: #FF5252 !important;
+        font-size: 13px !important;
         font-weight: 900 !important;
         line-height: 1 !important;
-        cursor: pointer !important;
-    }
-
-    [data-testid="stSidebarCollapseButton"]::after {
-        content: "« ⚽" !important;
-        color: #00E676 !important;
-        font-size: 16px !important;
-        font-weight: 900 !important;
-        line-height: 1 !important;
-        cursor: pointer !important;
     }
 
     /* Estilos globales y contraste de texto */
