@@ -452,15 +452,16 @@ if not st.session_state['autenticado']:
         bancoppel_holder = getattr(config, 'BANCOPPEL_TITULAR', 'Jesús')
         paypal_url = getattr(config, 'PAYPAL_LINK', 'https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2')
 
-        html_pago = '<div style="background: linear-gradient(135deg, #161922 0%, #1E2130 100%); padding: 22px; border-radius: 14px; border: 2px dashed #00E676; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">'
-        html_pago += '<h4 style="color: #00E676; margin: 0 0 10px 0; font-weight: 900; text-align: center;">💳 MÉTODOS DE PAGO PARA ACCESO VIP ($299 MXN / MES)</h4>'
-        html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Realiza tu pago por <b>BanCoppel, OXXO o PayPal</b> y envía tu comprobante por WhatsApp para recibir tu usuario y contraseña de inmediato:</p>'
+        html_pago = '<div style="background: linear-gradient(135deg, #161922 0%, #1E2130 100%); padding: 22px; border-radius: 14px; border: 2px dashed #00E676; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
+        html_pago += '<div style="background: linear-gradient(90deg, #FF512F 0%, #DD2476 100%); color: white; font-weight: 900; font-size: 13px; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(221,36,118,0.4);">🔥 ¡SÚPER OFERTA POR TIEMPO LIMITADO (50% OFF)!</div>'
+        html_pago += '<h3 style="color: #00E676; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #FFD700; font-size: 32px;">$149 MXN</span> / MES</h3>'
+        html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Aprovecha la súper promoción de lanzamiento por <b>$149 MXN</b>. Realiza tu pago por <b>BanCoppel, OXXO o PayPal</b> y envía tu comprobante por WhatsApp para recibir tu usuario y contraseña de inmediato:</p>'
         
-        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 12px;"><div style="color: #FFD700; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 DEPÓSITO / SPEI BANCOPPEL</div><div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div><div style="color: white; font-size: 13px;"><b>No. de Tarjeta / SPEI:</b> <span style="color:#00E676; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div><div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Acepta transferencias SPEI 24/7 y depósitos en OXXO o Tiendas Coppel.</div></div>'
+        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 12px; text-align: left;"><div style="color: #FFD700; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 DEPÓSITO / SPEI BANCOPPEL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div><div style="color: white; font-size: 13px;"><b>No. de Tarjeta / SPEI:</b> <span style="color:#00E676; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div><div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Acepta transferencias SPEI 24/7 y depósitos en OXXO o Tiendas Coppel.</div></div>'
 
-        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 15px;"><div style="color: #5DADE2; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🔵 PAGO EN LÍNEA POR PAYPAL</div><div style="color: white; font-size: 13px;"><b>Enlace PayPal:</b> <a href="{paypal_url}" target="_blank" style="color:#00E676; font-weight:bold;">{paypal_url}</a></div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Paga de forma segura con cualquier tarjeta de Débito o Crédito.</div></div>'
+        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 15px; text-align: left;"><div style="color: #5DADE2; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🔵 PAGO EN LÍNEA POR PAYPAL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Enlace PayPal:</b> <a href="{paypal_url}" target="_blank" style="color:#00E676; font-weight:bold;">{paypal_url}</a></div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Paga de forma segura con cualquier tarjeta de Débito o Crédito.</div></div>'
 
-        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20ya%20realice%20mi%20pago%20de%20%24299%20MXN.%20Adjunto%20mi%20comprobante%20para%20activar%20mi%20membresia%20VIP" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box;">💬 ENVIAR COMPROBANTE DE PAGO POR WHATSAPP</a></div>'
+        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20aprovecho%20la%20super%20oferta%20VIP%20de%20%24149%20MXN.%20Adjunto%20mi%20comprobante%20para%20activar%20mi%20cuenta" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; background:#25D366; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE DE $149 POR WHATSAPP</a></div>'
         html_pago += '</div>'
 
         st.markdown(html_pago, unsafe_allow_html=True)
@@ -472,6 +473,25 @@ if not st.session_state['autenticado']:
 # Cargar Jornada Oficial Activa de Progol (14 Partidos)
 jornada_oficial = jornada_manager.cargar_jornada_activa()
 
+# Botón flotante universal para abrir la barra lateral en celular y PC
+st.markdown('''
+<div id="vip-floating-toggle" onclick="
+    const parentDoc = window.parent ? window.parent.document : document;
+    const b = parentDoc.querySelector('[data-testid=\\'stSidebarCollapsedControl\\'] button, [data-testid=\\'collapsedControl\\'] button, button[aria-label=\\'Expand sidebar\\'], button[kind=\\'header\\']');
+    if (b) {
+        b.click();
+    } else {
+        const sb = parentDoc.querySelector('section[data-testid=\\'stSidebar\\']');
+        if (sb) {
+            sb.style.display = (sb.style.display === 'none' || sb.style.transform.includes('-100')) ? 'block' : 'none';
+            sb.style.transform = 'none';
+        }
+    }
+" style="position:fixed; top:14px; left:14px; z-index:99999999; background:#161922; border:2.5px solid #00E676; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,230,118,0.7); cursor:pointer; -webkit-tap-highlight-color:transparent;" title="Abrir Menú">
+    <span style="font-size:24px; line-height:1;">⚽</span>
+</div>
+''', unsafe_allow_html=True)
+
 # Encabezado Principal con Logo Oficial
 logo_header_html = ""
 if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
@@ -481,15 +501,32 @@ header_html = f'<div style="background:linear-gradient(135deg,#161922 0%,#1E2130
 
 st.markdown(header_html, unsafe_allow_html=True)
 
-# Botón WhatsApp Superior & Logout
-col_top1, col_top2 = st.columns([8, 2])
+# Botones Superiores: WhatsApp VIP, Abrir Menú & Logout
+col_top1, col_top2, col_top3 = st.columns([5, 4, 3])
 with col_top1:
     st.markdown(f'''
-    <a href="{config.ENLACE_WHATSAPP}" target="_blank" class="whatsapp-btn">
+    <a href="{config.ENLACE_WHATSAPP}" target="_blank" class="whatsapp-btn" style="display:block; text-align:center;">
         💬 Soporte WhatsApp VIP
     </a>
     ''', unsafe_allow_html=True)
 with col_top2:
+    st.markdown('''
+    <button onclick="
+        const parentDoc = window.parent ? window.parent.document : document;
+        const b = parentDoc.querySelector('[data-testid=\\'stSidebarCollapsedControl\\'] button, [data-testid=\\'collapsedControl\\'] button, button[aria-label=\\'Expand sidebar\\'], button[kind=\\'header\\']');
+        if (b) { b.click(); }
+        else {
+            const sb = parentDoc.querySelector('section[data-testid=\\'stSidebar\\']');
+            if (sb) {
+                sb.style.display = (sb.style.display === 'none' || sb.style.transform.includes('-100')) ? 'block' : 'none';
+                sb.style.transform = 'none';
+            }
+        }
+    " style="background:#1E2130; color:#00E676; border:1.5px solid #00E676; font-weight:900; padding:10px 14px; border-radius:30px; width:100%; cursor:pointer; font-size:14px; box-shadow:0 4px 10px rgba(0,230,118,0.25);">
+        ⚽ ABRIR MENÚ VIP
+    </button>
+    ''', unsafe_allow_html=True)
+with col_top3:
     if st.button("🔴 Cerrar Sesión", use_container_width=True):
         st.session_state['autenticado'] = False
         st.session_state['usuario'] = None
