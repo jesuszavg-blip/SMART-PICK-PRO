@@ -1,6 +1,10 @@
 import math
 import random
 import zlib
+try:
+    import config
+except ImportError:
+    config = None
 
 def poisson_probability(k: int, lamb: float) -> float:
     """Calcula la probabilidad de la distribución de Poisson P(X = k; lambda)"""
