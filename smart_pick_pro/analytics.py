@@ -280,8 +280,9 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
     elif p_vis >= 44.0: pick_sug = f"{equipo_visita} o Empate (X2)"
     else: pick_sug = f"{equipo_local} o {equipo_visita}"
 
-    url_final = web_url if web_url else "https://smartpickpro.com"
+    url_final = web_url if web_url else "https://smartpickprojz.com.mx"
     caliente_link = caliente_url if caliente_url else "https://www.caliente.mx/ofertas/raf/?member=CALIRAF&var1=undefined"
+    ixbet_link = "https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599"
 
     txt = f"""🏆 *SMART PICK PRO - FICHA DE PRONÓSTICO VIP* 🏆
 ⚽ *{equipo_local} vs {equipo_visita}*
@@ -300,10 +301,13 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
 • Pick Principal: Doble Oportunidad ({pick_sug})
 • Confianza: Alta ⭐⭐⭐⭐⭐
 
-🎁 *¡RECIBE $1,000 MXN DE REGALO SIN DEPÓSITO EN CALIENTE.MX!*
-👉 *Registra tu cuenta aquí:* {caliente_link}
+🎁 *BONO DE BIENVENIDA 1XBET (HASTA $3,500 MXN):*
+👉 *Regístrate en 1xBet aquí:* {ixbet_link}
 
-🔗 *SOLICITA TU ACCESO VIP EN NUESTRA WEBAPP:*
+🎁 *¡RECIBE $1,000 MXN DE REGALO EN CALIENTE.MX!*
+👉 *Regístrate en Caliente aquí:* {caliente_link}
+
+🔗 *SISTEMA DE PRONÓSTICOS VIP SMART PICK PRO:*
 👉 *Entra a nuestra WebApp:* {url_final}
 
 💬 _Generado por Smart Pick Pro VIP_"""
