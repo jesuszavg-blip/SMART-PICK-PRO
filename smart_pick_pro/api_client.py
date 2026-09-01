@@ -933,6 +933,7 @@ def obtener_estadisticas_arbitro_real(nombre_arbitro: str) -> float:
 def obtener_momios_multiples(fixture_id):
     casinos_default = [
         {"nombre": "1xBet", "1": 2.18, "X": 3.25, "2": 2.85},
+        {"nombre": "Mexplay", "1": 2.15, "X": 3.22, "2": 2.84},
         {"nombre": "Caliente", "1": 2.10, "X": 3.20, "2": 2.80},
         {"nombre": "Betmaster", "1": 2.15, "X": 3.25, "2": 2.85},
         {"nombre": "Winpot", "1": 2.12, "X": 3.18, "2": 2.82},
@@ -945,12 +946,12 @@ def obtener_momios_multiples(fixture_id):
         url = f"{config.API_FOOTBALL_URL}/odds"
         resp = requests.get(url, headers=headers, params={"fixture": fixture_id}, timeout=10)
         casinos_data = []
-        nombres_buscados = ["1xBet", "1XBet", "Caliente", "Betmaster", "Winpot"]
+        nombres_buscados = ["1xBet", "1XBet", "Mexplay", "Caliente", "Betmaster", "Winpot"]
         
         if resp.status_code == 200 and resp.json().get('response'):
             for bookie in resp.json()['response'][0]['bookmakers']:
                 bname = "1xBet" if "1xbet" in bookie['name'].lower() else bookie['name']
-                if bname in ["1xBet", "Caliente", "Betmaster", "Winpot"]:
+                if bname in ["1xBet", "Mexplay", "Caliente", "Betmaster", "Winpot"]:
                     for bet in bookie['bets']:
                         if bet['name'] == 'Match Winner':
                             loc, emp, vis = 0, 0, 0
@@ -962,7 +963,7 @@ def obtener_momios_multiples(fixture_id):
                             break
         
         # Asegurar que siempre estén los casinos principales con enlace de referencia
-        if len(casinos_data) < 4:
+        if len(casinos_data) < 5:
             encontrados = {c["nombre"] for c in casinos_data}
             for cd in casinos_default:
                 if cd["nombre"] not in encontrados:
