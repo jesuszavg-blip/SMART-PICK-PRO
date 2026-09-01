@@ -64,25 +64,60 @@ st.markdown("""
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
 <style>
-    /* Ocultar barra superior y menú Streamlit (Fork, GitHub, Deploy) */
-    #MainMenu {visibility: hidden !important;}
-    header {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    [data-testid="stToolbar"] {display: none !important; visibility: hidden !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    [data-testid="stStatusWidget"] {display: none !important;}
-    [data-testid="stHeader"] {background: rgba(0,0,0,0) !important; height: 0px !important;}
+    /* Ocultar ÚNICAMENTE los controles de Streamlit (Fork, GitHub, Deploy, MainMenu) */
+    #MainMenu { display: none !important; visibility: hidden !important; }
+    footer { display: none !important; visibility: hidden !important; }
+    [data-testid="stToolbar"] { display: none !important; visibility: hidden !important; }
+    [data-testid="stDecoration"] { display: none !important; }
+    [data-testid="stStatusWidget"] { display: none !important; }
+    .stDeployButton { display: none !important; }
 
-    /* Icono Balón de Fútbol ⚽ en Sidebar Toggle */
-    [data-testid="stSidebarCollapseButton"] svg, 
+    /* Header transparente sin interferir */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+        height: 0px !important;
+        z-index: 99999 !important;
+    }
+
+    /* Botón flotante VIP para abrir la barra lateral en celular y PC */
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 16px !important;
+        left: 16px !important;
+        z-index: 1000000 !important;
+        background: #161922 !important;
+        border: 2px solid #00E676 !important;
+        border-radius: 50% !important;
+        width: 44px !important;
+        height: 44px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4) !important;
+        cursor: pointer !important;
+    }
+
     [data-testid="collapsedControl"] svg {
         display: none !important;
     }
 
-    [data-testid="stSidebarCollapseButton"]::after, 
     [data-testid="collapsedControl"]::after {
         content: "⚽" !important;
-        font-size: 22px !important;
+        font-size: 20px !important;
+        line-height: 1 !important;
+    }
+
+    /* Botón de repliegue de barra lateral */
+    [data-testid="stSidebarCollapseButton"] svg {
+        display: none !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"]::after {
+        content: "« ⚽" !important;
+        color: #00E676 !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
         line-height: 1 !important;
         cursor: pointer !important;
     }
