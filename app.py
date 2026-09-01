@@ -61,6 +61,79 @@ st.markdown("""
 </head>
 """, unsafe_allow_html=True)
 
+# Botón Flotante Balón ⚽ Indestructible (Funciona en Móvil, PC y Modo Embebido)
+import streamlit.components.v1 as _st_components
+_st_components.html("""
+<script>
+(function() {
+    function setupFab() {
+        try {
+            const doc = window.parent ? window.parent.document : document;
+            if (doc.getElementById('vip-global-menu-fab')) return;
+
+            const fab = doc.createElement('div');
+            fab.id = 'vip-global-menu-fab';
+            fab.innerHTML = '⚽';
+            fab.title = 'Abrir / Cerrar Menú VIP';
+            fab.style.cssText = 'position:fixed;top:14px;left:14px;z-index:99999999;background:#161922;border:2.5px solid #00E676;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(0,230,118,0.7);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 0.2s;';
+
+            fab.onmouseover = () => fab.style.transform = 'scale(1.1)';
+            fab.onmouseout = () => fab.style.transform = 'scale(1.0)';
+
+            fab.onclick = function(e) {
+                e.stopPropagation();
+                const expandBtn = doc.querySelector('[data-testid="stSidebarCollapsedControl"] button, [data-testid="collapsedControl"] button, button[aria-label="Expand sidebar"]');
+                const collapseBtn = doc.querySelector('[data-testid="stSidebarCollapseButton"] button, button[aria-label="Close sidebar"]');
+                
+                if (expandBtn) {
+                    expandBtn.click();
+                    return;
+                }
+                if (collapseBtn) {
+                    collapseBtn.click();
+                    return;
+                }
+
+                const sb = doc.querySelector('section[data-testid="stSidebar"]');
+                if (sb) {
+                    const isHidden = sb.style.display === 'none' || sb.style.transform.includes('-100') || sb.getAttribute('aria-expanded') === 'false';
+                    if (isHidden) {
+                        sb.style.display = 'block';
+                        sb.style.transform = 'none';
+                        sb.style.position = 'fixed';
+                        sb.style.left = '0';
+                        sb.style.top = '0';
+                        sb.style.height = '100vh';
+                        sb.style.zIndex = '9999999';
+                        sb.style.background = '#161922';
+                        sb.style.boxShadow = '0 0 35px rgba(0,230,118,0.5)';
+                        sb.setAttribute('aria-expanded', 'true');
+                    } else {
+                        sb.style.display = 'none';
+                        sb.style.transform = 'translateX(-100%)';
+                        sb.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            };
+
+            doc.body.appendChild(fab);
+        } catch(e) {
+            console.log("FAB setup error:", e);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupFab);
+    } else {
+        setupFab();
+    }
+    setTimeout(setupFab, 300);
+    setTimeout(setupFab, 1000);
+    setTimeout(setupFab, 2500);
+})();
+</script>
+""", height=0, width=0)
+
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
 <style>
