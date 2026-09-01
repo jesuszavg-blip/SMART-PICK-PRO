@@ -63,6 +63,7 @@ st.markdown("""
 
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
+<style>
     /* Ocultar barra superior y menú Streamlit (Fork, GitHub, Deploy) */
     #MainMenu {visibility: hidden !important;}
     header {visibility: hidden !important;}
