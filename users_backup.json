@@ -10,5 +10,11 @@
     "password": "$2b$12$8.RNyB2wh.Z0qWnnQRtEdOEPtisZO3c86I2m8KzVx9YrXpLpN7jDO",
     "role": "VIP",
     "is_active": 1
+  },
+  {
+    "username": "test_vip_user",
+    "password": "$2b$12$MMyaE0tEaX51mAfZbGKsBOS0KTHijVRI.BQRHwI38NWso.oA5FrfC",
+    "role": "VIP",
+    "is_active": 1
   }
 ]
