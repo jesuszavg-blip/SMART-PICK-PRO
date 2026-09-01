@@ -72,15 +72,19 @@ st.markdown("""
     [data-testid="stStatusWidget"] { display: none !important; }
     .stDeployButton { display: none !important; }
 
-    /* Header transparente sin bloquear clicks */
+    /* Header transparente */
     header[data-testid="stHeader"] {
         background: transparent !important;
         pointer-events: none !important;
     }
 
-    /* 1. CUANDO LA BARRA LATERAL ESTÁ CERRADA: Botón único flotante Balón ⚽ arriba a la izquierda */
-    [data-testid="stSidebarCollapsedControl"] {
-        display: block !important;
+    /* 1. CUANDO LA BARRA LATERAL ESTÁ CERRADA: Botón único flotante Balón ⚽ arriba a la izquierda (Móvil y Escritorio) */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"],
+    button[aria-label="Expand sidebar"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         position: fixed !important;
         top: 14px !important;
         left: 14px !important;
@@ -88,7 +92,9 @@ st.markdown("""
         pointer-events: auto !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] button {
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="collapsedControl"] button,
+    button[aria-label="Expand sidebar"] {
         background: #161922 !important;
         border: 2px solid #00E676 !important;
         border-radius: 50% !important;
@@ -99,22 +105,30 @@ st.markdown("""
         justify-content: center !important;
         box-shadow: 0 4px 18px rgba(0, 230, 118, 0.6) !important;
         cursor: pointer !important;
+        pointer-events: auto !important;
         padding: 0 !important;
+        color: transparent !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] button svg {
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="collapsedControl"] button svg,
+    button[aria-label="Expand sidebar"] svg {
         display: none !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] button::after {
+    [data-testid="stSidebarCollapsedControl"] button::after,
+    [data-testid="collapsedControl"] button::after,
+    button[aria-label="Expand sidebar"]::after {
         content: "⚽" !important;
         font-size: 22px !important;
         line-height: 1 !important;
+        color: initial !important;
     }
 
     /* 2. CUANDO LA BARRA LATERAL ESTÁ ABIERTA: Botón de Cerrar claro y visible dentro del menú */
     [data-testid="stSidebarCollapseButton"] {
-        display: block !important;
+        display: flex !important;
+        visibility: visible !important;
         pointer-events: auto !important;
     }
 
@@ -127,6 +141,7 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        pointer-events: auto !important;
     }
 
     [data-testid="stSidebarCollapseButton"] button svg {
