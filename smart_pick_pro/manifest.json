@@ -9,7 +9,7 @@
   "theme_color": "#00E676",
   "icons": [
     {
-      "src": "assets/app_icon.jpg",
+      "src": "https://raw.githubusercontent.com/jesuszavg-blip/SMART-PICK-PRO/main/assets/app_icon.jpg",
       "sizes": "192x192 512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
