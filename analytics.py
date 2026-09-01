@@ -281,8 +281,9 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
     else: pick_sug = f"{equipo_local} o {equipo_visita}"
 
     url_final = web_url if web_url else "https://smartpickprojz.com.mx"
+    ixbet_link = getattr(config, "ENLACE_1XBET", "https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599")
+    mexplay_link = getattr(config, "ENLACE_MEXPLAY", "https://mexplay.mx/?referral=mqx6lb")
     caliente_link = caliente_url if caliente_url else "https://www.caliente.mx/ofertas/raf/?member=CALIRAF&var1=undefined"
-    ixbet_link = "https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599"
 
     txt = f"""🏆 *SMART PICK PRO - FICHA DE PRONÓSTICO VIP* 🏆
 ⚽ *{equipo_local} vs {equipo_visita}*
@@ -301,11 +302,11 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
 • Pick Principal: Doble Oportunidad ({pick_sug})
 • Confianza: Alta ⭐⭐⭐⭐⭐
 
-🎁 *BONO DE BIENVENIDA 1XBET (HASTA $3,500 MXN):*
-👉 *Regístrate en 1xBet aquí:* {ixbet_link}
+🎁 *BONO 1XBET (HASTA $3,500 MXN EN TU 1ER DEPÓSITO):*
+👉 *Abre tu cuenta 1xBet aquí:* {ixbet_link}
 
-🎁 *¡RECIBE $1,000 MXN DE REGALO EN CALIENTE.MX!*
-👉 *Regístrate en Caliente aquí:* {caliente_link}
+🎰 *BONO MEXPLAY (CASINO + GIROS GRATIS EN MÉXICO):*
+👉 *Abre tu cuenta Mexplay aquí:* {mexplay_link}
 
 🔗 *SISTEMA DE PRONÓSTICOS VIP SMART PICK PRO:*
 👉 *Entra a nuestra WebApp:* {url_final}
