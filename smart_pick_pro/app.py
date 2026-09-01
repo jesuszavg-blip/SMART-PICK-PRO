@@ -57,6 +57,8 @@ st.markdown("""
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SmartPick VIP">
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/jesuszavg-blip/SMART-PICK-PRO/main/assets/app_icon.jpg">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jesuszavg-blip/SMART-PICK-PRO/main/assets/app_icon.jpg">
     <link rel="manifest" href="manifest.json">
 </head>
 """, unsafe_allow_html=True)
