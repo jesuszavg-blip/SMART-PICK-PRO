@@ -63,7 +63,15 @@ st.markdown("""
 
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
-<style>
+    /* Ocultar barra superior y menú Streamlit (Fork, GitHub, Deploy) */
+    #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    [data-testid="stToolbar"] {display: none !important; visibility: hidden !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    [data-testid="stHeader"] {background: rgba(0,0,0,0) !important; height: 0px !important;}
+
     /* Icono Balón de Fútbol ⚽ en Sidebar Toggle */
     [data-testid="stSidebarCollapseButton"] svg, 
     [data-testid="collapsedControl"] svg {
@@ -421,12 +429,26 @@ if not st.session_state['autenticado']:
 # Cargar Jornada Oficial Activa de Progol (14 Partidos)
 jornada_oficial = jornada_manager.cargar_jornada_activa()
 
-# Encabezado Principal
+# Encabezado Principal con Logo Oficial
+logo_header_html = ""
+if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
+    logo_header_html = f'''
+    <div style="text-align: center; margin-bottom: 14px;">
+        <img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-height: 120px; width: auto; max-width: 95%; border-radius: 14px; box-shadow: 0 6px 25px rgba(0,0,0,0.6); border: 1px solid #2D3245;" />
+    </div>
+    '''
+
 st.markdown(f'''
-<div class="hero-banner">
-    <h1 style="color: white; margin: 0; font-weight: 900; font-size: 34px;">🏆 SMART PICK PRO</h1>
-    <p style="color: white; margin: 4px 0 0 0; font-size: 15px; opacity: 0.95;">
-        Bienvenido <b>{st.session_state['usuario'].upper()}</b> [{st.session_state['rol']}] | Escáner Estadístico VIP & Optimizador Progol
+<div style="background: linear-gradient(135deg, #161922 0%, #1E2130 100%); border: 1px solid #2D3245; border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+    {logo_header_html}
+    <div style="display: inline-block; background: rgba(0, 230, 118, 0.12); border: 1px solid #00E676; border-radius: 20px; padding: 6px 18px; margin-bottom: 6px;">
+        <span style="color: #00E676; font-weight: 900; font-size: 14px;">⭐ SESIÓN VIP ACTIVA</span>
+    </div>
+    <div style="color: white; font-size: 17px; margin-top: 6px;">
+        Bienvenido <b>{st.session_state['usuario'].upper()}</b> <span style="background: #00E676; color: #161922; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 10px; margin-left: 6px;">{st.session_state['rol']}</span>
+    </div>
+    <p style="color: #94A3B8; margin: 6px 0 0 0; font-size: 13px;">
+        Escáner Estadístico Predictivo & Optimizador Progol
     </p>
 </div>
 ''', unsafe_allow_html=True)
