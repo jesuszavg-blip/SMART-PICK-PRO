@@ -456,6 +456,14 @@ with col_top2:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# Banners de Afiliados Oficiales (1xBet & Mexplay)
+ban_1xbet = getattr(config, 'ENLACE_1XBET', 'https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599')
+ban_mexplay = getattr(config, 'ENLACE_MEXPLAY', 'https://mexplay.mx/?referral=mqx6lb')
+
+banners_afiliados_html = f'<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;margin-top:8px;margin-bottom:18px;"><div style="background:linear-gradient(135deg, #0A192F 0%, #172A45 100%);border:2px solid #00B4D8;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(0,180,216,0.25);"><div style="color:#90E0EF;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🔵 CASA OFICIAL DEPORTES #1</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎁 1XBET • BONO $3,500 MXN</div><p style="color:#CCD6F6;font-size:12px;margin:0 0 12px 0;">Las cuotas más altas de México y streaming de partidos en vivo.</p><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(0,180,216,0.4);">🔥 ABRIR CUENTA EN 1XBET</a></div><div style="background:linear-gradient(135deg, #2D1500 0%, #3D1C06 100%);border:2px solid #FF8500;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(255,133,0,0.25);"><div style="color:#FFB703;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🟡 CASINO & DEPORTES DESTACADO #2</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎰 MEXPLAY • BONO + GIROS</div><p style="color:#FFE8D6;font-size:12px;margin:0 0 12px 0;">Casino 100% mexicano, depósitos y retiros instantáneos por SPEI/OXXO.</p><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(255,133,0,0.4);">⚡ ABRIR CUENTA EN MEXPLAY</a></div></div>'
+
+st.markdown(banners_afiliados_html, unsafe_allow_html=True)
+
 # --- BARRA LATERAL ---
 if assets_data and hasattr(assets_data, 'APP_ICON_B64') and assets_data.APP_ICON_B64:
     st.sidebar.markdown(f'''
@@ -479,6 +487,9 @@ with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
         3. ¡Listo! Se abrirá a pantalla completa.
     </div>
     ''', unsafe_allow_html=True)
+
+sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #161922 0%, #1E2130 100%);padding:12px;border-radius:12px;border:1px solid #2D3245;margin-top:10px;margin-bottom:14px;text-align:center;"><div style="color:#00E676;font-weight:900;font-size:11px;margin-bottom:8px;letter-spacing:0.5px;">💎 CASAS RECOMENDADAS (+EV)</div><div style="display:flex;gap:6px;justify-content:center;"><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🔵 1xBet</a><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🟡 Mexplay</a></div></div>'
+st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
 
 dict_ligas_globales = api_client.obtener_ligas_mundo()
 liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", list(dict_ligas_globales.keys()))
