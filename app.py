@@ -64,7 +64,7 @@ st.markdown("""
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
 st.markdown("""
 <style>
-    /* Ocultar ÚNICAMENTE los controles de Streamlit (Fork, GitHub, Deploy, MainMenu) */
+    /* Ocultar controles de Streamlit (Fork, GitHub, Deploy, MainMenu) */
     #MainMenu { display: none !important; visibility: hidden !important; }
     footer { display: none !important; visibility: hidden !important; }
     [data-testid="stToolbar"] { display: none !important; visibility: hidden !important; }
@@ -72,52 +72,72 @@ st.markdown("""
     [data-testid="stStatusWidget"] { display: none !important; }
     .stDeployButton { display: none !important; }
 
-    /* Header transparente sin interferir con el contenido */
+    /* Header transparente sin bloquear clicks */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
-        z-index: 99999 !important;
+        height: 60px !important;
+        z-index: 999999 !important;
+        pointer-events: none !important;
     }
 
-    /* Botón flotante VIP para abrir la barra lateral en celular y PC (Todos los selectores de Streamlit) */
-    [data-testid="collapsedControl"],
+    /* El botón nativo de Streamlit recibe clicks y flota arriba a la izquierda */
     [data-testid="stSidebarCollapsedControl"],
-    button[aria-label="Expand sidebar"],
-    button[kind="header"] {
+    [data-testid="collapsedControl"],
+    header[data-testid="stHeader"] > div:first-child {
         display: flex !important;
         visibility: visible !important;
-        opacity: 1 !important;
         position: fixed !important;
         top: 14px !important;
         left: 14px !important;
-        z-index: 1000000 !important;
+        z-index: 10000000 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Estilo del botón nativo: Balón ⚽ con borde verde neón interactivo */
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="collapsedControl"] button,
+    header[data-testid="stHeader"] button {
+        display: flex !important;
+        visibility: visible !important;
         background: #161922 !important;
         border: 2px solid #00E676 !important;
         border-radius: 50% !important;
-        width: 44px !important;
-        height: 44px !important;
+        width: 46px !important;
+        height: 46px !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 18px rgba(0, 230, 118, 0.5) !important;
+        box-shadow: 0 4px 18px rgba(0, 230, 118, 0.6) !important;
         cursor: pointer !important;
+        pointer-events: auto !important;
+        padding: 0 !important;
     }
 
-    [data-testid="collapsedControl"] svg,
-    [data-testid="stSidebarCollapsedControl"] svg,
-    button[aria-label="Expand sidebar"] svg {
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="collapsedControl"] button svg,
+    header[data-testid="stHeader"] button svg {
         display: none !important;
     }
 
-    [data-testid="collapsedControl"]::after,
-    [data-testid="stSidebarCollapsedControl"]::after,
-    button[aria-label="Expand sidebar"]::after {
+    [data-testid="stSidebarCollapsedControl"] button::after,
+    [data-testid="collapsedControl"] button::after,
+    header[data-testid="stHeader"] button::after {
         content: "⚽" !important;
-        font-size: 20px !important;
+        font-size: 22px !important;
         line-height: 1 !important;
     }
 
-    /* Botón de repliegue de barra lateral */
+    /* Botón de repliegue de barra lateral (cuando está abierta) */
     [data-testid="stSidebarCollapseButton"] svg {
         display: none !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"]::after {
+        content: "« ⚽" !important;
+        color: #00E676 !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
     }
 
     [data-testid="stSidebarCollapseButton"]::after {
@@ -473,25 +493,6 @@ if not st.session_state['autenticado']:
 # Cargar Jornada Oficial Activa de Progol (14 Partidos)
 jornada_oficial = jornada_manager.cargar_jornada_activa()
 
-# Botón flotante universal para abrir la barra lateral en celular y PC
-st.markdown('''
-<div id="vip-floating-toggle" onclick="
-    const parentDoc = window.parent ? window.parent.document : document;
-    const b = parentDoc.querySelector('[data-testid=\\'stSidebarCollapsedControl\\'] button, [data-testid=\\'collapsedControl\\'] button, button[aria-label=\\'Expand sidebar\\'], button[kind=\\'header\\']');
-    if (b) {
-        b.click();
-    } else {
-        const sb = parentDoc.querySelector('section[data-testid=\\'stSidebar\\']');
-        if (sb) {
-            sb.style.display = (sb.style.display === 'none' || sb.style.transform.includes('-100')) ? 'block' : 'none';
-            sb.style.transform = 'none';
-        }
-    }
-" style="position:fixed; top:14px; left:14px; z-index:99999999; background:#161922; border:2.5px solid #00E676; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,230,118,0.7); cursor:pointer; -webkit-tap-highlight-color:transparent;" title="Abrir Menú">
-    <span style="font-size:24px; line-height:1;">⚽</span>
-</div>
-''', unsafe_allow_html=True)
-
 # Encabezado Principal con Logo Oficial
 logo_header_html = ""
 if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
@@ -501,32 +502,15 @@ header_html = f'<div style="background:linear-gradient(135deg,#161922 0%,#1E2130
 
 st.markdown(header_html, unsafe_allow_html=True)
 
-# Botones Superiores: WhatsApp VIP, Abrir Menú & Logout
-col_top1, col_top2, col_top3 = st.columns([5, 4, 3])
+# Botón WhatsApp Superior & Logout
+col_top1, col_top2 = st.columns([8, 2])
 with col_top1:
     st.markdown(f'''
-    <a href="{config.ENLACE_WHATSAPP}" target="_blank" class="whatsapp-btn" style="display:block; text-align:center;">
+    <a href="{config.ENLACE_WHATSAPP}" target="_blank" class="whatsapp-btn">
         💬 Soporte WhatsApp VIP
     </a>
     ''', unsafe_allow_html=True)
 with col_top2:
-    st.markdown('''
-    <button onclick="
-        const parentDoc = window.parent ? window.parent.document : document;
-        const b = parentDoc.querySelector('[data-testid=\\'stSidebarCollapsedControl\\'] button, [data-testid=\\'collapsedControl\\'] button, button[aria-label=\\'Expand sidebar\\'], button[kind=\\'header\\']');
-        if (b) { b.click(); }
-        else {
-            const sb = parentDoc.querySelector('section[data-testid=\\'stSidebar\\']');
-            if (sb) {
-                sb.style.display = (sb.style.display === 'none' || sb.style.transform.includes('-100')) ? 'block' : 'none';
-                sb.style.transform = 'none';
-            }
-        }
-    " style="background:#1E2130; color:#00E676; border:1.5px solid #00E676; font-weight:900; padding:10px 14px; border-radius:30px; width:100%; cursor:pointer; font-size:14px; box-shadow:0 4px 10px rgba(0,230,118,0.25);">
-        ⚽ ABRIR MENÚ VIP
-    </button>
-    ''', unsafe_allow_html=True)
-with col_top3:
     if st.button("🔴 Cerrar Sesión", use_container_width=True):
         st.session_state['autenticado'] = False
         st.session_state['usuario'] = None
