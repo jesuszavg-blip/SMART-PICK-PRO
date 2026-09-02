@@ -856,7 +856,21 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
                 }
 
         if not ligas_filtradas:
-            st.info("ℹ️ No se encontraron partidos activos con los filtros seleccionados.")
+            if total_partidos == 0:
+                st.markdown('''
+                <div style="background: #151821; border: 1.5px solid #282F3F; border-radius: 14px; padding: 30px; text-align: center; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <div style="font-size: 40px; margin-bottom: 10px;">⏱️</div>
+                    <h3 style="color: #F3E5AB; margin: 0 0 8px 0; font-weight: 900;">Sin Partidos en Juego en Este Momento</h3>
+                    <p style="color: #94A3B8; font-size: 14px; max-width: 600px; margin: 0 auto 15px auto;">
+                        El radar satelital está activo y monitoreando todas las ligas del mundo 24/7. En cuanto dé inicio el próximo partido oficial, aparecerá automáticamente aquí con su marcador y minuto a minuto en tiempo real.
+                    </p>
+                    <div style="display: inline-block; background: rgba(56,189,248,0.12); border: 1px solid #38BDF8; color: #38BDF8; font-weight: bold; padding: 6px 16px; border-radius: 20px; font-size: 13px;">
+                        💡 Puedes seleccionar una liga en el menú de la izquierda para analizar los próximos partidos o el Cazador de Parlays
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.info("ℹ️ No se encontraron partidos activos con los filtros de búsqueda seleccionados.")
         else:
             for l_key, l_data in ligas_filtradas.items():
                 p_lista = l_data["partidos"]
