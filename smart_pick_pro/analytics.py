@@ -82,7 +82,7 @@ def generar_badges_racha_visual(forma_str: str, equipo_nombre: str = "") -> tupl
 
     for idx, char in enumerate(forma_clean):
         if char == 'W':
-            badges.append({"letra": "V", "significado": "Victoria", "color": "#00E676", "bg": "rgba(0, 230, 118, 0.2)", "borde": "#00E676"})
+            badges.append({"letra": "V", "significado": "Victoria", "color": "#10B981", "bg": "rgba(16, 185, 129, 0.2)", "borde": "#10B981"})
             consecutivas_w += 1
             consecutivas_l = 0
             invicto_count += 1
