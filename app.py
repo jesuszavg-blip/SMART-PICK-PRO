@@ -521,7 +521,7 @@ if not st.session_state['autenticado']:
     if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
         st.markdown(f'''
         <div style="text-align:center; margin-top:20px; margin-bottom:20px;">
-            <img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-width:550px; width:95%; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.7); border:1px solid #2D3245;" />
+            <img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-width:640px; width:95%; border-radius:18px; box-shadow:0 12px 35px rgba(0,0,0,0.75); border:1.5px solid #282F3F;" />
         </div>
         ''', unsafe_allow_html=True)
     else:
@@ -585,7 +585,7 @@ jornada_oficial = jornada_manager.cargar_jornada_activa()
 # Encabezado Principal con Logo Oficial
 logo_header_html = ""
 if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
-    logo_header_html = f'<div style="text-align:center;margin-bottom:14px;"><img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-height:120px;width:auto;max-width:95%;border-radius:14px;box-shadow:0 6px 25px rgba(0,0,0,0.6);border:1px solid #282F3F;" /></div>'
+    logo_header_html = f'<div style="text-align:center;margin-bottom:18px;"><img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-height:260px;width:95%;max-width:580px;border-radius:16px;box-shadow:0 10px 35px rgba(0,0,0,0.7);border:1.5px solid #282F3F;" /></div>'
 
 header_html = f'<div style="background:linear-gradient(135deg,#151821 0%,#1A1E29 100%);border:1px solid #282F3F;border-radius:14px;padding:20px;text-align:center;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">{logo_header_html}<div style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid #D4AF37;border-radius:20px;padding:6px 18px;margin-bottom:6px;"><span style="color:#D4AF37;font-weight:900;font-size:14px;">⭐ SESIÓN VIP ACTIVA</span></div><div style="color:white;font-size:17px;margin-top:6px;">Bienvenido <b>{st.session_state["usuario"].upper()}</b> <span style="background:#D4AF37;color:#0D0F14;font-size:11px;font-weight:900;padding:2px 8px;border-radius:10px;margin-left:6px;">{st.session_state["rol"]}</span></div><p style="color:#94A3B8;margin:6px 0 0 0;font-size:13px;">Escáner Estadístico Predictivo & Optimizador Progol</p></div>'
 
@@ -620,8 +620,8 @@ st.markdown(banners_afiliados_html, unsafe_allow_html=True)
 if assets_data and hasattr(assets_data, 'APP_ICON_B64') and assets_data.APP_ICON_B64:
     st.sidebar.markdown(f'''
     <div style="text-align:center; padding:6px 0 14px 0;">
-        <img src="data:image/jpeg;base64,{assets_data.APP_ICON_B64}" style="width:75px; height:75px; border-radius:18px; box-shadow:0 4px 15px rgba(212,175,55,0.3); border:1.5px solid #D4AF37;" />
-        <div style="color:#D4AF37; font-weight:900; font-size:16px; margin-top:6px; letter-spacing:0.5px;">SMART PICK PRO</div>
+        <img src="data:image/jpeg;base64,{assets_data.APP_ICON_B64}" style="width:105px; height:105px; border-radius:22px; box-shadow:0 6px 22px rgba(212,175,55,0.35); border:2px solid #D4AF37;" />
+        <div style="color:#D4AF37; font-weight:900; font-size:17px; margin-top:8px; letter-spacing:0.5px;">SMART PICK PRO</div>
         <div style="color:#F3E5AB; font-size:11px; font-weight:bold; letter-spacing:1px;">DATA INTELLIGENCE VIP</div>
     </div>
     ''', unsafe_allow_html=True)
