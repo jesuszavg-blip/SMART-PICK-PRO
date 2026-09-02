@@ -50,17 +50,17 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
         if i in triples_set:
             sugerencia = "Triple (1/X/2)"
             tipo = "triple"
-            color_borde = "#FFD700"
+            color_borde = "#D4AF37"
         elif i in dobles_set:
             idx_doble = (i * 7 + seed_val) % 3
             sugerencia = opciones_dobles[idx_doble]
             tipo = "doble"
-            color_borde = "#00E676"
+            color_borde = "#38BDF8"
         else:
             idx_fijo = (i * 3 + seed_val) % 2
             sugerencia = opciones_fijos[idx_fijo]
             tipo = "fijo"
-            color_borde = "#00D2FF"
+            color_borde = "#F3E5AB"
             
         boleta.append({
             "casilla": i,
@@ -92,13 +92,13 @@ def obtener_reduccion_predefinida(nombre_estrat: str) -> list[dict]:
         
         if idx in triples_config:
             tipo_txt = "Triple (1/X/2)"
-            color_borde = "#FFD700"
+            color_borde = "#D4AF37"
         elif idx in dobles_config:
             tipo_txt = "Doble (1/X)" if val_base != 'X' else "Doble (X/2)"
-            color_borde = "#FFA500"
+            color_borde = "#38BDF8"
         else:
             tipo_txt = f"Fijo ({val_base})"
-            color_borde = "#00E676"
+            color_borde = "#F3E5AB"
 
         casilleros.append({
             "casilla": idx,
