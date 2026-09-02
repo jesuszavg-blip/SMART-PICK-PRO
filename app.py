@@ -77,7 +77,7 @@ _st_components.html("""
             fab.id = 'vip-global-menu-fab';
             fab.innerHTML = '⚽';
             fab.title = 'Abrir / Cerrar Menú VIP';
-            fab.style.cssText = 'position:fixed;top:14px;left:14px;z-index:99999999;background:#161922;border:2.5px solid #00E676;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(0,230,118,0.7);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 0.2s;';
+            fab.style.cssText = 'position:fixed;top:14px;left:14px;z-index:99999999;background:#151821;border:2.5px solid #D4AF37;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(212,175,55,0.5);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 0.2s;';
 
             fab.onmouseover = () => fab.style.transform = 'scale(1.1)';
             fab.onmouseout = () => fab.style.transform = 'scale(1.0)';
@@ -107,8 +107,8 @@ _st_components.html("""
                         sb.style.top = '0';
                         sb.style.height = '100vh';
                         sb.style.zIndex = '9999999';
-                        sb.style.background = '#161922';
-                        sb.style.boxShadow = '0 0 35px rgba(0,230,118,0.5)';
+                        sb.style.background = '#151821';
+                        sb.style.boxShadow = '0 0 35px rgba(212,175,55,0.4)';
                         sb.setAttribute('aria-expanded', 'true');
                     } else {
                         sb.style.display = 'none';
@@ -136,7 +136,7 @@ _st_components.html("""
 </script>
 """, height=0, width=0)
 
-# Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP
+# Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP (Paleta Oficial Dorado & Obsidiana)
 st.markdown("""
 <style>
     /* Ocultar controles de Streamlit (Fork, GitHub, Deploy, MainMenu) */
@@ -170,15 +170,15 @@ st.markdown("""
     [data-testid="stSidebarCollapsedControl"] button,
     [data-testid="collapsedControl"] button,
     button[aria-label="Expand sidebar"] {
-        background: #161922 !important;
-        border: 2px solid #00E676 !important;
+        background: #151821 !important;
+        border: 2px solid #D4AF37 !important;
         border-radius: 50% !important;
         width: 46px !important;
         height: 46px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 18px rgba(0, 230, 118, 0.6) !important;
+        box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45) !important;
         cursor: pointer !important;
         pointer-events: auto !important;
         padding: 0 !important;
@@ -208,8 +208,8 @@ st.markdown("""
     }
 
     [data-testid="stSidebarCollapseButton"] button {
-        background: #1E2130 !important;
-        border: 1.5px solid #FF5252 !important;
+        background: #1A1E29 !important;
+        border: 1.5px solid #EF5350 !important;
         border-radius: 8px !important;
         padding: 6px 14px !important;
         cursor: pointer !important;
@@ -225,7 +225,7 @@ st.markdown("""
 
     [data-testid="stSidebarCollapseButton"] button::after {
         content: "✖ CERRAR" !important;
-        color: #FF5252 !important;
+        color: #EF5350 !important;
         font-size: 13px !important;
         font-weight: 900 !important;
         line-height: 1 !important;
@@ -233,15 +233,15 @@ st.markdown("""
 
     /* Estilos globales y contraste de texto */
     .stApp {
-        background-color: #0E1117;
+        background-color: #0D0F14;
         color: #FFFFFF !important;
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
     
     /* Contraste forzado en la barra lateral */
     [data-testid="stSidebar"] {
-        background-color: #161922 !important;
-        border-right: 1px solid #2A2D3E;
+        background-color: #11141C !important;
+        border-right: 1px solid #232938;
     }
     
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {
@@ -252,90 +252,97 @@ st.markdown("""
 
     /* Banners y Tarjetas de Alto Contraste */
     .hero-banner {
-        background: linear-gradient(135deg, #1E2130 0%, #00E676 100%);
+        background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%);
+        border: 1.5px solid #D4AF37;
         padding: 24px;
         border-radius: 14px;
         text-align: center;
         margin-bottom: 20px;
-        box-shadow: 0 6px 20px rgba(0, 230, 118, 0.25);
+        box-shadow: 0 6px 25px rgba(212, 175, 55, 0.2);
     }
     
     .card-dark {
-        background-color: #1E2130;
+        background-color: #161922;
         border-radius: 12px;
         padding: 18px;
         margin-bottom: 14px;
-        border: 1px solid #2D3245;
+        border: 1px solid #282F3F;
         color: #FFFFFF !important;
     }
     
     .whatsapp-btn {
-        background-color: #25D366;
+        background: linear-gradient(135deg, #1A4D2E 0%, #155E38 100%);
+        border: 1px solid #2ECC71;
         color: white !important;
         padding: 10px 22px;
         border-radius: 30px;
         text-decoration: none;
         font-weight: bold;
         font-size: 14px;
-        box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.25);
         display: inline-block;
+        transition: transform 0.2s ease;
+    }
+    .whatsapp-btn:hover {
+        transform: scale(1.03);
     }
     
     .casino-btn {
-        background-color: #F39C12;
-        color: white !important;
+        background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
+        color: #0D0F14 !important;
         padding: 6px 14px;
         border-radius: 20px;
         text-decoration: none;
         font-size: 12px;
-        font-weight: bold;
+        font-weight: 900;
     }
 
     /* Pestañas (st.tabs) Premium VIP */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #161922;
+        background-color: #11141C;
         padding: 8px;
         border-radius: 12px;
-        border: 1px solid #2D3245;
+        border: 1px solid #232938;
     }
 
     .stTabs [data-baseweb="tab"] {
         height: 46px;
         white-space: pre-wrap;
-        background-color: #1E2130;
+        background-color: #161922;
         border-radius: 8px;
-        color: #E0E0E0;
+        color: #D1D5DB;
         font-weight: 800;
         font-size: 14px;
         padding: 0 16px;
-        border: 1px solid #2A2D3E;
+        border: 1px solid #282F3F;
         transition: all 0.2s ease;
     }
 
     .stTabs [aria-selected="true"] {
-        background-color: #00E676 !important;
-        color: #0E1117 !important;
-        border: 1px solid #00E676 !important;
-        box-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
+        background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%) !important;
+        color: #0D0F14 !important;
+        border: 1px solid #F3E5AB !important;
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
     }
 
     /* Métricas con alto contraste */
     [data-testid="stMetricValue"] {
         font-size: 26px !important;
-        font-weight: 800 !important;
-        color: #00E676 !important;
+        font-weight: 900 !important;
+        color: #D4AF37 !important;
     }
 
     [data-testid="stMetricLabel"] {
-        color: #E0E0E0 !important;
+        color: #94A3B8 !important;
         font-weight: 600 !important;
     }
     
     /* Cajas de alerta e información en texto blanco puro */
     .stAlert, [data-baseweb="notification"] {
-        background-color: #1E2130 !important;
-        border-left: 5px solid #00E676 !important;
+        background-color: #161922 !important;
+        border-left: 5px solid #D4AF37 !important;
+        border-radius: 8px !important;
     }
 
     .stAlert p, .stAlert span, [data-baseweb="notification"] p {
@@ -355,10 +362,10 @@ st.markdown("""
     [data-testid="stSidebar"] .stDownloadButton button,
     [data-testid="stSidebar"] [data-testid="baseButton-secondary"],
     [data-testid="stSidebar"] [data-testid="baseButton-primary"] {
-        background-color: #1E2130 !important;
-        color: #00E676 !important;
-        -webkit-text-fill-color: #00E676 !important;
-        border: 2px solid #00E676 !important;
+        background-color: #161922 !important;
+        color: #D4AF37 !important;
+        -webkit-text-fill-color: #D4AF37 !important;
+        border: 1.5px solid #D4AF37 !important;
         border-radius: 10px !important;
         font-weight: 900 !important;
         font-size: 14px !important;
@@ -374,11 +381,11 @@ st.markdown("""
     [data-testid="baseButton-primary"]:hover,
     [data-testid="stSidebar"] button:hover,
     [data-testid="stSidebar"] .stDownloadButton button:hover {
-        background-color: #00E676 !important;
-        color: #0E1117 !important;
-        -webkit-text-fill-color: #0E1117 !important;
-        border-color: #00E676 !important;
-        box-shadow: 0 0 18px rgba(0, 230, 118, 0.7) !important;
+        background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%) !important;
+        color: #0D0F14 !important;
+        -webkit-text-fill-color: #0D0F14 !important;
+        border-color: #F3E5AB !important;
+        box-shadow: 0 0 18px rgba(212, 175, 55, 0.5) !important;
     }
 
     button p, button span,
@@ -391,15 +398,15 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* Cuadro de texto Ficha VIP / Textarea con fondo blanco y texto NEGRO intenso */
+    /* Cuadro de texto Ficha VIP / Textarea */
     .stTextArea textarea, [data-baseweb="textarea"] textarea, div[data-baseweb="textarea"] > div > textarea {
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
+        background-color: #151821 !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
         font-size: 14px !important;
         font-weight: 700 !important;
         line-height: 1.5 !important;
-        border: 2px solid #00E676 !important;
+        border: 1.5px solid #D4AF37 !important;
         border-radius: 10px !important;
     }
     
@@ -410,8 +417,8 @@ st.markdown("""
 
     /* --- SIDEBAR & PANEL DE ADMINISTRACIÓN (ALTO CONTRASTE TOTAL) --- */
     [data-testid="stSidebar"] {
-        background-color: #0E1117 !important;
-        border-right: 1px solid #1E2130 !important;
+        background-color: #0D0F14 !important;
+        border-right: 1px solid #1E2330 !important;
     }
 
     [data-testid="stSidebar"] h1, 
@@ -429,33 +436,33 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] code {
-        background-color: #1E2130 !important;
-        color: #00E676 !important;
-        border: 1px solid #00E676 !important;
+        background-color: #161922 !important;
+        color: #D4AF37 !important;
+        border: 1px solid #D4AF37 !important;
         font-weight: 800 !important;
         border-radius: 6px !important;
         padding: 2px 6px !important;
     }
 
     [data-testid="stSidebar"] h4 {
-        color: #00E676 !important;
+        color: #D4AF37 !important;
         font-size: 16px !important;
         font-weight: 900 !important;
         margin-top: 14px !important;
         margin-bottom: 6px !important;
-        text-shadow: 0 0 10px rgba(0, 230, 118, 0.3) !important;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.25) !important;
     }
 
     /* Expander en Sidebar */
     [data-testid="stSidebar"] [data-testid="stExpander"] {
-        background-color: #161922 !important;
-        border: 1.5px solid #00E676 !important;
+        background-color: #151821 !important;
+        border: 1.5px solid #D4AF37 !important;
         border-radius: 12px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
     }
 
     [data-testid="stSidebar"] [data-testid="stExpander"] summary {
-        color: #00E676 !important;
+        color: #D4AF37 !important;
         font-weight: 900 !important;
         font-size: 15px !important;
     }
@@ -463,10 +470,10 @@ st.markdown("""
     /* Entradas de Texto y Selectores en Sidebar */
     [data-testid="stSidebar"] .stTextInput input,
     [data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] {
-        background-color: #1E2130 !important;
+        background-color: #161922 !important;
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
-        border: 1.5px solid #00E676 !important;
+        border: 1.5px solid #D4AF37 !important;
         border-radius: 8px !important;
         font-weight: 700 !important;
         font-size: 14px !important;
@@ -474,22 +481,22 @@ st.markdown("""
 
     [data-testid="stSidebar"] .stTextInput input:focus,
     [data-testid="stSidebar"] .stSelectbox [data-baseweb="select"]:focus {
-        border-color: #FFD700 !important;
-        box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
+        border-color: #F3E5AB !important;
+        box-shadow: 0 0 12px rgba(212, 175, 55, 0.4) !important;
     }
 
     /* Subida de Archivos en Sidebar */
     [data-testid="stSidebar"] [data-testid="stFileUploader"] section {
-        background-color: #1E2130 !important;
-        border: 2px dashed #00E676 !important;
+        background-color: #161922 !important;
+        border: 2px dashed #D4AF37 !important;
         border-radius: 10px !important;
         padding: 10px !important;
     }
 
     [data-testid="stSidebar"] [data-testid="stFileUploader"] section button {
-        background-color: #00E676 !important;
-        color: #0E1117 !important;
-        -webkit-text-fill-color: #0E1117 !important;
+        background-color: #D4AF37 !important;
+        color: #0D0F14 !important;
+        -webkit-text-fill-color: #0D0F14 !important;
         font-weight: 900 !important;
     }
 
@@ -522,7 +529,7 @@ if not st.session_state['autenticado']:
         <div class="hero-banner" style="margin-top: 25px;">
             <h1 style="color: white; margin: 0; font-weight: 900; font-size: 38px; letter-spacing: 1px;">🏆 SMART PICK PRO VIP</h1>
             <p style="color: white; margin: 8px 0 0 0; font-size: 18px; opacity: 0.95;">Sistema de IA Predictiva • Optimizador de Reducciones Progol • Buscador $+EV$</p>
-            <div style="margin-top: 12px; display: inline-block; background: rgba(0, 230, 118, 0.2); border: 2px solid #00E676; border-radius: 20px; padding: 6px 18px; color: #00E676; font-weight: 900; font-size: 14px;">
+            <div style="margin-top: 12px; display: inline-block; background: rgba(212, 175, 55, 0.15); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 6px 18px; color: #D4AF37; font-weight: 900; font-size: 14px;">
                 ⭐ +85.4% de Efectividad Comprobada en Quinielas y Parlays VIP
             </div>
         </div>
@@ -531,7 +538,7 @@ if not st.session_state['autenticado']:
     col_log1, col_log2, col_log3 = st.columns([1, 2.5, 1])
     with col_log2:
         st.markdown('''
-        <div style="background: #1E2130; padding: 25px; border-radius: 14px; border: 1px solid #2D3245; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <div style="background: #151821; padding: 25px; border-radius: 14px; border: 1px solid #282F3F; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
             <h3 style="color: white; margin: 0 0 15px 0; font-weight: 800; text-align: center;">🔒 Iniciar Sesión en tu Cuenta VIP</h3>
         ''', unsafe_allow_html=True)
         user_input = st.text_input("Usuario:", key="login_user")
@@ -554,16 +561,16 @@ if not st.session_state['autenticado']:
         bancoppel_holder = getattr(config, 'BANCOPPEL_TITULAR', 'Jesús')
         paypal_url = getattr(config, 'PAYPAL_LINK', 'https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2')
 
-        html_pago = '<div style="background: linear-gradient(135deg, #161922 0%, #1E2130 100%); padding: 22px; border-radius: 14px; border: 2px dashed #00E676; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
+        html_pago = '<div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); padding: 22px; border-radius: 14px; border: 2px dashed #D4AF37; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
         html_pago += '<div style="background: linear-gradient(90deg, #FF512F 0%, #DD2476 100%); color: white; font-weight: 900; font-size: 13px; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(221,36,118,0.4);">🔥 ¡SÚPER OFERTA POR TIEMPO LIMITADO (50% OFF)!</div>'
-        html_pago += '<h3 style="color: #00E676; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #FFD700; font-size: 32px;">$149 MXN</span> / MES</h3>'
+        html_pago += '<h3 style="color: #D4AF37; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #F3E5AB; font-size: 32px;">$149 MXN</span> / MES</h3>'
         html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Aprovecha la súper promoción de lanzamiento por <b>$149 MXN</b>. Realiza tu pago por <b>BanCoppel, OXXO o PayPal</b> y envía tu comprobante por WhatsApp para recibir tu usuario y contraseña de inmediato:</p>'
         
-        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 12px; text-align: left;"><div style="color: #FFD700; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 DEPÓSITO / SPEI BANCOPPEL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div><div style="color: white; font-size: 13px;"><b>No. de Tarjeta / SPEI:</b> <span style="color:#00E676; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div><div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Acepta transferencias SPEI 24/7 y depósitos en OXXO o Tiendas Coppel.</div></div>'
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 12px; text-align: left;"><div style="color: #F3E5AB; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 DEPÓSITO / SPEI BANCOPPEL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div><div style="color: white; font-size: 13px;"><b>No. de Tarjeta / SPEI:</b> <span style="color:#D4AF37; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div><div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Acepta transferencias SPEI 24/7 y depósitos en OXXO o Tiendas Coppel.</div></div>'
 
-        html_pago += f'<div style="background: #161922; border-radius: 10px; padding: 14px; border: 1px solid #2D3245; margin-bottom: 15px; text-align: left;"><div style="color: #5DADE2; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🔵 PAGO EN LÍNEA POR PAYPAL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Enlace PayPal:</b> <a href="{paypal_url}" target="_blank" style="color:#00E676; font-weight:bold;">{paypal_url}</a></div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Paga de forma segura con cualquier tarjeta de Débito o Crédito.</div></div>'
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 15px; text-align: left;"><div style="color: #38BDF8; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🔵 PAGO EN LÍNEA POR PAYPAL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Enlace PayPal:</b> <a href="{paypal_url}" target="_blank" style="color:#38BDF8; font-weight:bold;">{paypal_url}</a></div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Paga de forma segura con cualquier tarjeta de Débito o Crédito.</div></div>'
 
-        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20aprovecho%20la%20super%20oferta%20VIP%20de%20%24149%20MXN.%20Adjunto%20mi%20comprobante%20para%20activar%20mi%20cuenta" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; background:#25D366; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE DE $149 POR WHATSAPP</a></div>'
+        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20aprovecho%20la%20super%20oferta%20VIP%20de%20%24149%20MXN.%20Adjunto%20mi%20comprobante%20para%20activar%20mi%20cuenta" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE DE $149 POR WHATSAPP</a></div>'
         html_pago += '</div>'
 
         st.markdown(html_pago, unsafe_allow_html=True)
@@ -578,9 +585,9 @@ jornada_oficial = jornada_manager.cargar_jornada_activa()
 # Encabezado Principal con Logo Oficial
 logo_header_html = ""
 if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
-    logo_header_html = f'<div style="text-align:center;margin-bottom:14px;"><img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-height:120px;width:auto;max-width:95%;border-radius:14px;box-shadow:0 6px 25px rgba(0,0,0,0.6);border:1px solid #2D3245;" /></div>'
+    logo_header_html = f'<div style="text-align:center;margin-bottom:14px;"><img src="data:image/jpeg;base64,{assets_data.LOGO_WEB_B64}" style="max-height:120px;width:auto;max-width:95%;border-radius:14px;box-shadow:0 6px 25px rgba(0,0,0,0.6);border:1px solid #282F3F;" /></div>'
 
-header_html = f'<div style="background:linear-gradient(135deg,#161922 0%,#1E2130 100%);border:1px solid #2D3245;border-radius:14px;padding:20px;text-align:center;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">{logo_header_html}<div style="display:inline-block;background:rgba(0,230,118,0.12);border:1px solid #00E676;border-radius:20px;padding:6px 18px;margin-bottom:6px;"><span style="color:#00E676;font-weight:900;font-size:14px;">⭐ SESIÓN VIP ACTIVA</span></div><div style="color:white;font-size:17px;margin-top:6px;">Bienvenido <b>{st.session_state["usuario"].upper()}</b> <span style="background:#00E676;color:#161922;font-size:11px;font-weight:900;padding:2px 8px;border-radius:10px;margin-left:6px;">{st.session_state["rol"]}</span></div><p style="color:#94A3B8;margin:6px 0 0 0;font-size:13px;">Escáner Estadístico Predictivo & Optimizador Progol</p></div>'
+header_html = f'<div style="background:linear-gradient(135deg,#151821 0%,#1A1E29 100%);border:1px solid #282F3F;border-radius:14px;padding:20px;text-align:center;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">{logo_header_html}<div style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid #D4AF37;border-radius:20px;padding:6px 18px;margin-bottom:6px;"><span style="color:#D4AF37;font-weight:900;font-size:14px;">⭐ SESIÓN VIP ACTIVA</span></div><div style="color:white;font-size:17px;margin-top:6px;">Bienvenido <b>{st.session_state["usuario"].upper()}</b> <span style="background:#D4AF37;color:#0D0F14;font-size:11px;font-weight:900;padding:2px 8px;border-radius:10px;margin-left:6px;">{st.session_state["rol"]}</span></div><p style="color:#94A3B8;margin:6px 0 0 0;font-size:13px;">Escáner Estadístico Predictivo & Optimizador Progol</p></div>'
 
 st.markdown(header_html, unsafe_allow_html=True)
 
@@ -605,7 +612,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 ban_1xbet = getattr(config, 'ENLACE_1XBET', 'https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599')
 ban_mexplay = getattr(config, 'ENLACE_MEXPLAY', 'https://mexplay.mx/?referral=mqx6lb')
 
-banners_afiliados_html = f'<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;margin-top:8px;margin-bottom:18px;"><div style="background:linear-gradient(135deg, #0A192F 0%, #172A45 100%);border:2px solid #00B4D8;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(0,180,216,0.25);"><div style="color:#90E0EF;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🔵 CASA OFICIAL DEPORTES #1</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎁 1XBET • BONO $3,500 MXN</div><p style="color:#CCD6F6;font-size:12px;margin:0 0 12px 0;">Las cuotas más altas de México y streaming de partidos en vivo.</p><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(0,180,216,0.4);">🔥 ABRIR CUENTA EN 1XBET</a></div><div style="background:linear-gradient(135deg, #2D1500 0%, #3D1C06 100%);border:2px solid #FF8500;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(255,133,0,0.25);"><div style="color:#FFB703;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🟡 CASINO & DEPORTES DESTACADO #2</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎰 MEXPLAY • BONO + GIROS</div><p style="color:#FFE8D6;font-size:12px;margin:0 0 12px 0;">Casino 100% mexicano, depósitos y retiros instantáneos por SPEI/OXXO.</p><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(255,133,0,0.4);">⚡ ABRIR CUENTA EN MEXPLAY</a></div></div>'
+banners_afiliados_html = f'<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;margin-top:8px;margin-bottom:18px;"><div style="background:linear-gradient(135deg, #0A192F 0%, #172A45 100%);border:1.5px solid #00B4D8;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(0,180,216,0.25);"><div style="color:#90E0EF;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🔵 CASA OFICIAL DEPORTES #1</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎁 1XBET • BONO $3,500 MXN</div><p style="color:#CCD6F6;font-size:12px;margin:0 0 12px 0;">Las cuotas más altas de México y streaming de partidos en vivo.</p><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(0,180,216,0.4);">🔥 ABRIR CUENTA EN 1XBET</a></div><div style="background:linear-gradient(135deg, #2D1500 0%, #3D1C06 100%);border:1.5px solid #FF8500;border-radius:14px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(255,133,0,0.25);"><div style="color:#FFB703;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;">🟡 CASINO & DEPORTES DESTACADO #2</div><div style="color:#FFFFFF;font-weight:900;font-size:19px;margin:5px 0;">🎰 MEXPLAY • BONO + GIROS</div><p style="color:#FFE8D6;font-size:12px;margin:0 0 12px 0;">Casino 100% mexicano, depósitos y retiros instantáneos por SPEI/OXXO.</p><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:900;font-size:13px;padding:9px 20px;border-radius:25px;text-decoration:none;display:inline-block;box-shadow:0 3px 12px rgba(255,133,0,0.4);">⚡ ABRIR CUENTA EN MEXPLAY</a></div></div>'
 
 st.markdown(banners_afiliados_html, unsafe_allow_html=True)
 
@@ -613,27 +620,27 @@ st.markdown(banners_afiliados_html, unsafe_allow_html=True)
 if assets_data and hasattr(assets_data, 'APP_ICON_B64') and assets_data.APP_ICON_B64:
     st.sidebar.markdown(f'''
     <div style="text-align:center; padding:6px 0 14px 0;">
-        <img src="data:image/jpeg;base64,{assets_data.APP_ICON_B64}" style="width:75px; height:75px; border-radius:18px; box-shadow:0 4px 15px rgba(0,230,118,0.3); border:1.5px solid #00E676;" />
-        <div style="color:#00E676; font-weight:900; font-size:16px; margin-top:6px; letter-spacing:0.5px;">SMART PICK PRO</div>
-        <div style="color:#FFD700; font-size:11px; font-weight:bold; letter-spacing:1px;">DATA INTELLIGENCE VIP</div>
+        <img src="data:image/jpeg;base64,{assets_data.APP_ICON_B64}" style="width:75px; height:75px; border-radius:18px; box-shadow:0 4px 15px rgba(212,175,55,0.3); border:1.5px solid #D4AF37;" />
+        <div style="color:#D4AF37; font-weight:900; font-size:16px; margin-top:6px; letter-spacing:0.5px;">SMART PICK PRO</div>
+        <div style="color:#F3E5AB; font-size:11px; font-weight:bold; letter-spacing:1px;">DATA INTELLIGENCE VIP</div>
     </div>
     ''', unsafe_allow_html=True)
 
 with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
     st.markdown('''
-    <div style="background:#161922; padding:12px; border-radius:10px; border:1px solid #2D3245; font-size:13px; line-height:1.4;">
-        <b style="color:#00E676;">🍏 En iPhone / iPad (Safari):</b><br>
+    <div style="background:#151821; padding:12px; border-radius:10px; border:1px solid #282F3F; font-size:13px; line-height:1.4;">
+        <b style="color:#D4AF37;">🍏 En iPhone / iPad (Safari):</b><br>
         1. Toca el botón <b>Compartir</b> (ícono <span style="font-size:14px;">⬆️</span> abajo).<br>
         2. Selecciona <b>"Agregar a inicio"</b> ➕.<br>
         3. Toca <b>"Agregar"</b> y se creará la app con el logo oficial.<br><br>
-        <b style="color:#00E676;">🤖 En Android (Chrome):</b><br>
+        <b style="color:#D4AF37;">🤖 En Android (Chrome):</b><br>
         1. Toca los <b>3 puntos (⋮)</b> arriba a la derecha.<br>
         2. Elige <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b> 📥.<br>
         3. ¡Listo! Se abrirá a pantalla completa.
     </div>
     ''', unsafe_allow_html=True)
 
-sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #161922 0%, #1E2130 100%);padding:12px;border-radius:12px;border:1px solid #2D3245;margin-top:10px;margin-bottom:14px;text-align:center;"><div style="color:#00E676;font-weight:900;font-size:11px;margin-bottom:8px;letter-spacing:0.5px;">💎 CASAS RECOMENDADAS (+EV)</div><div style="display:flex;gap:6px;justify-content:center;"><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🔵 1xBet</a><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🟡 Mexplay</a></div></div>'
+sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%);padding:12px;border-radius:12px;border:1px solid #282F3F;margin-top:10px;margin-bottom:14px;text-align:center;"><div style="color:#D4AF37;font-weight:900;font-size:11px;margin-bottom:8px;letter-spacing:0.5px;">💎 CASAS RECOMENDADAS (+EV)</div><div style="display:flex;gap:6px;justify-content:center;"><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🔵 1xBet</a><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🟡 Mexplay</a></div></div>'
 st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
 
 dict_ligas_globales = api_client.obtener_ligas_mundo()
@@ -762,17 +769,17 @@ def render_tarjeta_live_segura(p_item):
     venue = html.escape(str(p_item.get('venue', 'Estadio')))
 
     if st_val in ['1H', '2H', 'LIVE']:
-        st_badge = f'<span style="background:rgba(231,76,60,0.2); color:#E74C3C; border:1px solid #E74C3C; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:0.5px;">🔴 {st_val} {min_val}\'</span>'
+        st_badge = f'<span style="background:rgba(231,76,60,0.2); color:#EF5350; border:1px solid #EF5350; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:0.5px;">🔴 {st_val} {min_val}\'</span>'
     elif st_val == 'HT':
-        st_badge = '<span style="background:rgba(255,215,0,0.2); color:#FFD700; border:1px solid #FFD700; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
+        st_badge = '<span style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
     elif st_val in ['FT', 'AET', 'PEN']:
-        st_badge = '<span style="background:rgba(0,230,118,0.2); color:#00E676; border:1px solid #00E676; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
+        st_badge = '<span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
     else:
         st_badge = f'<span style="background:rgba(255,255,255,0.1); color:#aaa; border:1px solid #444; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:11px;">⏳ {st_val}</span>'
 
     return f'''
-    <div style="background:linear-gradient(135deg, #161922 0%, #1E2130 100%); border:1px solid #2D3245; border-radius:14px; padding:14px 18px; margin-bottom:10px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #252836; padding-bottom:6px;">
+    <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; border-radius:14px; padding:14px 18px; margin-bottom:10px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #232938; padding-bottom:6px;">
             <div style="color:#aaa; font-size:11px; font-weight:bold;">📍 {venue}</div>
             <div>{st_badge}</div>
         </div>
@@ -781,7 +788,7 @@ def render_tarjeta_live_segura(p_item):
                 <span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{loc}</span>
                 <img src="{logo_l}" style="width:36px; height:36px; object-fit:contain; flex-shrink:0;">
             </div>
-            <div style="background:#0E1117; border:1.5px solid #00E676; padding:4px 16px; border-radius:8px; font-size:22px; font-weight:900; color:#00E676; letter-spacing:2px; text-align:center; min-width:70px;">
+            <div style="background:#0D0F14; border:1.5px solid #D4AF37; padding:4px 16px; border-radius:8px; font-size:22px; font-weight:900; color:#D4AF37; letter-spacing:2px; text-align:center; min-width:70px;">
                 {g_l} - {g_v}
             </div>
             <div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; text-align:left;">
@@ -796,9 +803,9 @@ def render_tarjeta_live_segura(p_item):
 if liga_elegida_val == "LIVE_RADAR_MODE":
     if not st.session_state.get('live_partido_detalle'):
         st.markdown('''
-        <div style="background: linear-gradient(135deg, #1E2130 0%, #E74C3C 100%); padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);">
+        <div style="background: linear-gradient(135deg, #1C202B 0%, #3D1A1A 100%); border:1.5px solid #EF5350; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(239, 83, 80, 0.25);">
             <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">🔴 RADAR DE PARTIDOS EN VIVO MULTILIGAS</h2>
-            <p style="color: white; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Marcadores en tiempo real, minutos jugados y eventos de todos los encuentros activos en el mundo.</p>
+            <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Marcadores en tiempo real, minutos jugados y eventos de todos los encuentros activos en el mundo.</p>
         </div>
         ''', unsafe_allow_html=True)
         
@@ -819,9 +826,9 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
         total_partidos = sum(len(d.get("partidos", [])) for d in ligas_en_vivo.values())
         
         st.markdown(f'''
-        <div style="background:#161922; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #2D3245; display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">📡 Conexión Satelital API-Sports: <span style="color:#00E676; font-weight:900;">ACTIVA (HTTP 200 OK)</span></span>
-            <span style="background:#00E676; color:#0E1117; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">🟢 {total_partidos} Partidos en Juego</span>
+        <div style="background:#151821; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">📡 Conexión Satelital API-Sports: <span style="color:#38BDF8; font-weight:900;">ACTIVA (HTTP 200 OK)</span></span>
+            <span style="background:#38BDF8; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">🟢 {total_partidos} Partidos en Juego</span>
         </div>
         ''', unsafe_allow_html=True)
 
@@ -858,11 +865,11 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
                 liga_nombre = l_data.get("nombre", "Torneo")
                 
                 st.markdown(f'''
-                <div style="display:flex; align-items:center; justify-content:space-between; background:#161922; border-left:5px solid #00E676; border-radius:10px; padding:10px 16px; margin:20px 0 12px 0; border-top:1px solid #2D3245; border-right:1px solid #2D3245; border-bottom:1px solid #2D3245;">
+                <div style="display:flex; align-items:center; justify-content:space-between; background:#151821; border-left:5px solid #38BDF8; border-radius:10px; padding:10px 16px; margin:20px 0 12px 0; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:16px; font-weight:900; color:#FFFFFF;">🏆 {pais_nombre} - {liga_nombre}</span>
                     </div>
-                    <span style="background:#00E676; color:#0E1117; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">{len(p_lista)} en juego</span>
+                    <span style="background:#38BDF8; color:#0D0F14; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">{len(p_lista)} en juego</span>
                 </div>
                 ''', unsafe_allow_html=True)
                 
@@ -880,9 +887,9 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 # --- MODO 0.5: CAZADOR DE PARLAYS VIP (TOP 15 ALTAS & TOP 5 EMPATES) ---
 elif liga_elegida_val == "PARLAY_HUNTER_MODE":
     st.markdown('''
-    <div style="background: linear-gradient(135deg, #1E2130 0%, #00E676 100%); padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0, 230, 118, 0.25);">
+    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);">
         <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">💎 CAZADOR DE PARLAYS VIP (+ALTAS & EMPATES DE ORO)</h2>
-        <p style="color: white; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Parlays de Alta Probabilidad y Cuotas de Valor.</p>
+        <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Parlays de Alta Probabilidad y Cuotas de Valor.</p>
     </div>
     ''', unsafe_allow_html=True)
     
@@ -907,14 +914,14 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
         st.markdown(pitch_renderer.render_ticket_parlay_altas(parlay_altas_data), unsafe_allow_html=True)
 
         # Opciones de Difusión y Compartir
-        ficha_altas = analytics.generar_ficha_parlay_altas_whatsapp(parlay_altas_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickpro.com'))
+        ficha_altas = analytics.generar_ficha_parlay_altas_whatsapp(parlay_altas_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'))
         import urllib.parse
         encoded_altas = urllib.parse.quote(ficha_altas)
 
         col_w1, col_w2 = st.columns(2)
         with col_w1:
             st.markdown(f'''
-            <a href="https://wa.me/?text={encoded_altas}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(37,211,102,0.4);">
+            <a href="https://wa.me/?text={encoded_altas}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
                 💬 COMPARTIR PARLAY DE ALTAS EN WHATSAPP (1 CLIC)
             </a>
             ''', unsafe_allow_html=True)
@@ -943,13 +950,13 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
         st.markdown(pitch_renderer.render_ticket_empates_oro(empates_data), unsafe_allow_html=True)
 
         # Ficha WhatsApp de Empates
-        ficha_empates = analytics.generar_ficha_empates_whatsapp(empates_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickpro.com'))
+        ficha_empates = analytics.generar_ficha_empates_whatsapp(empates_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'))
         encoded_empates = urllib.parse.quote(ficha_empates)
 
         col_we1, col_we2 = st.columns(2)
         with col_we1:
             st.markdown(f'''
-            <a href="https://wa.me/?text={encoded_empates}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(37,211,102,0.4);">
+            <a href="https://wa.me/?text={encoded_empates}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
                 💬 COMPARTIR RADAR DE EMPATES EN WHATSAPP (1 CLIC)
             </a>
             ''', unsafe_allow_html=True)
@@ -967,9 +974,9 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 # --- MODO 1: PROGOL TRADICIONAL ---
 elif liga_elegida_val == "PROGOL_MODE":
     st.markdown('''
-    <div style="background: linear-gradient(135deg, #1E2130 0%, #FFD700 100%); padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #1E2130; margin: 0; font-weight: 900;">🎯 OPTIMIZADOR INTELIGENTE DE QUINIELA PROGOL</h2>
-        <p style="color: #1E2130; margin: 6px 0 0 0; font-size: 15px;">Configura tus dobles y triples deseados sobre los 14 partidos oficiales.</p>
+    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">🎯 OPTIMIZADOR INTELIGENTE DE QUINIELA PROGOL</h2>
+        <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px;">Configura tus dobles y triples deseados sobre los 14 partidos oficiales.</p>
     </div>
     ''', unsafe_allow_html=True)
     
@@ -1004,7 +1011,7 @@ elif liga_elegida_val == "PROGOL_MODE":
         for item in boleta:
             p_match = jornada_oficial[item['casilla'] - 1]
             st.markdown(f'''
-            <div style="background:#1E2130; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white;">
+            <div style="background:#151821; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                 <b style="color:white; font-size:15px;">Casilla {item['casilla']}:</b> 
                 <span style="color:#FFFFFF; font-weight:bold;">{p_match['local']} vs {p_match['visita']}</span> -> 
                 <span style="color:{item['color_borde']}; font-weight:900; font-size:16px;">{item['sugerencia']}</span>
@@ -1016,9 +1023,9 @@ elif liga_elegida_val == "PROGOL_MODE":
 # --- MODO 2: OPTIMIZADOR DE REDUCCIONES ---
 elif liga_elegida_val == "REDUCCIONES_MODE":
     st.markdown('''
-    <div style="background: linear-gradient(135deg, #1E2130 0%, #00E676 100%); padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-        <h2 style="color: white; margin: 0; font-weight: 900;">⚙️ Panel de Reducciones Inteligentes Pro</h2>
-        <p style="color: white; margin: 5px 0 0 0; font-size: 15px;">Matriz matemática de reducciones aplicadas a los 14 partidos oficiales</p>
+    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">⚙️ Panel de Reducciones Inteligentes Pro</h2>
+        <p style="color: #E2E8F0; margin: 5px 0 0 0; font-size: 15px;">Matriz matemática de reducciones aplicadas a los 14 partidos oficiales</p>
     </div>
     ''', unsafe_allow_html=True)
     
@@ -1051,16 +1058,16 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
             
             if idx in set_triples:
                 tipo_txt = "Triple (1/X/2)"
-                color_borde = "#FFD700"
+                color_borde = "#D4AF37"
             elif idx in set_dobles:
                 tipo_txt = "Doble Local/Empate (1X)" if idx % 2 != 0 else "Doble Empate/Visita (X2)"
-                color_borde = "#00E676"
+                color_borde = "#38BDF8"
             else:
                 tipo_txt = "Fijo Local (1)" if idx % 2 != 0 else "Fijo Visita (2)"
-                color_borde = "#00D2FF"
+                color_borde = "#F3E5AB"
 
             st.markdown(f'''
-            <div style="background:#1E2130; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {color_borde}; color:white;">
+            <div style="background:#151821; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {color_borde}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                 <b style="color:white;">Casilla {idx}:</b> <span style="color:#FFFFFF; font-weight:bold;">{match_title} -> </span>
                 <span style="color:{color_borde}; font-weight:900; font-size:15px;">{tipo_txt}</span>
             </div>
@@ -1077,7 +1084,7 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
             st.dataframe(resumen_df, use_container_width=True, height=450)
         else:
             for idx, r_val in enumerate(sorted(resultados, reverse=True)):
-                st.markdown(f"<div style='background:#1E2130; padding:8px; margin:4px 0; border-radius:6px; color:#00E676; font-weight:bold;'><b>Combinación {idx+1}:</b> {r_val} aciertos</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background:#151821; padding:8px; margin:4px 0; border-radius:6px; color:#D4AF37; font-weight:bold; border:1px solid #282F3F;'><b>Combinación {idx+1}:</b> {r_val} aciertos</div>", unsafe_allow_html=True)
 
     st.markdown("---")
     
@@ -1121,8 +1128,8 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
             st.write("#### 🏆 Resultados de tus Boletas:")
             for ev in evals:
                 badge_p = "🥇 ¡1ER LUGAR (14 ACIERTOS)!" if ev['es_ganadora_1er'] else ("🥈 2DO LUGAR (13 ACIERTOS)" if ev['es_ganadora_2do'] else ("🥉 3ER LUGAR (12 ACIERTOS)" if ev['es_ganadora_3er'] else f"🎯 {ev['aciertos']} Aciertos"))
-                color_ev = "#00E676" if ev['es_premio'] else "#E0E0E0"
-                st.markdown(f"<div style='background:#1E2130; padding:10px 14px; border-radius:8px; margin:4px 0; border-left:5px solid {color_ev};'><b>Boleta #{ev['numero_boleta']} ({ev['cadena_corta']}):</b> <span style='color:{color_ev}; font-weight:bold; font-size:16px;'>{badge_p}</span></div>", unsafe_allow_html=True)
+                color_ev = "#D4AF37" if ev['es_premio'] else "#94A3B8"
+                st.markdown(f"<div style='background:#151821; padding:10px 14px; border-radius:8px; margin:4px 0; border-left:5px solid {color_ev}; border:1px solid #282F3F;'><b>Boleta #{ev['numero_boleta']} ({ev['cadena_corta']}):</b> <span style='color:{color_ev}; font-weight:bold; font-size:16px;'>{badge_p}</span></div>", unsafe_allow_html=True)
 
     cols_b = st.columns(2)
     for idx_b, b_item in enumerate(boletas_sencillas):
@@ -1132,11 +1139,11 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
                     p_c = p_sub['casilla']
                     p_part = p_sub['partido']
                     p_pk = p_sub['pick']
-                    c_color = "#00E676" if p_pk == '1' else ("#FFD700" if p_pk == 'X' else "#E74C3C")
+                    c_color = "#D4AF37" if p_pk == '1' else ("#38BDF8" if p_pk == 'X' else "#EF4444")
                     st.markdown(f'''
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#1E2130; padding:5px 10px; border-radius:6px; margin:2px 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#151821; padding:5px 10px; border-radius:6px; margin:2px 0; border:1px solid #282F3F;">
                         <span style="color:white; font-size:12px;"><b>Casilla {p_c}:</b> {p_part}</span>
-                        <span style="background:{c_color}; color:#0E1117; font-weight:900; padding:1px 8px; border-radius:8px; font-size:13px;">{p_pk}</span>
+                        <span style="background:{c_color}; color:#0D0F14; font-weight:900; padding:1px 8px; border-radius:8px; font-size:13px;">{p_pk}</span>
                     </div>
                     ''', unsafe_allow_html=True)
 
@@ -1218,18 +1225,18 @@ else:
 
         # Marcador Superior Principal
         st.markdown(f'''
-        <div style="display:flex; align-items:center; justify-content:space-around; background-color:white; padding:20px 15px; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-bottom:15px;">
+        <div style="display:flex; align-items:center; justify-content:space-around; background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; padding:20px 15px; border-radius:16px; box-shadow:0 6px 25px rgba(0,0,0,0.5); margin-bottom:15px;">
             <div style="text-align:center; width:33%;">
                 <img src="{logo_local_render}" style="width:70px; height:70px; object-fit:contain; margin-bottom:6px;">
-                <h3 style="margin:0; color:#1E2130; font-size:17px; font-weight:800;">{equipo_local_real}</h3>
+                <h3 style="margin:0; color:#FFFFFF; font-size:17px; font-weight:800;">{equipo_local_real}</h3>
             </div>
             <div style="width:34%; text-align:center;">
                 {badge_html}
-                {score_html}
+                <h1 style='margin:0; font-size:44px; color:#D4AF37; letter-spacing:4px;'>{g_h} - {g_a}</h1>
             </div>
             <div style="text-align:center; width:33%;">
                 <img src="{logo_visita_render}" style="width:70px; height:70px; object-fit:contain; margin-bottom:6px;">
-                <h3 style="margin:0; color:#1E2130; font-size:17px; font-weight:800;">{equipo_visita_real}</h3>
+                <h3 style="margin:0; color:#FFFFFF; font-size:17px; font-weight:800;">{equipo_visita_real}</h3>
             </div>
         </div>
         ''', unsafe_allow_html=True)
@@ -1303,11 +1310,11 @@ else:
 
             # Bet Builder Dinámico
             picks_builder = analytics.generar_bet_builder_dinamico(equipo_local_real, equipo_visita_real, stats_poisson)
-            html_bet_builder = '<div style="background-color: #1E2130; color: white; padding: 20px; border-radius: 14px; border: 2px dashed #00E676; margin-bottom: 15px;">'
-            html_bet_builder += '<h3 style="text-align: center; color: #FFD700; margin: 0 0 6px 0; font-weight: 900; font-size: 20px;">🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)</h3>'
-            html_bet_builder += '<p style="text-align: center; color: #aaa; font-size: 13px; margin-bottom: 12px;">Combinación de alta efectividad basada en simulación Poisson + Dixon-Coles & xG</p>'
+            html_bet_builder = '<div style="background-color: #151821; color: white; padding: 20px; border-radius: 14px; border: 2px dashed #D4AF37; margin-bottom: 15px; box-shadow:0 4px 20px rgba(0,0,0,0.3);">'
+            html_bet_builder += '<h3 style="text-align: center; color: #D4AF37; margin: 0 0 6px 0; font-weight: 900; font-size: 20px;">🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)</h3>'
+            html_bet_builder += '<p style="text-align: center; color: #94A3B8; font-size: 13px; margin-bottom: 12px;">Combinación de alta efectividad basada en simulación Poisson + Dixon-Coles & xG</p>'
             for p_item in picks_builder:
-                html_bet_builder += f'<div style="display:flex; justify-content:space-between; align-items:center; background:#161922; padding:10px 14px; border-radius:8px; margin:6px 0; border:1px solid #2A2D3E;"><div><span style="color:#FFD700; font-size:12px; font-weight:bold;">{p_item["categoria"]}</span><br><span style="color:white; font-size:15px; font-weight:bold;">✅ {p_item["descripcion"]}</span></div><span style="background:#00E676; color:#0E1117; font-weight:900; padding:4px 12px; border-radius:12px; font-size:13px;">Confianza: {p_item["prob"]}</span></div>'
+                html_bet_builder += f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; padding:10px 14px; border-radius:8px; margin:6px 0; border:1px solid #282F3F;"><div><span style="color:#F3E5AB; font-size:12px; font-weight:bold;">{p_item["categoria"]}</span><br><span style="color:white; font-size:15px; font-weight:bold;">✅ {p_item["descripcion"]}</span></div><span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:12px; font-size:13px;">Confianza: {p_item["prob"]}</span></div>'
             html_bet_builder += '</div>'
             st.markdown(html_bet_builder, unsafe_allow_html=True)
 
@@ -1324,7 +1331,7 @@ else:
                     labels=[f"Gana {equipo_local_real}", "Empate", f"Gana {equipo_visita_real}"],
                     values=[stats_poisson['p_home_win'], stats_poisson['p_draw'], stats_poisson['p_away_win']],
                     hole=.5,
-                    marker_colors=['#00E676', '#5DADE2', '#E74C3C']
+                    marker_colors=['#D4AF37', '#38BDF8', '#EF4444']
                 )])
                 fig.update_layout(
                     title_text="Distribución de Probabilidades Estimada",
@@ -1348,9 +1355,9 @@ else:
                 import urllib.parse
                 encoded_txt = urllib.parse.quote(ficha_txt)
                 st.markdown(f'''
-                <div style="background: linear-gradient(135deg, #161922 0%, #1E2130 100%); border-radius:12px; padding:16px; border:2px solid #25D366; text-align:center; margin-top:10px;">
-                    <h4 style="color:#25D366; margin:0 0 6px 0; font-size:17px; font-weight:900;">📲 RECOMIENDA ESTE PRONÓSTICO VIP CON UN AMIGO</h4>
-                    <a href="https://wa.me/?text={encoded_txt}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:10px 22px; border-radius:25px; text-decoration:none; display:inline-block; font-size:14px; margin-top:8px;">
+                <div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); border-radius:12px; padding:16px; border:2px solid #2ECC71; text-align:center; margin-top:10px;">
+                    <h4 style="color:#2ECC71; margin:0 0 6px 0; font-size:17px; font-weight:900;">📲 RECOMIENDA ESTE PRONÓSTICO VIP CON UN AMIGO</h4>
+                    <a href="https://wa.me/?text={encoded_txt}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:10px 22px; border-radius:25px; text-decoration:none; display:inline-block; font-size:14px; margin-top:8px;">
                         💬 COMPARTIR EN WHATSAPP (1 CLIC)
                     </a>
                 </div>
@@ -1371,18 +1378,18 @@ else:
             col_mc1, col_mc2 = st.columns([1.2, 0.8])
             with col_mc1:
                 st.markdown('''
-                <div style="background:#1E2130; border-radius:12px; padding:16px; border-left:6px solid #FFD700; border:1px solid #2D3245; color:white;">
-                    <h4 style="margin:0 0 10px 0; color:#FFD700; font-size:16px; font-weight:900;">🎯 Top 3 Marcadores Exactos Más Probables</h4>
+                <div style="background:#151821; border-radius:12px; padding:16px; border-left:6px solid #D4AF37; border:1px solid #282F3F; color:white;">
+                    <h4 style="margin:0 0 10px 0; color:#D4AF37; font-size:16px; font-weight:900;">🎯 Top 3 Marcadores Exactos Más Probables</h4>
                 ''', unsafe_allow_html=True)
                 medallas = ["🥇 1er Lugar", "🥈 2do Lugar", "🥉 3er Lugar"]
-                colores_mc = ["#00E676", "#5DADE2", "#F39C12"]
+                colores_mc = ["#D4AF37", "#38BDF8", "#F3E5AB"]
                 for idx_m, item_m in enumerate(top_3_sc):
                     lbl_med = medallas[idx_m] if idx_m < len(medallas) else "🎯 Marcador"
                     c_badge = colores_mc[idx_m] if idx_m < len(colores_mc) else "#FFFFFF"
                     st.markdown(f'''
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#161922; padding:8px 12px; border-radius:8px; margin:5px 0; border:1px solid #2A2D3E;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; padding:8px 12px; border-radius:8px; margin:5px 0; border:1px solid #282F3F;">
                         <span style="color:#E0E0E0; font-size:14px; font-weight:bold;">{lbl_med}: <b style="color:white; font-size:17px; margin-left:8px;">{item_m['marcador']}</b></span>
-                        <span style="background:{c_badge}; color:#0E1117; font-weight:900; padding:3px 10px; border-radius:12px; font-size:13px;">Prob: {item_m['prob']}%</span>
+                        <span style="background:{c_badge}; color:#0D0F14; font-weight:900; padding:3px 10px; border-radius:12px; font-size:13px;">Prob: {item_m['prob']}%</span>
                     </div>
                     ''', unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
@@ -1391,18 +1398,18 @@ else:
                 btts_val = mc_info.get("btts_pct", 50.0)
                 over25_val = mc_info.get("over25_pct", 50.0)
                 txt_btts = "SÍ" if btts_val >= 50.0 else "NO"
-                c_btts = "#00E676" if btts_val >= 50.0 else "#E74C3C"
+                c_btts = "#D4AF37" if btts_val >= 50.0 else "#EF4444"
                 txt_over25 = "SÍ (+2.5)" if over25_val >= 50.0 else "NO (-2.5)"
-                c_over25 = "#00E676" if over25_val >= 50.0 else "#E74C3C"
+                c_over25 = "#D4AF37" if over25_val >= 50.0 else "#EF4444"
                 st.markdown(f'''
-                <div style="background:#1E2130; border-radius:12px; padding:16px; border:1px solid #2D3245; color:white;">
-                    <h4 style="margin:0 0 10px 0; color:#00E676; font-size:16px; font-weight:900;">⚽ Proyecciones Monte Carlo</h4>
-                    <div style="margin:6px 0; background:#161922; padding:8px 12px; border-radius:8px;">
-                        <div style="color:#aaa; font-size:12px;">Ambos Equipos Anotan (BTTS)</div>
+                <div style="background:#151821; border-radius:12px; padding:16px; border:1px solid #282F3F; color:white;">
+                    <h4 style="margin:0 0 10px 0; color:#D4AF37; font-size:16px; font-weight:900;">⚽ Proyecciones Monte Carlo</h4>
+                    <div style="margin:6px 0; background:#1A1E29; padding:8px 12px; border-radius:8px; border:1px solid #282F3F;">
+                        <div style="color:#94A3B8; font-size:12px;">Ambos Equipos Anotan (BTTS)</div>
                         <div style="color:{c_btts}; font-size:18px; font-weight:900;">{txt_btts} ({btts_val}%)</div>
                     </div>
-                    <div style="margin:6px 0; background:#161922; padding:8px 12px; border-radius:8px;">
-                        <div style="color:#aaa; font-size:12px;">Línea de Goles (Over/Under 2.5)</div>
+                    <div style="margin:6px 0; background:#1A1E29; padding:8px 12px; border-radius:8px; border:1px solid #282F3F;">
+                        <div style="color:#94A3B8; font-size:12px;">Línea de Goles (Over/Under 2.5)</div>
                         <div style="color:{c_over25}; font-size:18px; font-weight:900;">{txt_over25} ({over25_val}%)</div>
                     </div>
                 </div>
@@ -1418,8 +1425,8 @@ else:
             xg_c3.metric(f"xG {equipo_visita_real}", f"{xg_data['xg_visita']} xG", f"Eficiencia: {xg_data['eficiencia_vis']}%")
 
             st.markdown(f'''
-            <div style="background:#161922; padding:12px 16px; border-radius:10px; border-left:5px solid #00E676; border:1px solid #2D3245; margin:10px 0; color:white;">
-                <div style="color:#00E676; font-weight:900; font-size:14px;">📌 Análisis de Ocasiones Clave (Expected Goals):</div>
+            <div style="background:#151821; padding:12px 16px; border-radius:10px; border-left:5px solid #D4AF37; border:1px solid #282F3F; margin:10px 0; color:white;">
+                <div style="color:#D4AF37; font-weight:900; font-size:14px;">📌 Análisis de Ocasiones Clave (Expected Goals):</div>
                 <div style="color:#E0E0E0; font-size:13px; margin-top:4px;">{xg_data['alerta_xg']}</div>
             </div>
             ''', unsafe_allow_html=True)
@@ -1431,14 +1438,14 @@ else:
             ia_info = analytics.evaluar_predictor_ia_ensemble(equipo_local_real, equipo_visita_real, stats_poisson, bajas_info)
             
             st.markdown(f'''
-            <div style="background: linear-gradient(135deg, #1E2130 0%, #161922 100%); border-radius:14px; padding:18px; border:2px solid #5DADE2; margin:10px 0; color:white;">
+            <div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); border-radius:14px; padding:18px; border:2px solid #38BDF8; margin:10px 0; color:white; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h4 style="margin:0; color:#5DADE2; font-size:17px; font-weight:900;">{ia_info['tendencia_ia']}</h4>
-                    <span style="background:#5DADE2; color:#0E1117; font-weight:900; padding:4px 12px; border-radius:16px; font-size:13px;">Confianza IA: {ia_info['confianza_ia']}%</span>
+                    <h4 style="margin:0; color:#38BDF8; font-size:17px; font-weight:900;">{ia_info['tendencia_ia']}</h4>
+                    <span style="background:#38BDF8; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:16px; font-size:13px;">Confianza IA: {ia_info['confianza_ia']}%</span>
                 </div>
-                <div style="background:#0E1117; padding:10px 14px; border-radius:8px; border:1px solid #2A2D3E; margin-bottom:10px;">
-                    <span style="color:#aaa; font-size:12px;">Pick Sugerido por Machine Learning:</span><br>
-                    <span style="color:#00E676; font-size:17px; font-weight:900;">🎯 {ia_info['pick_ia']}</span>
+                <div style="background:#0D0F14; padding:10px 14px; border-radius:8px; border:1px solid #282F3F; margin-bottom:10px;">
+                    <span style="color:#94A3B8; font-size:12px;">Pick Sugerido por Machine Learning:</span><br>
+                    <span style="color:#D4AF37; font-size:17px; font-weight:900;">🎯 {ia_info['pick_ia']}</span>
                 </div>
                 <div style="font-size:13px; color:#E0E0E0;">
                     <b>📌 Factores Ponderados por el Algoritmo:</b>
@@ -1486,21 +1493,21 @@ else:
                         y=['Choques Directos'], x=[h2h_loc_wins], name=equipo_local_real,
                         text=[f"<b>{equipo_local_real}: {h2h_loc_wins} Vic.</b>"],
                         textposition='auto', insidetextfont=dict(color='white', size=13),
-                        orientation='h', marker=dict(color='#00E676', line=dict(color='#ffffff', width=2))
+                        orientation='h', marker=dict(color='#D4AF37', line=dict(color='#ffffff', width=2))
                     ))
                 if h2h_empates > 0:
                     fig_h2h.add_trace(go.Bar(
                         y=['Choques Directos'], x=[h2h_empates], name='Empates',
                         text=[f"<b>{h2h_empates} Empate(s)</b>"],
                         textposition='auto', insidetextfont=dict(color='white', size=13),
-                        orientation='h', marker=dict(color='#5DADE2', line=dict(color='#ffffff', width=2))
+                        orientation='h', marker=dict(color='#38BDF8', line=dict(color='#ffffff', width=2))
                     ))
                 if h2h_vis_wins > 0:
                     fig_h2h.add_trace(go.Bar(
                         y=['Choques Directos'], x=[h2h_vis_wins], name=equipo_visita_real,
                         text=[f"<b>{equipo_visita_real}: {h2h_vis_wins} Vic.</b>"],
                         textposition='auto', insidetextfont=dict(color='white', size=13),
-                        orientation='h', marker=dict(color='#E74C3C', line=dict(color='#ffffff', width=2))
+                        orientation='h', marker=dict(color='#EF4444', line=dict(color='#ffffff', width=2))
                     ))
 
                 fig_h2h.update_layout(
@@ -1514,12 +1521,12 @@ else:
 
             with col_h2h_metrics:
                 st.markdown(f'''
-                <div style="background:#1E2130; padding:12px; border-radius:10px; border:1px solid #2D3245; text-align:center;">
-                    <h5 style="color:#FFD700; margin:0 0 8px 0; font-weight:900;">⚽ Goles en H2H</h5>
+                <div style="background:#151821; padding:12px; border-radius:10px; border:1px solid #282F3F; text-align:center;">
+                    <h5 style="color:#D4AF37; margin:0 0 8px 0; font-weight:900;">⚽ Goles en H2H</h5>
                     <div style="display:flex; justify-content:space-around; align-items:center;">
-                        <div><span style="color:#00E676; font-size:22px; font-weight:900;">{goles_tot_loc}</span><br><small style="color:#aaa;">{equipo_local_real}</small></div>
+                        <div><span style="color:#D4AF37; font-size:22px; font-weight:900;">{goles_tot_loc}</span><br><small style="color:#aaa;">{equipo_local_real}</small></div>
                         <span style="color:#fff; font-size:16px; font-weight:bold;">VS</span>
-                        <div><span style="color:#E74C3C; font-size:22px; font-weight:900;">{goles_tot_vis}</span><br><small style="color:#aaa;">{equipo_visita_real}</small></div>
+                        <div><span style="color:#EF4444; font-size:22px; font-weight:900;">{goles_tot_vis}</span><br><small style="color:#aaa;">{equipo_visita_real}</small></div>
                     </div>
                 </div>
                 ''', unsafe_allow_html=True)
@@ -1534,15 +1541,15 @@ else:
                 val_l = v_loc_rad[idx_c]
                 val_v = v_vis_rad[idx_c]
                 st.markdown(f'''
-                <div style="background:#1E2130; border-radius:10px; padding:10px 16px; margin:6px 0; border:1px solid #2D3245;">
+                <div style="background:#151821; border-radius:10px; padding:10px 16px; margin:6px 0; border:1px solid #282F3F;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                        <span style="color:#00E676; font-weight:900; font-size:14px;">🔵 {equipo_local_real}: <b>{val_l}%</b></span>
-                        <span style="color:#FFD700; font-weight:bold; font-size:13px;">{icon_title}</span>
-                        <span style="color:#E74C3C; font-weight:900; font-size:14px;">🔴 {equipo_visita_real}: <b>{val_v}%</b></span>
+                        <span style="color:#38BDF8; font-weight:900; font-size:14px;">🔵 {equipo_local_real}: <b>{val_l}%</b></span>
+                        <span style="color:#D4AF37; font-weight:bold; font-size:13px;">{icon_title}</span>
+                        <span style="color:#EF4444; font-weight:900; font-size:14px;">🔴 {equipo_visita_real}: <b>{val_v}%</b></span>
                     </div>
-                    <div style="display:flex; height:10px; background:#161922; border-radius:5px; overflow:hidden; border:1px solid #2A2D3E;">
-                        <div style="width:{val_l}%; background:#00E676; height:100%;"></div>
-                        <div style="width:{val_v}%; background:#E74C3C; height:100%; margin-left:auto;"></div>
+                    <div style="display:flex; height:10px; background:#0D0F14; border-radius:5px; overflow:hidden; border:1px solid #282F3F;">
+                        <div style="width:{val_l}%; background:#38BDF8; height:100%;"></div>
+                        <div style="width:{val_v}%; background:#EF4444; height:100%; margin-left:auto;"></div>
                     </div>
                 </div>
                 ''', unsafe_allow_html=True)
@@ -1556,19 +1563,19 @@ else:
             with col_r1:
                 b_html_l = "".join([f'<span style="background:{b["bg"]}; color:{b["color"]}; border:2px solid {b["borde"]}; font-weight:900; font-size:13px; width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">{b["letra"]}</span>' for b in badges_l])
                 st.markdown(f'''
-                <div style="background:#1E2130; border-radius:12px; padding:14px; border-left:5px solid #00E676; border:1px solid #2D3245;">
+                <div style="background:#151821; border-radius:12px; padding:14px; border-left:5px solid #38BDF8; border:1px solid #282F3F;">
                     <h4 style="margin:0 0 6px 0; color:white; font-size:15px; font-weight:900;">🔵 {equipo_local_real}</h4>
                     <div style="display:flex; margin-bottom:8px;">{b_html_l}</div>
-                    <div style="background:#161922; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold;">{tend_l}</div>
+                    <div style="background:#0D0F14; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold; border:1px solid #282F3F;">{tend_l}</div>
                 </div>
                 ''', unsafe_allow_html=True)
             with col_r2:
                 b_html_v = "".join([f'<span style="background:{b["bg"]}; color:{b["color"]}; border:2px solid {b["borde"]}; font-weight:900; font-size:13px; width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">{b["letra"]}</span>' for b in badges_v])
                 st.markdown(f'''
-                <div style="background:#1E2130; border-radius:12px; padding:14px; border-left:5px solid #E74C3C; border:1px solid #2D3245;">
+                <div style="background:#151821; border-radius:12px; padding:14px; border-left:5px solid #EF4444; border:1px solid #282F3F;">
                     <h4 style="margin:0 0 6px 0; color:white; font-size:15px; font-weight:900;">🔴 {equipo_visita_real}</h4>
                     <div style="display:flex; margin-bottom:8px;">{b_html_v}</div>
-                    <div style="background:#161922; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold;">{tend_v}</div>
+                    <div style="background:#0D0F14; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold; border:1px solid #282F3F;">{tend_v}</div>
                 </div>
                 ''', unsafe_allow_html=True)
 
@@ -1580,14 +1587,14 @@ else:
                 st.markdown(f"<b>🔵 {equipo_local_real} (Impacto: -{bajas_info.get('impacto_loc_pct', 0)}%)</b>", unsafe_allow_html=True)
                 if bajas_info.get('local_bajas'):
                     for b in bajas_info['local_bajas']:
-                        st.markdown(f"<div style='background:#1E2130; padding:6px 10px; border-radius:6px; margin:4px 0; border:1px solid #2D3245; color:white; font-size:13px;'>{b['gravedad']} <b>{b['nombre']}</b> ({b['motivo']})</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='background:#151821; padding:6px 10px; border-radius:6px; margin:4px 0; border:1px solid #282F3F; color:white; font-size:13px;'>{b['gravedad']} <b>{b['nombre']}</b> ({b['motivo']})</div>", unsafe_allow_html=True)
                 else:
                     st.success("✅ Plantilla completa sin bajas reportadas.")
             with col_bj2:
                 st.markdown(f"<b>🔴 {equipo_visita_real} (Impacto: -{bajas_info.get('impacto_vis_pct', 0)}%)</b>", unsafe_allow_html=True)
                 if bajas_info.get('visita_bajas'):
                     for b in bajas_info['visita_bajas']:
-                        st.markdown(f"<div style='background:#1E2130; padding:6px 10px; border-radius:6px; margin:4px 0; border:1px solid #2D3245; color:white; font-size:13px;'>{b['gravedad']} <b>{b['nombre']}</b> ({b['motivo']})</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='background:#151821; padding:6px 10px; border-radius:6px; margin:4px 0; border:1px solid #282F3F; color:white; font-size:13px;'>{b['gravedad']} <b>{b['nombre']}</b> ({b['motivo']})</div>", unsafe_allow_html=True)
                 else:
                     st.success("✅ Plantilla completa sin bajas reportadas.")
 
@@ -1613,10 +1620,10 @@ else:
             cx3.metric("Desgaste de Sede", info_af['tag_altitud'].split('(')[0].strip())
 
             st.markdown(f'''
-            <div style="background:#1E2130; padding:12px 16px; border-radius:10px; border:1px solid #2D3245; margin:10px 0; color:white;">
-                <div style="color:#FFD700; font-weight:bold; font-size:14px; margin-bottom:4px;">📌 Impacto Aeróbico & Físico:</div>
+            <div style="background:#151821; padding:12px 16px; border-radius:10px; border:1px solid #282F3F; margin:10px 0; color:white;">
+                <div style="color:#D4AF37; font-weight:bold; font-size:14px; margin-bottom:4px;">📌 Impacto Aeróbico & Físico:</div>
                 <div style="color:#E0E0E0; font-size:13px;">{info_af['desc_altitud']}</div>
-                <div style="display:flex; justify-content:space-between; margin-top:8px; background:#161922; padding:8px 12px; border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; margin-top:8px; background:#0D0F14; padding:8px 12px; border-radius:6px; border:1px solid #282F3F;">
                     <span>🔵 <b>{equipo_local_real}:</b> {info_af['fatiga_loc']}</span>
                     <span>🔴 <b>{equipo_visita_real}:</b> {info_af['fatiga_vis']}</span>
                 </div>
@@ -1633,10 +1640,10 @@ else:
             ref_col3.metric("Rigor Arbitral", info_ref['rigor'].split('(')[0].strip())
 
             st.markdown(f'''
-            <div style="background:#1E2130; padding:12px 16px; border-radius:10px; border-left:5px solid #FFD700; border:1px solid #2D3245; margin:10px 0; color:white;">
-                <div style="color:#00E676; font-weight:bold; font-size:14px; margin-bottom:4px;">🎯 Análisis de Fricción & Recomendación de Mercado:</div>
+            <div style="background:#151821; padding:12px 16px; border-radius:10px; border-left:5px solid #D4AF37; border:1px solid #282F3F; margin:10px 0; color:white;">
+                <div style="color:#D4AF37; font-weight:bold; font-size:14px; margin-bottom:4px;">🎯 Análisis de Fricción & Recomendación de Mercado:</div>
                 <div style="color:#E0E0E0; font-size:13px;">{info_ref['recomendacion']}</div>
-                <div style="color:#888; font-size:12px; margin-top:4px;">Promedio Expulsiones: {info_ref['tarjetas_rojas']} rojas/partido | Promedio Penales: {info_ref['penales_prom']}/partido</div>
+                <div style="color:#94A3B8; font-size:12px; margin-top:4px;">Promedio Expulsiones: {info_ref['tarjetas_rojas']} rojas/partido | Promedio Penales: {info_ref['penales_prom']}/partido</div>
             </div>
             ''', unsafe_allow_html=True)
 
@@ -1645,15 +1652,15 @@ else:
         # =========================================================
         with tab_cuotas:
             st.write("### 📊 Comparador Multi-Casino & Valor Esperado ($+EV$)")
-            t_html = '''<div style="background-color:#1E2130; border-radius:10px; padding:15px; margin-bottom:15px;">
+            t_html = '''<div style="background-color:#151821; border-radius:10px; padding:15px; margin-bottom:15px; border:1px solid #282F3F;">
             <table style="width:100%; border-collapse:collapse; text-align:center; color:white;">
-            <thead style="border-bottom:2px solid #333;">
+            <thead style="border-bottom:2px solid #282F3F;">
             <tr>
-            <th style="padding:10px; color:#aaa; font-size:12px; text-align:left;">CASA DE APUESTAS</th>
+            <th style="padding:10px; color:#94A3B8; font-size:12px; text-align:left;">CASA DE APUESTAS</th>
             <th style="padding:10px; color:#fff;">1 (Local)</th>
             <th style="padding:10px; color:#fff;">X (Empate)</th>
             <th style="padding:10px; color:#fff;">2 (Visita)</th>
-            <th style="padding:10px; color:#aaa; font-size:12px;">APOSTAR</th>
+            <th style="padding:10px; color:#94A3B8; font-size:12px;">APOSTAR</th>
             </tr>
             </thead>
             <tbody>'''
@@ -1680,19 +1687,19 @@ else:
                     apuestas_valor.append(f"💎 Gana {equipo_visita_real} en **{nc}** (Ventaja $+EV$: +{ev_v:.1f}%)")
                     if casino['2'] > mejor_cuota_ev: mejor_cuota_ev, mejor_prob_ev = casino['2'], stats_poisson['p_away_win']
 
-                t_html += f'''<tr style="border-bottom:1px solid #2a2d3e;">
+                t_html += f'''<tr style="border-bottom:1px solid #282F3F;">
                 <td style="padding:10px 5px; font-weight:bold; color:#fff; text-align:left; font-size:14px;">{nc}</td>
-                <td style="padding:10px 2px;"><div style="background:#2A2D3E; color:#00E676; padding:6px 0; border-radius:6px; font-weight:bold;">{casino['1']}</div></td>
-                <td style="padding:10px 2px;"><div style="background:#2A2D3E; color:#00E676; padding:6px 0; border-radius:6px; font-weight:bold;">{casino['X']}</div></td>
-                <td style="padding:10px 2px;"><div style="background:#2A2D3E; color:#00E676; padding:6px 0; border-radius:6px; font-weight:bold;">{casino['2']}</div></td>
+                <td style="padding:10px 2px;"><div style="background:#0D0F14; color:#D4AF37; padding:6px 0; border-radius:6px; font-weight:bold; border:1px solid #282F3F;">{casino['1']}</div></td>
+                <td style="padding:10px 2px;"><div style="background:#0D0F14; color:#D4AF37; padding:6px 0; border-radius:6px; font-weight:bold; border:1px solid #282F3F;">{casino['X']}</div></td>
+                <td style="padding:10px 2px;"><div style="background:#0D0F14; color:#D4AF37; padding:6px 0; border-radius:6px; font-weight:bold; border:1px solid #282F3F;">{casino['2']}</div></td>
                 <td style="padding:10px 5px;"><a href="{lk}" target="_blank" class="casino-btn">Apostar ></a></td>
                 </tr>'''
             t_html += '''</tbody></table></div>'''
             st.markdown(t_html, unsafe_allow_html=True)
 
             if apuestas_valor:
-                st.markdown('''<div style="background-color: rgba(0, 230, 118, 0.1); border-left: 5px solid #00E676; padding: 14px; border-radius: 6px; margin-bottom: 15px;">
-                <h4 style="color: #00E676; margin-top:0;">🔥 ALERTAS DE VALOR ESPERADO POSITIVO (+EV)</h4>''', unsafe_allow_html=True)
+                st.markdown('''<div style="background-color: rgba(212, 175, 55, 0.12); border-left: 5px solid #D4AF37; padding: 14px; border-radius: 6px; margin-bottom: 15px; border-top: 1px solid #282F3F; border-right: 1px solid #282F3F; border-bottom: 1px solid #282F3F;">
+                <h4 style="color: #D4AF37; margin-top:0;">🔥 ALERTAS DE VALOR ESPERADO POSITIVO (+EV)</h4>''', unsafe_allow_html=True)
                 for av in apuestas_valor:
                     st.markdown(f"- {av}")
                 st.markdown("</div>", unsafe_allow_html=True)
@@ -1712,9 +1719,9 @@ else:
                 res_kelly = analytics.calcular_criterio_kelly(mejor_prob_ev, mejor_cuota_ev, fraccion=f_val, bankroll=bankroll)
                 if res_kelly["es_viable"]:
                     st.markdown(f'''
-                    <div style="background:#161922; border-radius:10px; padding:14px; border:2px solid #00E676; margin:10px 0;">
-                        <h4 style="color:#00E676; margin:0 0 6px 0;">💎 Apuesta Óptima Sugerida por Criterio de Kelly:</h4>
-                        <div style="font-size:18px; color:white; font-weight:bold;">Apostar: <span style="color:#00E676;">${res_kelly['monto_sugerido']:,.2f} MXN</span> ({res_kelly['kelly_pct']}% de tu bankroll) en cuota {mejor_cuota_ev}</div>
+                    <div style="background:#151821; border-radius:10px; padding:14px; border:2px solid #D4AF37; margin:10px 0;">
+                        <h4 style="color:#D4AF37; margin:0 0 6px 0;">💎 Apuesta Óptima Sugerida por Criterio de Kelly:</h4>
+                        <div style="font-size:18px; color:white; font-weight:bold;">Apostar: <span style="color:#D4AF37;">${res_kelly['monto_sugerido']:,.2f} MXN</span> ({res_kelly['kelly_pct']}% de tu bankroll) en cuota {mejor_cuota_ev}</div>
                         <small style="color:#aaa;">* Calculado con ventaja matemática positiva (+EV) y control de riesgo.</small>
                     </div>
                     ''', unsafe_allow_html=True)
@@ -1735,16 +1742,16 @@ else:
 
                 ct1, ct2 = st.columns(2)
                 with ct1:
-                    st.markdown(f'''<div style="background:#1a2530; padding:14px; border-radius:10px; border-left:5px solid #3498db;">
+                    st.markdown(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #38BDF8; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <h4 style="color:white; margin:0 0 6px 0;">🔵 {equipo_local_real}</h4>
                     <p style="color:#ddd; font-size:13px; margin:0 0 6px 0;">Posición: {pos_l}° | Puntos: {pts_l} | Racha: {forma_l}</p>
-                    <div style="background:rgba(52,152,219,0.15); padding:8px; border-radius:6px;">
+                    <div style="background:rgba(56,189,248,0.12); padding:8px; border-radius:6px; border:1px solid rgba(56,189,248,0.2);">
                         <p style="color:#e0e0e0; margin:0; font-size:12px;">📌 {txt_nec_l}</p>
                     </div></div>''', unsafe_allow_html=True)
                 with ct2:
-                    st.markdown(f'''<div style="background:#301a1a; padding:14px; border-radius:10px; border-left:5px solid #e74c3c;">
+                    st.markdown(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #EF4444; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <h4 style="color:white; margin:0 0 6px 0;">🔴 {equipo_visita_real}</h4>
                     <p style="color:#ddd; font-size:13px; margin:0 0 6px 0;">Posición: {pos_v}° | Puntos: {pts_v} | Racha: {forma_v}</p>
-                    <div style="background:rgba(231,76,60,0.15); padding:8px; border-radius:6px;">
+                    <div style="background:rgba(239,68,68,0.12); padding:8px; border-radius:6px; border:1px solid rgba(239,68,68,0.2);">
                         <p style="color:#e0e0e0; margin:0; font-size:12px;">📌 {txt_nec_v}</p>
                     </div></div>''', unsafe_allow_html=True)
