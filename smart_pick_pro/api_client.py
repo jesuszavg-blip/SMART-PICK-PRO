@@ -464,10 +464,13 @@ def obtener_todos_partidos_en_vivo():
                     ligas_dict[key_liga]["partidos"].append(partido_dict)
                     
                 return ligas_dict
+            else:
+                # La API respondió correctamente pero no hay partidos en juego en este instante
+                return {}
     except Exception as e:
         print(f"Error al obtener partidos en vivo: {e}")
 
-    return _generar_partidos_en_vivo_muestra()
+    return {}
 
 def _generar_partidos_en_vivo_muestra():
     """Genera datos de muestra en vivo si no hay partidos en este instante exacto"""
