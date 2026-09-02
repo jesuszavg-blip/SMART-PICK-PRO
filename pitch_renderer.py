@@ -2,7 +2,8 @@ import html
 
 def render_cancha_tactica(equipo_local: str, equipo_visita: str, form_loc: str, form_vis: str, al_loc: list[str], al_vis: list[str]) -> str:
     """
-    Renderiza la Cancha Táctica 2D estilo SofaScore/FotMob (Disposición Vertical 2D Completa).
+    Renderiza la Cancha Táctica 2D estilo SofaScore/FotMob (Disposición Vertical 2D Completa)
+    adaptada a la paleta de lujo (Oro cepillado, Obsidiana y Acentos elegantes).
     """
     if not al_loc or len(al_loc) < 11:
         al_loc = [
@@ -31,20 +32,20 @@ def render_cancha_tactica(equipo_local: str, equipo_visita: str, form_loc: str, 
     p_v = [html.escape(p.replace("👕 ", "")) for p in al_vis[:11]]
 
     html_code = f'''
-<div style="background: radial-gradient(circle, #2e7d32 0%, #1b4d2e 65%, #0d2e15 100%); border: 3px solid #00E676; border-radius: 16px; padding: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; position: relative; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden;">
+<div style="background: radial-gradient(circle, #1a3d24 0%, #0e2916 65%, #08170c 100%); border: 2px solid #D4AF37; border-radius: 16px; padding: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; position: relative; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden;">
     
     <!-- Líneas del Campo -->
-    <div style="position: absolute; top: 50%; left: 10px; right: 10px; height: 2px; background: rgba(255,255,255,0.4); transform: translateY(-50%);"></div>
-    <div style="position: absolute; top: 50%; left: 50%; width: 110px; height: 110px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; transform: translate(-50%, -50%);"></div>
+    <div style="position: absolute; top: 50%; left: 10px; right: 10px; height: 2px; background: rgba(255,255,255,0.35); transform: translateY(-50%);"></div>
+    <div style="position: absolute; top: 50%; left: 50%; width: 110px; height: 110px; border: 2px solid rgba(255,255,255,0.35); border-radius: 50%; transform: translate(-50%, -50%);"></div>
     
     <!-- Áreas de Meta -->
-    <div style="position: absolute; top: 10px; left: 50%; width: 180px; height: 60px; border: 2px solid rgba(255,255,255,0.4); border-top: none; transform: translateX(-50%);"></div>
-    <div style="position: absolute; bottom: 10px; left: 50%; width: 180px; height: 60px; border: 2px solid rgba(255,255,255,0.4); border-bottom: none; transform: translateX(-50%);"></div>
+    <div style="position: absolute; top: 10px; left: 50%; width: 180px; height: 60px; border: 2px solid rgba(255,255,255,0.35); border-top: none; transform: translateX(-50%);"></div>
+    <div style="position: absolute; bottom: 10px; left: 50%; width: 180px; height: 60px; border: 2px solid rgba(255,255,255,0.35); border-bottom: none; transform: translateX(-50%);"></div>
 
     <!-- Encabezado Local (Arriba) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(18,20,29,0.92); padding: 8px 16px; border-radius: 12px; border-left: 5px solid #3498db; margin-bottom: 12px; position: relative; z-index: 10;">
+    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(21,24,33,0.92); padding: 8px 16px; border-radius: 12px; border-left: 5px solid #38BDF8; margin-bottom: 12px; position: relative; z-index: 10; border: 1px solid #282F3F;">
         <div style="font-size: 15px; font-weight: 900; color: #ffffff;">🔵 {loc_name}</div>
-        <div style="color: #00E676; font-size: 11px; font-weight: bold;">{status_loc}</div>
+        <div style="color: #D4AF37; font-size: 11px; font-weight: bold;">{status_loc}</div>
     </div>
 
     <!-- MITAD CAMPO LOCAL (TOP) -->
@@ -53,31 +54,31 @@ def render_cancha_tactica(equipo_local: str, equipo_visita: str, form_loc: str, 
         <!-- Portero Local -->
         <div style="display: flex; justify-content: center;">
             <div style="text-align: center;">
-                <div style="background: #f39c12; color: white; width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.5);">1</div>
-                <div style="background: rgba(0,0,0,0.85); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; margin-top: 2px; white-space: nowrap;">{p_l[0]}</div>
+                <div style="background: #D4AF37; color: #0D0F14; width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.5);">1</div>
+                <div style="background: rgba(13,15,20,0.88); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; margin-top: 2px; white-space: nowrap; border: 1px solid #282F3F;">{p_l[0]}</div>
             </div>
         </div>
 
         <!-- Defensas Local (4) -->
         <div style="display: flex; justify-content: space-around; padding: 0 15px;">
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">2</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[1]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">4</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[2]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">5</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[3]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">3</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[4]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">2</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[1]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">4</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[2]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">5</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[3]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">3</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[4]}</div></div>
         </div>
 
         <!-- Mediocampo Local (3) -->
         <div style="display: flex; justify-content: space-around; padding: 0 40px;">
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">6</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[5]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">8</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[6]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">10</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[7]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">6</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[5]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">8</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[6]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">10</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[7]}</div></div>
         </div>
 
         <!-- Delanteros Local (3) -->
         <div style="display: flex; justify-content: space-around; padding: 0 30px;">
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">7</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[8]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">9</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[9]}</div></div>
-            <div style="text-align: center;"><div style="background: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">11</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_l[10]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">7</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[8]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">9</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[9]}</div></div>
+            <div style="text-align: center;"><div style="background: #38BDF8; color: #0D0F14; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">11</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_l[10]}</div></div>
         </div>
 
     </div>
@@ -87,40 +88,40 @@ def render_cancha_tactica(equipo_local: str, equipo_visita: str, form_loc: str, 
         
         <!-- Delanteros Visita (3) -->
         <div style="display: flex; justify-content: space-around; padding: 0 30px;">
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">7</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[8]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">9</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[9]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">11</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[10]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">7</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[8]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">9</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[9]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">11</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[10]}</div></div>
         </div>
 
         <!-- Mediocampo Visita (3) -->
         <div style="display: flex; justify-content: space-around; padding: 0 40px;">
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">6</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[5]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">8</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[6]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">10</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[7]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">6</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[5]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">8</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[6]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">10</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[7]}</div></div>
         </div>
 
         <!-- Defensas Visita (4) -->
         <div style="display: flex; justify-content: space-around; padding: 0 15px;">
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">2</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[1]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">4</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[2]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">5</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[3]}</div></div>
-            <div style="text-align: center;"><div style="background: #e74c3c; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">3</div><div style="background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{p_v[4]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">2</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[1]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">4</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[2]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">5</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[3]}</div></div>
+            <div style="text-align: center;"><div style="background: #EF4444; color: white; width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid white;">3</div><div style="background: rgba(13,15,20,0.88); color: white; font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 6px; margin-top: 2px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #282F3F;">{p_v[4]}</div></div>
         </div>
 
         <!-- Portero Visita -->
         <div style="display: flex; justify-content: center;">
             <div style="text-align: center;">
-                <div style="background: #f39c12; color: white; width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.5);">1</div>
-                <div style="background: rgba(0,0,0,0.85); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; margin-top: 2px; white-space: nowrap;">{p_v[0]}</div>
+                <div style="background: #D4AF37; color: #0D0F14; width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.5);">1</div>
+                <div style="background: rgba(13,15,20,0.88); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; margin-top: 2px; white-space: nowrap; border: 1px solid #282F3F;">{p_v[0]}</div>
             </div>
         </div>
 
     </div>
 
     <!-- Encabezado Visita (Abajo) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(18,20,29,0.92); padding: 8px 16px; border-radius: 12px; border-right: 5px solid #e74c3c; margin-top: 12px; position: relative; z-index: 10;">
+    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(21,24,33,0.92); padding: 8px 16px; border-radius: 12px; border-right: 5px solid #EF4444; margin-top: 12px; position: relative; z-index: 10; border: 1px solid #282F3F;">
         <div style="font-size: 15px; font-weight: 900; color: #ffffff;">🔴 {vis_name}</div>
-        <div style="color: #00E676; font-size: 11px; font-weight: bold;">{status_vis}</div>
+        <div style="color: #D4AF37; font-size: 11px; font-weight: bold;">{status_vis}</div>
     </div>
 
 </div>'''
@@ -159,13 +160,13 @@ def render_minuto_a_minuto_dividido(
     # Estado y Tiempo
     if status in ['1H', '2H', 'HT', 'LIVE']:
         status_label = f"🔴 EN VIVO {minuto_actual}'"
-        status_color = "#E74C3C"
+        status_color = "#EF5350"
     elif status in ['FT', 'AET', 'PEN']:
         status_label = "🏁 FINALIZADO (90')"
-        status_color = "#00E676"
+        status_color = "#D4AF37"
     else:
         status_label = "⏳ PRÓXIMO ENCUENTRO"
-        status_color = "#FFD700"
+        status_color = "#F3E5AB"
 
     # Generación de eventos por defecto si no hay eventos cargados
     if not eventos_local and not eventos_visita:
@@ -201,9 +202,9 @@ def render_minuto_a_minuto_dividido(
             det_str = partes[1] if len(partes) > 1 else ev
             ev_icon = "⚽" if "GOL" in det_str else ("🟨" if "Amarilla" in det_str else ("🟥" if "Roja" in det_str else ("🔄" if "Cambio" in det_str else "📌")))
             m_val = m_str.replace("'", "")
-            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div><div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{m_val}\'</div></div>'
+            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#151821; border:1px solid #282F3F; border-right:3px solid #38BDF8; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div><div style="background:#38BDF8; color:#0D0F14; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(56,189,248,0.4);">{m_val}\'</div></div>'
         elif isinstance(ev, dict):
-            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#1E2130; border:1px solid #2D3245; border-right:3px solid #00E676; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#00E676; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div><div style="background:#00E676; color:#0E1117; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(0,230,118,0.4);">{ev.get("min", 0)}\'</div></div>'
+            html_ev_loc += f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-bottom:12px;"><div style="background:#151821; border:1px solid #282F3F; border-right:3px solid #38BDF8; padding:8px 12px; border-radius:8px 2px 2px 8px; text-align:right; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#38BDF8; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div><div style="background:#38BDF8; color:#0D0F14; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(56,189,248,0.4);">{ev.get("min", 0)}\'</div></div>'
 
     # Formatear lista de eventos visita
     html_ev_vis = ""
@@ -214,33 +215,33 @@ def render_minuto_a_minuto_dividido(
             det_str = partes[1] if len(partes) > 1 else ev
             ev_icon = "⚽" if "GOL" in det_str else ("🟨" if "Amarilla" in det_str else ("🟥" if "Roja" in det_str else ("🔄" if "Cambio" in det_str else "📌")))
             m_val = m_str.replace("'", "")
-            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{m_val}\'</div><div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div></div>'
+            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#EF4444; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(239,68,68,0.4);">{m_val}\'</div><div style="background:#151821; border:1px solid #282F3F; border-left:3px solid #EF4444; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{html.escape(det_str)}</div></div></div>'
         elif isinstance(ev, dict):
-            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#E74C3C; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(231,76,60,0.4);">{ev.get("min", 0)}\'</div><div style="background:#1E2130; border:1px solid #2D3245; border-left:3px solid #E74C3C; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#FF7675; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div></div>'
+            html_ev_vis += f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; margin-bottom:12px;"><div style="background:#EF4444; color:white; font-weight:900; font-size:12px; padding:4px 8px; border-radius:50px; min-width:32px; text-align:center; box-shadow:0 0 8px rgba(239,68,68,0.4);">{ev.get("min", 0)}\'</div><div style="background:#151821; border:1px solid #282F3F; border-left:3px solid #EF4444; padding:8px 12px; border-radius:2px 8px 8px 2px; text-align:left; max-width:85%;"><div style="font-size:13px; font-weight:800; color:#FFFFFF;">{ev.get("icon", "📌")} <b>{html.escape(ev.get("title", ""))}</b></div><div style="font-size:12px; color:#F87171; font-weight:bold;">{html.escape(ev.get("player", ""))}</div><div style="font-size:11px; color:#aaa;">{html.escape(ev.get("detail", ""))}</div></div></div>'
 
     pct_tiros_l = int((tiros_local / max(1, tiros_local + tiros_visita)) * 100)
     pct_tiros_v = 100 - pct_tiros_l
 
     html_full = (
-        f'<div style="background: linear-gradient(180deg, #12151E 0%, #0E1117 100%); border: 2px solid #00E676; border-radius: 16px; padding: 20px; color: white; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">'
-        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
-        f'<div style="font-size:18px; font-weight:900; color:#FFD700;">⏱️ CENTRO DE PARTIDO: MINUTO A MINUTO EN VIVO</div>'
-        f'<div style="background:{status_color}; color:#0E1117; font-weight:900; padding:5px 14px; border-radius:20px; font-size:13px; letter-spacing:1px;">{status_label}</div>'
+        f'<div style="background: linear-gradient(180deg, #151821 0%, #0D0F14 100%); border: 1.5px solid #D4AF37; border-radius: 16px; padding: 20px; color: white; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div style="font-size:18px; font-weight:900; color:#D4AF37;">⏱️ CENTRO DE PARTIDO: MINUTO A MINUTO EN VIVO</div>'
+        f'<div style="background:{status_color}; color:#0D0F14; font-weight:900; padding:5px 14px; border-radius:20px; font-size:13px; letter-spacing:1px;">{status_label}</div>'
         f'</div>'
-        f'<div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:15px; margin-bottom:20px; background:#161922; padding:15px; border-radius:12px; border:1px solid #2A2D3E;">'
+        f'<div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:15px; margin-bottom:20px; background:#11141C; padding:15px; border-radius:12px; border:1px solid #282F3F;">'
         f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:right;">{loc_name}</span><img src="{logo_local}" style="width:48px; height:48px; object-fit:contain;"></div>'
-        f'<div style="text-align:center; padding:0 15px;"><div style="background:#0E1117; border:2px solid #00E676; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#00E676; letter-spacing:4px;">{g_l} - {g_v}</div></div>'
+        f'<div style="text-align:center; padding:0 15px;"><div style="background:#0D0F14; border:2px solid #D4AF37; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#D4AF37; letter-spacing:4px;">{g_l} - {g_v}</div></div>'
         f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:12px;"><img src="{logo_visita}" style="width:48px; height:48px; object-fit:contain;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:left;">{vis_name}</span></div>'
         f'</div>'
-        f'<div style="background:#161922; padding:14px; border-radius:12px; margin-bottom:20px; border:1px solid #2A2D3E;">'
-        f'<div style="font-size:12px; font-weight:800; color:#00E676; text-transform:uppercase; margin-bottom:10px; text-align:center;">📊 ESTADÍSTICAS DEL PARTIDO EN TIEMPO REAL</div>'
-        f'<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#00E676;">{pos_local}%</span><span style="color:#aaa;">Posesión de Balón</span><span style="color:#E74C3C;">{pos_visita}%</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;"><div style="width:{pos_local}%; background:#00E676;"></div><div style="width:{pos_visita}%; background:#E74C3C;"></div></div></div>'
-        f'<div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#00E676;">{tiros_local} Tiros</span><span style="color:#aaa;">Disparos al Arco</span><span style="color:#E74C3C;">{tiros_visita} Tiros</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#2D3245;"><div style="width:{pct_tiros_l}%; background:#00E676;"></div><div style="width:{pct_tiros_v}%; background:#E74C3C;"></div></div></div>'
+        f'<div style="background:#11141C; padding:14px; border-radius:12px; margin-bottom:20px; border:1px solid #282F3F;">'
+        f'<div style="font-size:12px; font-weight:800; color:#D4AF37; text-transform:uppercase; margin-bottom:10px; text-align:center; letter-spacing:0.5px;">📊 ESTADÍSTICAS DEL PARTIDO EN TIEMPO REAL</div>'
+        f'<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#38BDF8;">{pos_local}%</span><span style="color:#aaa;">Posesión de Balón</span><span style="color:#EF4444;">{pos_visita}%</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#282F3F;"><div style="width:{pos_local}%; background:#38BDF8;"></div><div style="width:{pos_visita}%; background:#EF4444;"></div></div></div>'
+        f'<div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;"><span style="color:#38BDF8;">{tiros_local} Tiros</span><span style="color:#aaa;">Disparos al Arco</span><span style="color:#EF4444;">{tiros_visita} Tiros</span></div><div style="display:flex; height:8px; border-radius:4px; overflow:hidden; background:#282F3F;"><div style="width:{pct_tiros_l}%; background:#38BDF8;"></div><div style="width:{pct_tiros_v}%; background:#EF4444;"></div></div></div>'
         f'</div>'
         f'<div style="display:grid; grid-template-columns: 1fr 2px 1fr; gap:16px; position:relative; margin-top:10px;">'
-        f'<div><div style="text-align:right; font-size:14px; font-weight:900; color:#00E676; margin-bottom:12px; border-bottom:2px solid #00E676; padding-bottom:4px;">🔵 ACCIONES {loc_name.upper()}</div>{html_ev_loc}</div>'
-        f'<div style="background: linear-gradient(180deg, #00E676 0%, #2D3245 50%, #E74C3C 100%); width:2px; border-radius:2px;"></div>'
-        f'<div><div style="text-align:left; font-size:14px; font-weight:900; color:#E74C3C; margin-bottom:12px; border-bottom:2px solid #E74C3C; padding-bottom:4px;">🔴 ACCIONES {vis_name.upper()}</div>{html_ev_vis}</div>'
+        f'<div><div style="text-align:right; font-size:14px; font-weight:900; color:#38BDF8; margin-bottom:12px; border-bottom:2px solid #38BDF8; padding-bottom:4px;">🔵 ACCIONES {loc_name.upper()}</div>{html_ev_loc}</div>'
+        f'<div style="background: linear-gradient(180deg, #38BDF8 0%, #282F3F 50%, #EF4444 100%); width:2px; border-radius:2px;"></div>'
+        f'<div><div style="text-align:left; font-size:14px; font-weight:900; color:#EF4444; margin-bottom:12px; border-bottom:2px solid #EF4444; padding-bottom:4px;">🔴 ACCIONES {vis_name.upper()}</div>{html_ev_vis}</div>'
         f'</div>'
         f'</div>'
     )
@@ -263,17 +264,17 @@ def render_tarjeta_partido_live_radar(partido: dict) -> str:
     venue = html.escape(str(partido.get('venue', 'Estadio')))
 
     if st_val in ['1H', '2H', 'LIVE']:
-        st_badge = f'<span style="background:rgba(231,76,60,0.2); color:#E74C3C; border:1px solid #E74C3C; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:0.5px;">🔴 {st_val} {min_val}\'</span>'
+        st_badge = f'<span style="background:rgba(239,68,68,0.2); color:#EF5350; border:1px solid #EF5350; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:0.5px;">🔴 {st_val} {min_val}\'</span>'
     elif st_val == 'HT':
-        st_badge = '<span style="background:rgba(255,215,0,0.2); color:#FFD700; border:1px solid #FFD700; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
+        st_badge = '<span style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
     elif st_val in ['FT', 'AET', 'PEN']:
-        st_badge = '<span style="background:rgba(0,230,118,0.2); color:#00E676; border:1px solid #00E676; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
+        st_badge = '<span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
     else:
         st_badge = f'<span style="background:rgba(255,255,255,0.1); color:#aaa; border:1px solid #444; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:11px;">⏳ {st_val}</span>'
 
     card_html = f'''
-    <div style="background:linear-gradient(135deg, #161922 0%, #1E2130 100%); border:1px solid #2D3245; border-radius:14px; padding:14px 18px; margin-bottom:10px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #252836; padding-bottom:6px;">
+    <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; border-radius:14px; padding:14px 18px; margin-bottom:10px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #232938; padding-bottom:6px;">
             <div style="color:#aaa; font-size:11px; font-weight:bold;">📍 {venue}</div>
             <div>{st_badge}</div>
         </div>
@@ -282,7 +283,7 @@ def render_tarjeta_partido_live_radar(partido: dict) -> str:
                 <span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{loc}</span>
                 <img src="{logo_l}" style="width:36px; height:36px; object-fit:contain; flex-shrink:0;">
             </div>
-            <div style="background:#0E1117; border:1.5px solid #00E676; padding:4px 16px; border-radius:8px; font-size:22px; font-weight:900; color:#00E676; letter-spacing:2px; text-align:center; min-width:70px;">
+            <div style="background:#0D0F14; border:1.5px solid #D4AF37; padding:4px 16px; border-radius:8px; font-size:22px; font-weight:900; color:#D4AF37; letter-spacing:2px; text-align:center; min-width:70px;">
                 {g_l} - {g_v}
             </div>
             <div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; text-align:left;">
@@ -315,29 +316,29 @@ def render_ticket_parlay_altas(parlay_data: dict) -> str:
         cuota = p.get("cuota", 1.30)
 
         html_items += (
-            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#161922; border:1px solid #2D3245; border-left:4px solid #00E676; padding:10px 14px; border-radius:8px; margin-bottom:8px;">'
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#11141C; border:1px solid #282F3F; border-left:4px solid #D4AF37; padding:10px 14px; border-radius:8px; margin-bottom:8px;">'
             f'<div style="flex:1;">'
             f'<div style="color:#aaa; font-size:11px; font-weight:bold;">{idx+1}. {liga}</div>'
             f'<div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>'
             f'</div>'
             f'<div style="text-align:right; display:flex; align-items:center; gap:10px;">'
-            f'<div style="background:rgba(0,230,118,0.15); border:1px solid #00E676; color:#00E676; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px;">⚽ {mercado}</div>'
-            f'<div style="background:#1E2130; border:1px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px; min-width:65px; text-align:center;">@{cuota:.2f}</div>'
-            f'<div style="background:#0E1117; color:#FFFFFF; font-weight:bold; font-size:11px; padding:4px 8px; border-radius:4px; border:1px solid #333;">{prob}%</div>'
+            f'<div style="background:rgba(212,175,55,0.15); border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px;">⚽ {mercado}</div>'
+            f'<div style="background:#151821; border:1px solid #F3E5AB; color:#F3E5AB; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px; min-width:65px; text-align:center;">@{cuota:.2f}</div>'
+            f'<div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:11px; padding:4px 8px; border-radius:4px; border:1px solid #282F3F;">{prob}%</div>'
             f'</div>'
             f'</div>'
         )
 
     html_ticket = (
-        f'<div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #00E676; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(0,230,118,0.2);">'
-        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:16px;">'
         f'<div>'
-        f'<div style="font-size:20px; font-weight:900; color:#00E676;">🔥 BOLETO PARLAY MAESTRO DE ALTAS</div>'
+        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">🔥 BOLETO PARLAY MAESTRO DE ALTAS</div>'
         f'<div style="color:#aaa; font-size:13px;">Selección de los {total_p} partidos con mayor volumen ofensivo y xG esperado</div>'
         f'</div>'
-        f'<div style="text-align:right; background:#161922; border:1.5px solid #FFD700; padding:8px 18px; border-radius:10px;">'
-        f'<div style="font-size:11px; color:#FFD700; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>'
-        f'<div style="font-size:24px; font-weight:900; color:#00E676; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
+        f'<div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">'
+        f'<div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>'
+        f'<div style="font-size:24px; font-weight:900; color:#D4AF37; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
         f'</div>'
         f'</div>'
         f'<div>{html_items}</div>'
@@ -367,39 +368,35 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         doble_op = html.escape(str(e.get("doble_oportunidad", "")))
 
         html_items += (
-            f'<div style="background:#161922; border:1px solid #2D3245; border-left:4px solid #FFD700; padding:14px 18px; border-radius:10px; margin-bottom:12px;">'
+            f'<div style="background:#11141C; border:1px solid #282F3F; border-left:4px solid #D4AF37; padding:14px 18px; border-radius:10px; margin-bottom:12px;">'
             f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">'
             f'<span style="color:#aaa; font-size:12px; font-weight:bold;">{idx+1}. {liga}</span>'
-            f'<span style="background:rgba(255,215,0,0.15); color:#FFD700; border:1px solid #FFD700; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">⚖️ Paridad Extrema</span>'
+            f'<span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">⚖️ Paridad Extrema</span>'
             f'</div>'
             f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">'
             f'<span style="color:#FFFFFF; font-weight:900; font-size:16px;">{loc} vs {vis}</span>'
-            f'<span style="background:#0E1117; border:2px solid #FFD700; color:#FFD700; font-weight:900; padding:4px 14px; border-radius:8px; font-size:16px;">Cuota @{cuota:.2f}</span>'
+            f'<span style="background:#0D0F14; border:1.5px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 14px; border-radius:8px; font-size:16px;">Cuota @{cuota:.2f}</span>'
             f'</div>'
-            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1E2130; padding:8px 12px; border-radius:6px; font-size:12px;">'
-            f'<span style="color:#00E676; font-weight:bold;">🎯 Marcador Probable: <b>{marcador}</b> (Prob: {prob}%)</span>'
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#151821; padding:8px 12px; border-radius:6px; font-size:12px; border:1px solid #282F3F;">'
+            f'<span style="color:#D4AF37; font-weight:bold;">🎯 Marcador Probable: <b>{marcador}</b> (Prob: {prob}%)</span>'
             f'<span style="color:#ddd;">🛡️ Opción Segura: <b>{doble_op}</b></span>'
             f'</div>'
             f'</div>'
         )
 
     html_ticket = (
-        f'<div style="background:linear-gradient(135deg, #12151E 0%, #0E1117 100%); border:2px solid #FFD700; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(255,215,0,0.2);">'
-        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2D3245; padding-bottom:14px; margin-bottom:16px;">'
+        f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:16px;">'
         f'<div>'
-        f'<div style="font-size:20px; font-weight:900; color:#FFD700;">⚖️ RADAR DE EMPATES DE ORO (TOP 5 DE ALTO VALOR)</div>'
+        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">⚖️ RADAR DE EMPATES DE ORO (TOP 5 DE ALTO VALOR)</div>'
         f'<div style="color:#aaa; font-size:13px;">5 encuentros de máxima paridad táctica con cuotas superiores a 3.00</div>'
         f'</div>'
-        f'<div style="text-align:right; background:#161922; border:1.5px solid #00E676; padding:8px 18px; border-radius:10px;">'
-        f'<div style="font-size:11px; color:#00E676; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>'
-        f'<div style="font-size:24px; font-weight:900; color:#FFD700; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
+        f'<div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">'
+        f'<div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>'
+        f'<div style="font-size:24px; font-weight:900; color:#D4AF37; letter-spacing:1px;">x{cuota_tot:,.2f}</div>'
         f'</div>'
         f'</div>'
         f'<div>{html_items}</div>'
         f'</div>'
     )
     return html_ticket
-
-
-
-
