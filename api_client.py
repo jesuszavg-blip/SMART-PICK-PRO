@@ -336,9 +336,10 @@ def obtener_ligas_mundo():
         resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
         
         ligas_top = {
-            "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
+            "📅 [HOY] Partidos de Hoy (Resuelven Hoy Mismo)": "TODAY_MATCHES_MODE",
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
             "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
+            "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
             "🇲🇽 Mexico - Liga MX": "262", 
@@ -547,12 +548,282 @@ def _generar_partidos_en_vivo_muestra():
         }
     }
 
+def _generar_partidos_hoy_muestra() -> dict:
+    """Genera datos estructurados y realistas de los mejores partidos programados para HOY"""
+    return {
+        "🇲🇽 México - Liga MX (Jornada de Hoy)": {
+            "pais": "México",
+            "nombre": "Liga MX",
+            "logo": "https://media.api-sports.io/football/leagues/262.png",
+            "flag": "https://media.api-sports.io/flags/mx.svg",
+            "id_liga": "262",
+            "partidos": [
+                {
+                    "id": 1301001,
+                    "local": "América",
+                    "local_id": 2287,
+                    "logo_local": obtener_logo_oficial_equipo("América"),
+                    "visita": "Pumas UNAM",
+                    "visita_id": 2286,
+                    "logo_visita": obtener_logo_oficial_equipo("Pumas"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "19:00 hrs (CDMX)",
+                    "venue": "Estadio Ciudad de los Deportes",
+                    "city": "Ciudad de México",
+                    "referee": "César Ramos"
+                },
+                {
+                    "id": 1301002,
+                    "local": "Tigres UANL",
+                    "local_id": 2291,
+                    "logo_local": obtener_logo_oficial_equipo("Tigres"),
+                    "visita": "Toluca",
+                    "visita_id": 2281,
+                    "logo_visita": obtener_logo_oficial_equipo("Toluca"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "21:05 hrs (CDMX)",
+                    "venue": "Estadio Universitario",
+                    "city": "Monterrey",
+                    "referee": "Fernando Hernández"
+                },
+                {
+                    "id": 1301003,
+                    "local": "Guadalajara",
+                    "local_id": 2288,
+                    "logo_local": obtener_logo_oficial_equipo("Guadalajara"),
+                    "visita": "Atlas",
+                    "visita_id": 2282,
+                    "logo_visita": obtener_logo_oficial_equipo("Atlas"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "17:00 hrs (CDMX)",
+                    "venue": "Estadio Akron",
+                    "city": "Guadalajara",
+                    "referee": "Adonai Escobedo"
+                }
+            ]
+        },
+        "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra - Premier League": {
+            "pais": "Inglaterra",
+            "nombre": "Premier League",
+            "logo": "https://media.api-sports.io/football/leagues/39.png",
+            "flag": "https://media.api-sports.io/flags/gb.svg",
+            "id_liga": "39",
+            "partidos": [
+                {
+                    "id": 1301004,
+                    "local": "Manchester City",
+                    "local_id": 50,
+                    "logo_local": obtener_logo_oficial_equipo("Manchester City"),
+                    "visita": "Liverpool",
+                    "visita_id": 40,
+                    "logo_visita": obtener_logo_oficial_equipo("Liverpool"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "13:30 hrs (CDMX)",
+                    "venue": "Etihad Stadium",
+                    "city": "Manchester",
+                    "referee": "Anthony Taylor"
+                },
+                {
+                    "id": 1301005,
+                    "local": "Arsenal",
+                    "local_id": 42,
+                    "logo_local": obtener_logo_oficial_equipo("Arsenal"),
+                    "visita": "Tottenham",
+                    "visita_id": 47,
+                    "logo_visita": obtener_logo_oficial_equipo("Tottenham"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "11:00 hrs (CDMX)",
+                    "venue": "Emirates Stadium",
+                    "city": "London",
+                    "referee": "Michael Oliver"
+                }
+            ]
+        },
+        "🇪🇸 España - LaLiga EA Sports": {
+            "pais": "España",
+            "nombre": "LaLiga",
+            "logo": "https://media.api-sports.io/football/leagues/140.png",
+            "flag": "https://media.api-sports.io/flags/es.svg",
+            "id_liga": "140",
+            "partidos": [
+                {
+                    "id": 1301006,
+                    "local": "Real Madrid",
+                    "local_id": 541,
+                    "logo_local": obtener_logo_oficial_equipo("Real Madrid"),
+                    "visita": "Villarreal",
+                    "visita_id": 533,
+                    "logo_visita": obtener_logo_oficial_equipo("Villarreal"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "14:00 hrs (CDMX)",
+                    "venue": "Estadio Santiago Bernabéu",
+                    "city": "Madrid",
+                    "referee": "Gil Manzano"
+                },
+                {
+                    "id": 1301007,
+                    "local": "Barcelona",
+                    "local_id": 529,
+                    "logo_local": obtener_logo_oficial_equipo("Barcelona"),
+                    "visita": "Real Sociedad",
+                    "visita_id": 548,
+                    "logo_visita": obtener_logo_oficial_equipo("Real Sociedad"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "12:00 hrs (CDMX)",
+                    "venue": "Estadi Olímpic Lluís Companys",
+                    "city": "Barcelona",
+                    "referee": "Sánchez Martínez"
+                }
+            ]
+        },
+        "🌍 UEFA Champions League": {
+            "pais": "Europa",
+            "nombre": "UEFA Champions League",
+            "logo": "https://media.api-sports.io/football/leagues/2.png",
+            "flag": "https://media.api-sports.io/flags/eu.svg",
+            "id_liga": "2",
+            "partidos": [
+                {
+                    "id": 1301008,
+                    "local": "Bayern Múnich",
+                    "local_id": 157,
+                    "logo_local": obtener_logo_oficial_equipo("Bayern Múnich"),
+                    "visita": "Inter Milan",
+                    "visita_id": 505,
+                    "logo_visita": obtener_logo_oficial_equipo("Inter"),
+                    "goles_local": 0,
+                    "goles_visita": 0,
+                    "status": "NS",
+                    "minuto": 0,
+                    "hora": "13:00 hrs (CDMX)",
+                    "venue": "Allianz Arena",
+                    "city": "Munich",
+                    "referee": "Szymon Marciniak"
+                }
+            ]
+        }
+    }
+
+@st.cache_data(ttl=120)
+def obtener_partidos_de_hoy() -> dict:
+    """
+    Obtiene todos los partidos programados o jugándose HOY agrupados por Liga/País
+    para apuestas rápidas que se resuelven el mismo día.
+    """
+    import datetime
+    today_str = datetime.date.today().strftime("%Y-%m-%d")
+    
+    headers = get_headers()
+    try:
+        url = f"{config.API_FOOTBALL_URL}/fixtures"
+        resp = requests.get(url, headers=headers, params={"date": today_str, "timezone": "America/Mexico_City"}, timeout=12)
+        if resp.status_code == 200 and resp.json().get('response'):
+            fixtures_raw = resp.json()['response']
+            
+            ligas_hoy = {}
+            for f in fixtures_raw:
+                l_obj = f.get('league', {})
+                l_id = str(l_obj.get('id', ''))
+                l_name = l_obj.get('name', 'Liga Oficial')
+                l_country = l_obj.get('country', 'Mundo')
+                l_logo = l_obj.get('logo', '')
+                l_flag = l_obj.get('flag', '')
+                
+                key_liga = f"{l_country} - {l_name}"
+                if key_liga not in ligas_hoy:
+                    ligas_hoy[key_liga] = {
+                        "pais": l_country,
+                        "nombre": l_name,
+                        "logo": l_logo,
+                        "flag": l_flag,
+                        "id_liga": l_id,
+                        "partidos": []
+                    }
+                
+                f_id = f.get('fixture', {}).get('id')
+                status_short = f.get('fixture', {}).get('status', {}).get('short', 'NS')
+                status_elapsed = f.get('fixture', {}).get('status', {}).get('elapsed', 0)
+                hora_utc = f.get('fixture', {}).get('date', '')
+                
+                hora_str = "Hoy"
+                if "T" in str(hora_utc):
+                    try:
+                        t_part = str(hora_utc).split("T")[1][:5]
+                        hora_str = f"{t_part} hrs (CDMX)"
+                    except Exception:
+                        hora_str = "Hoy"
+
+                home_name = f.get('teams', {}).get('home', {}).get('name', 'Local')
+                home_id = f.get('teams', {}).get('home', {}).get('id', 0)
+                home_logo_raw = f.get('teams', {}).get('home', {}).get('logo', '')
+                home_logo = obtener_logo_oficial_equipo(home_name, home_logo_raw)
+                
+                away_name = f.get('teams', {}).get('away', {}).get('name', 'Visita')
+                away_id = f.get('teams', {}).get('away', {}).get('id', 0)
+                away_logo_raw = f.get('teams', {}).get('away', {}).get('logo', '')
+                away_logo = obtener_logo_oficial_equipo(away_name, away_logo_raw)
+                
+                goals_home = f.get('goals', {}).get('home', 0)
+                goals_away = f.get('goals', {}).get('away', 0)
+                
+                venue_obj = f.get('fixture', {}).get('venue') or {}
+                stadium = venue_obj.get('name') or f"Estadio {home_name}"
+                city = venue_obj.get('city') or l_country
+                referee = f.get('fixture', {}).get('referee') or "Árbitro Oficial Asignado"
+
+                partido_dict = {
+                    "id": f_id,
+                    "local": home_name,
+                    "local_id": home_id,
+                    "logo_local": home_logo,
+                    "visita": away_name,
+                    "visita_id": away_id,
+                    "logo_visita": away_logo,
+                    "goles_local": goals_home if goals_home is not None else 0,
+                    "goles_visita": goals_away if goals_away is not None else 0,
+                    "status": status_short,
+                    "minuto": status_elapsed if status_elapsed is not None else 0,
+                    "hora": hora_str,
+                    "venue": stadium,
+                    "city": city,
+                    "referee": referee
+                }
+                ligas_hoy[key_liga]["partidos"].append(partido_dict)
+                
+            if ligas_hoy:
+                return ligas_hoy
+    except Exception as e:
+        print(f"Error al obtener partidos de hoy: {e}")
+
+    return _generar_partidos_hoy_muestra()
+
 def obtener_partidos_jornada(league_id: str):
     """
     Obtiene los partidos de la jornada anterior (Finalizados) y de la jornada actual (Próximos)
     con sus escudos exactos e infalibles para cada equipo en su posición (Local y Visita).
     """
-    if league_id in ["LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE"]:
+    if league_id in ["TODAY_MATCHES_MODE", "LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE", "AFFILIATE_PROGRAM_MODE"]:
         return {"🎯 Módulo Especial Activo": {"id": None}}
     
     url = f"{config.API_FOOTBALL_URL}/fixtures"
