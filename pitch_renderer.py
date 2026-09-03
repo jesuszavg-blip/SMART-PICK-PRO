@@ -311,6 +311,8 @@ def render_ticket_parlay_altas(parlay_data: dict) -> str:
         loc = html.escape(str(p.get("local", "")))
         vis = html.escape(str(p.get("visita", "")))
         liga = html.escape(str(p.get("liga", "")))
+        hora = html.escape(str(p.get("hora", "")))
+        hora_badge = f'<span style="color:#38BDF8; font-size:11px; margin-left:6px; font-weight:bold;">⏰ {hora}</span>' if hora else ""
         mercado = html.escape(str(p.get("mercado", "Más de 1.5 Goles")))
         prob = p.get("probabilidad", 75.0)
         cuota = p.get("cuota", 1.30)
@@ -318,7 +320,7 @@ def render_ticket_parlay_altas(parlay_data: dict) -> str:
         html_items += (
             f'<div style="display:flex; justify-content:space-between; align-items:center; background:#11141C; border:1px solid #282F3F; border-left:4px solid #D4AF37; padding:10px 14px; border-radius:8px; margin-bottom:8px;">'
             f'<div style="flex:1;">'
-            f'<div style="color:#aaa; font-size:11px; font-weight:bold;">{idx+1}. {liga}</div>'
+            f'<div style="color:#aaa; font-size:11px; font-weight:bold;">{idx+1}. {liga}{hora_badge}</div>'
             f'<div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>'
             f'</div>'
             f'<div style="text-align:right; display:flex; align-items:center; gap:10px;">'
@@ -333,8 +335,8 @@ def render_ticket_parlay_altas(parlay_data: dict) -> str:
         f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">'
         f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:16px;">'
         f'<div>'
-        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">🔥 BOLETO PARLAY MAESTRO DE ALTAS</div>'
-        f'<div style="color:#aaa; font-size:13px;">Selección de los {total_p} partidos con mayor volumen ofensivo y xG esperado</div>'
+        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">🔥 BOLETO PARLAY MAESTRO DE ALTAS (PARTIDOS DE HOY)</div>'
+        f'<div style="color:#aaa; font-size:13px;">Selección de los {total_p} partidos de hoy con mayor volumen ofensivo y xG esperado</div>'
         f'</div>'
         f'<div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">'
         f'<div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>'
@@ -362,6 +364,8 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         loc = html.escape(str(e.get("local", "")))
         vis = html.escape(str(e.get("visita", "")))
         liga = html.escape(str(e.get("liga", "")))
+        hora = html.escape(str(e.get("hora", "")))
+        hora_badge = f'<span style="color:#38BDF8; font-size:11px; margin-left:6px; font-weight:bold;">⏰ {hora}</span>' if hora else ""
         prob = e.get("probabilidad_empate", 33.0)
         cuota = e.get("cuota_empate", 3.25)
         marcador = html.escape(str(e.get("marcador_probable", "1 - 1")))
@@ -370,7 +374,7 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         html_items += (
             f'<div style="background:#11141C; border:1px solid #282F3F; border-left:4px solid #D4AF37; padding:14px 18px; border-radius:10px; margin-bottom:12px;">'
             f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">'
-            f'<span style="color:#aaa; font-size:12px; font-weight:bold;">{idx+1}. {liga}</span>'
+            f'<span style="color:#aaa; font-size:12px; font-weight:bold;">{idx+1}. {liga}{hora_badge}</span>'
             f'<span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">⚖️ Paridad Extrema</span>'
             f'</div>'
             f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">'
@@ -388,8 +392,8 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">'
         f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:16px;">'
         f'<div>'
-        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">⚖️ RADAR DE EMPATES DE ORO (TOP 5 DE ALTO VALOR)</div>'
-        f'<div style="color:#aaa; font-size:13px;">5 encuentros de máxima paridad táctica con cuotas superiores a 3.00</div>'
+        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">⚖️ RADAR DE EMPATES DE ORO (PARTIDOS DE HOY)</div>'
+        f'<div style="color:#aaa; font-size:13px;">Encuentros de máxima paridad táctica de la jornada de hoy con cuotas superiores a 3.00</div>'
         f'</div>'
         f'<div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">'
         f'<div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>'
