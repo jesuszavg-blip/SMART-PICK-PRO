@@ -20,42 +20,12 @@
     "total_ganado": 0.0
   },
   {
-    "username": "test_vip_user",
-    "password": "$2b$12$MMyaE0tEaX51mAfZbGKsBOS0KTHijVRI.BQRHwI38NWso.oA5FrfC",
-    "role": "VIP",
-    "is_active": 1,
-    "referral_code": "SP-TESTMOAL",
-    "referred_by": null,
-    "balance_disponible": 0.0,
-    "total_ganado": 0.0
-  },
-  {
     "username": "rada",
     "password": "$2b$12$7euixbQvVbSkulaqkXe/o.OQOGISrIEyMnem19u3eCdi4Jl7lkwAG",
     "role": "VIP",
     "is_active": 1,
     "referral_code": "SP-RADASO71",
     "referred_by": null,
-    "balance_disponible": 0.0,
-    "total_ganado": 0.0
-  },
-  {
-    "username": "juan_promoter",
-    "password": "$2b$12$hl1b9HtRD87Udew8NPyuT.2ZaAa4oV434Meoa9Hqdw0PVQheHWGgG",
-    "role": "VIP",
-    "is_active": 1,
-    "referral_code": "SP-JUAN54LP",
-    "referred_by": null,
-    "balance_disponible": 74.5,
-    "total_ganado": 74.5
-  },
-  {
-    "username": "carlos_amigo",
-    "password": "$2b$12$9Y4pxvt1Y6MuMEpywgksAOPR8LPICJetq5NyZsEgMsdSOOrWHYCN6",
-    "role": "VIP",
-    "is_active": 1,
-    "referral_code": "SP-CARLPLE4",
-    "referred_by": "juan_promoter",
     "balance_disponible": 0.0,
     "total_ganado": 0.0
   }
