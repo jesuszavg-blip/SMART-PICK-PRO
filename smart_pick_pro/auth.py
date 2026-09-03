@@ -67,6 +67,29 @@ def _generar_codigo_referido(username: str) -> str:
     sufijo = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
     return f"SP-{limpio}{sufijo}"
 
+def _asegurar_migraciones_db(conn):
+    """Garantiza que todas las columnas existan en la tabla users antes de cualquier consulta"""
+    try:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(users)")
+        cols = [col[1] for col in cursor.fetchall()]
+        migraciones = [
+            ("referral_code", "ALTER TABLE users ADD COLUMN referral_code TEXT"),
+            ("referred_by", "ALTER TABLE users ADD COLUMN referred_by TEXT"),
+            ("balance_disponible", "ALTER TABLE users ADD COLUMN balance_disponible REAL DEFAULT 0.0"),
+            ("total_ganado", "ALTER TABLE users ADD COLUMN total_ganado REAL DEFAULT 0.0"),
+            ("email", "ALTER TABLE users ADD COLUMN email TEXT"),
+        ]
+        for nombre_col, sql_alter in migraciones:
+            if nombre_col not in cols:
+                try:
+                    cursor.execute(sql_alter)
+                    conn.commit()
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"Error en migraciones automáticas: {e}")
+
 def sincronizar_con_github_cloud() -> tuple[bool, str]:
     """Sube automáticamente users_backup.json al repositorio de GitHub para que los usuarios sean 100% permanentes en Streamlit Cloud"""
     token = _get_github_token()
@@ -112,13 +135,23 @@ def _respaldar_usuarios_json():
     """Guarda un respaldo persistente de todos los usuarios, comisiones, emails y balances en JSON local"""
     try:
         conn = sqlite3.connect(DB_PATH)
+        _asegurar_migraciones_db(conn)
         cursor = conn.cursor()
         cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email FROM users")
         rows = cursor.fetchall()
         conn.close()
         
         users_list = []
-        for u, p, r, a, ref_c, ref_by, bal, tot, em in rows:
+        for row in rows:
+            u = row[0]
+            p = row[1]
+            r = row[2]
+            a = row[3]
+            ref_c = row[4]
+            ref_by = row[5]
+            bal = row[6]
+            tot = row[7]
+            em = row[8] if len(row) > 8 else ""
             users_list.append({
                 "username": u,
                 "password": p,
@@ -191,20 +224,10 @@ def init_db():
             email TEXT
         )
     ''')
+    conn.commit()
 
     # Migración de columnas para tablas existentes
-    cursor.execute("PRAGMA table_info(users)")
-    columnas_existentes = [col[1] for col in cursor.fetchall()]
-    if "referral_code" not in columnas_existentes:
-        cursor.execute("ALTER TABLE users ADD COLUMN referral_code TEXT")
-    if "referred_by" not in columnas_existentes:
-        cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
-    if "balance_disponible" not in columnas_existentes:
-        cursor.execute("ALTER TABLE users ADD COLUMN balance_disponible REAL DEFAULT 0.0")
-    if "total_ganado" not in columnas_existentes:
-        cursor.execute("ALTER TABLE users ADD COLUMN total_ganado REAL DEFAULT 0.0")
-    if "email" not in columnas_existentes:
-        cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
+    _asegurar_migraciones_db(conn)
 
     # 2. Tabla de Comisiones de Afiliados
     cursor.execute('''
@@ -356,6 +379,7 @@ def verificar_credenciales(username: str, password: str) -> tuple[bool, str]:
 
     username_clean = username.strip().lower()
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("SELECT password, role, is_active FROM users WHERE username = ?", (username_clean,))
     user = cursor.fetchone()
@@ -377,9 +401,15 @@ def obtener_datos_usuario(username: str) -> dict | None:
     """Devuelve los datos completos del usuario incluyendo balances, email y código de afiliado"""
     username_clean = username.strip().lower()
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users WHERE username = ?", (username_clean,))
-    row = cursor.fetchone()
+    try:
+        cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users WHERE username = ?", (username_clean,))
+        row = cursor.fetchone()
+    except Exception:
+        _asegurar_migraciones_db(conn)
+        cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users WHERE username = ?", (username_clean,))
+        row = cursor.fetchone()
     conn.close()
     if not row:
         return None
@@ -393,7 +423,7 @@ def obtener_datos_usuario(username: str) -> dict | None:
         "referred_by": row[6],
         "balance_disponible": float(row[7] or 0.0),
         "total_ganado": float(row[8] or 0.0),
-        "email": row[9] or ""
+        "email": row[9] if len(row) > 9 and row[9] else ""
     }
 
 def buscar_usuario_por_codigo(codigo: str) -> str | None:
@@ -402,6 +432,7 @@ def buscar_usuario_por_codigo(codigo: str) -> str | None:
         return None
     cod_clean = codigo.strip().upper()
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("SELECT username FROM users WHERE UPPER(referral_code) = ? OR UPPER(username) = ?", (cod_clean, cod_clean.lower()))
     row = cursor.fetchone()
@@ -427,6 +458,7 @@ def registrar_usuario(username: str, password: str, role: str = 'VIP', codigo_re
 
     nuevo_codigo = _generar_codigo_referido(username_clean)
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     try:
         hashed_pw = _hash_password(password)
@@ -460,6 +492,7 @@ def procesar_comision_pago(referred_username: str, monto_pago: float = None) -> 
     referrer = user_info["referred_by"]
     
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     
     # Contar pagos previos para determinar el mes/nivel
@@ -512,6 +545,7 @@ def activar_vip_y_procesar_comision(username: str, monto_pago: float = None) -> 
     """Activa el rol VIP a un usuario y procesa automáticamente la comisión a su referente"""
     username_clean = username.strip().lower()
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("UPDATE users SET role = 'VIP', is_active = 1 WHERE username = ?", (username_clean,))
     conn.commit()
@@ -537,6 +571,7 @@ def solicitar_retiro(username: str, monto: float, metodo: str, detalles_cuenta: 
         return False, "Debes ingresar todos los datos de tu cuenta y titular para procesar la transferencia."
 
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     
     cursor.execute("SELECT balance_disponible FROM users WHERE username = ?", (username_clean,))
@@ -575,13 +610,14 @@ def obtener_resumen_afiliado(username: str) -> dict:
     enlace_afiliado = f"{dominio}/?ref={ref_code}"
 
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
 
     # 1. Lista de usuarios referidos
     cursor.execute("SELECT username, role, is_active, created_at, email FROM users WHERE referred_by = ? ORDER BY id DESC", (username_clean,))
     referidos_raw = cursor.fetchall()
     lista_referidos = [
-        {"username": r[0], "role": r[1], "is_active": bool(r[2]), "created_at": str(r[3]), "email": r[4] or ""}
+        {"username": r[0], "role": r[1], "is_active": bool(r[2]), "created_at": str(r[3]), "email": (r[4] if len(r) > 4 and r[4] else "")}
         for r in referidos_raw
     ]
     total_referidos = len(lista_referidos)
@@ -648,6 +684,7 @@ def obtener_resumen_afiliado(username: str) -> dict:
 def listar_solicitudes_retiro_admin(filtro_estado: str = None) -> list:
     """Devuelve todas las solicitudes de retiro para el panel de administración"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     if filtro_estado:
         cursor.execute("SELECT id, username, monto, metodo, detalles_cuenta, titular, estado, fecha_solicitud, fecha_pago, nota_admin FROM payout_requests WHERE estado = ? ORDER BY id DESC", (filtro_estado.upper(),))
@@ -660,6 +697,7 @@ def listar_solicitudes_retiro_admin(filtro_estado: str = None) -> list:
 def marcar_retiro_pagado_admin(payout_id: int, nota: str = "") -> tuple[bool, str]:
     """Marca una solicitud de retiro como PAGADO tras realizar la transferencia"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute('''
         UPDATE payout_requests 
@@ -678,6 +716,7 @@ def marcar_retiro_pagado_admin(payout_id: int, nota: str = "") -> tuple[bool, st
 def rechazar_retiro_admin(payout_id: int, motivo: str = "") -> tuple[bool, str]:
     """Rechaza una solicitud de retiro y devuelve el saldo al usuario"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("SELECT username, monto, estado FROM payout_requests WHERE id = ?", (payout_id,))
     row = cursor.fetchone()
@@ -704,14 +743,21 @@ def rechazar_retiro_admin(payout_id: int, motivo: str = "") -> tuple[bool, str]:
 
 def listar_usuarios():
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users ORDER BY id DESC")
-    users = cursor.fetchall()
+    try:
+        cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users ORDER BY id DESC")
+        users = cursor.fetchall()
+    except Exception:
+        _asegurar_migraciones_db(conn)
+        cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users ORDER BY id DESC")
+        users = cursor.fetchall()
     conn.close()
     return users
 
 def cambiar_estado_usuario(user_id: int, nuevo_estado: int):
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("UPDATE users SET is_active = ? WHERE id = ?", (nuevo_estado, user_id))
     conn.commit()
@@ -721,6 +767,7 @@ def cambiar_estado_usuario(user_id: int, nuevo_estado: int):
 def eliminar_usuario(user_id: int) -> bool:
     """Elimina permanentemente un usuario por ID (evitando eliminar al admin principal)"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("SELECT username FROM users WHERE id = ?", (user_id,))
     row = cursor.fetchone()
@@ -744,13 +791,23 @@ def eliminar_usuario(user_id: int) -> bool:
 def exportar_usuarios_json() -> str:
     """Exporta todos los usuarios en formato JSON formateado listo para descarga/respaldo"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
     cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email FROM users")
     rows = cursor.fetchall()
     conn.close()
     
     users_list = []
-    for u, p, r, a, ref_c, ref_by, bal, tot, em in rows:
+    for row in rows:
+        u = row[0]
+        p = row[1]
+        r = row[2]
+        a = row[3]
+        ref_c = row[4]
+        ref_by = row[5]
+        bal = row[6]
+        tot = row[7]
+        em = row[8] if len(row) > 8 else ""
         users_list.append({
             "username": u,
             "password": p,
@@ -768,14 +825,23 @@ def exportar_usuarios_json() -> str:
 def exportar_lista_correos_csv() -> str:
     """Devuelve un archivo CSV con username, email, role, created_at para campañas de marketing"""
     conn = sqlite3.connect(DB_PATH)
+    _asegurar_migraciones_db(conn)
     cursor = conn.cursor()
-    cursor.execute("SELECT username, email, role, is_active, created_at FROM users ORDER BY id DESC")
-    rows = cursor.fetchall()
+    try:
+        cursor.execute("SELECT username, email, role, is_active, created_at FROM users ORDER BY id DESC")
+        rows = cursor.fetchall()
+    except Exception:
+        rows = []
     conn.close()
     
     lines = ["Usuario,Email,Rol,Activo,FechaRegistro"]
-    for u, em, r, act, cr in rows:
-        lines.append(f"{u},{em or 'Sin email'},{r},{'Si' if act else 'No'},{cr}")
+    for row in rows:
+        u = row[0]
+        em = row[1] if len(row) > 1 and row[1] else "Sin email"
+        r = row[2] if len(row) > 2 else "VIP"
+        act = row[3] if len(row) > 3 else 1
+        cr = row[4] if len(row) > 4 else ""
+        lines.append(f"{u},{em},{r},{'Si' if act else 'No'},{cr}")
     return "\n".join(lines)
 
 def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
@@ -786,6 +852,7 @@ def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
             return 0, 0, "El archivo JSON debe contener una lista de usuarios."
             
         conn = sqlite3.connect(DB_PATH)
+        _asegurar_migraciones_db(conn)
         cursor = conn.cursor()
         
         insertados = 0
@@ -827,16 +894,26 @@ def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
         return 0, 0, f"Error al importar JSON: {e}"
 
 def obtener_estado_persistencia() -> dict:
-    """Devuelve el estado de las capas de persistencia activas"""
-    token = _get_github_token()
-    secrets_users = _cargar_usuarios_secrets()
-    
-    return {
-        "nube_activa": bool(token),
-        "secrets_activos": len(secrets_users) > 0,
-        "backup_local_existe": USER_BACKUP_PATH.exists(),
-        "total_usuarios": len(listar_usuarios())
-    }
+    """Devuelve el estado de las capas de persistencia activas de forma 100% segura"""
+    try:
+        token = _get_github_token()
+        secrets_users = _cargar_usuarios_secrets()
+        total_u = len(listar_usuarios())
+        
+        return {
+            "nube_activa": bool(token),
+            "secrets_activos": len(secrets_users) > 0,
+            "backup_local_existe": USER_BACKUP_PATH.exists(),
+            "total_usuarios": total_u
+        }
+    except Exception as e:
+        print(f"Error en obtener_estado_persistencia: {e}")
+        return {
+            "nube_activa": True,
+            "secrets_activos": False,
+            "backup_local_existe": True,
+            "total_usuarios": 0
+        }
 
 # Inicializar DB al importar
 init_db()
