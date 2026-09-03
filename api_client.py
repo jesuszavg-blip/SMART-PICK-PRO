@@ -336,6 +336,7 @@ def obtener_ligas_mundo():
         resp = requests.get(url, headers=headers, params={"current": "true"}, timeout=10)
         
         ligas_top = {
+            "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
             "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
