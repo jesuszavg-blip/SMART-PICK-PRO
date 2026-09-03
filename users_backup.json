@@ -16,5 +16,11 @@
     "password": "$2b$12$MMyaE0tEaX51mAfZbGKsBOS0KTHijVRI.BQRHwI38NWso.oA5FrfC",
     "role": "VIP",
     "is_active": 1
+  },
+  {
+    "username": "rada",
+    "password": "$2b$12$7euixbQvVbSkulaqkXe/o.OQOGISrIEyMnem19u3eCdi4Jl7lkwAG",
+    "role": "VIP",
+    "is_active": 1
   }
 ]
