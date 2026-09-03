@@ -810,7 +810,7 @@ def obtener_datos_vivo(fixture_id):
 
 @st.cache_data(ttl=3600)
 def obtener_analisis_completo(fixture_id, id_local, id_visita):
-    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and fixture_id >= 120000):
+    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and 120010 <= fixture_id <= 120019):
         return "Recomendación basada en el modelo Poisson multifactorial.", "45%", "30%", "25%", [], [], [], "Más de 1.5 Goles", "1.8", "1.1", "60%", "45%"
     
     headers = get_headers()
@@ -942,7 +942,7 @@ def obtener_momios_multiples(fixture_id):
         {"nombre": "Betmaster", "1": 2.15, "X": 3.25, "2": 2.85},
         {"nombre": "Winpot", "1": 2.12, "X": 3.18, "2": 2.82},
     ]
-    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and fixture_id >= 120000):
+    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and 120010 <= fixture_id <= 120019):
         return casinos_default
     
     headers = get_headers()
@@ -980,7 +980,7 @@ def obtener_momios_multiples(fixture_id):
 
 @st.cache_data(ttl=3600)
 def obtener_alineaciones(fixture_id):
-    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and fixture_id >= 120000):
+    if not fixture_id or fixture_id == "CUSTOM_MATCH" or (isinstance(fixture_id, int) and 120010 <= fixture_id <= 120019):
         return "4-3-3", "4-2-3-1", [], [], [], []
     
     headers = get_headers()
