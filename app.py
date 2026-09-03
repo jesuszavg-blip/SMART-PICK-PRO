@@ -1818,16 +1818,17 @@ else:
         else:
             consejo_dinamico = f"Doble Oportunidad sugerida: {equipo_local_real} o {equipo_visita_real} (12) | Choque sumamente parejo."
 
-        # Badge de Estado
+        # Badge de Estado y Marcador Superior Dinámico
         if status in ['1H', '2H', 'HT', 'LIVE']:
-            badge_html = f"<div style='background:#e74c3c; color:white; padding:4px 12px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>🔴 EN VIVO {min_j}'</div>"
-            score_html = f"<h1 style='margin:0; font-size:44px; color:#1E2130; letter-spacing:4px;'>{g_h} - {g_a}</h1>"
+            badge_html = f"<div style='background:#e74c3c; color:white; padding:4px 14px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>🔴 EN VIVO {min_j}'</div>"
+            score_html = f"<h1 style='margin:0; font-size:44px; color:#D4AF37; letter-spacing:4px;'>{g_h} - {g_a}</h1>"
         elif status in ['FT', 'AET', 'PEN']:
-            badge_html = "<div style='background:#34495e; color:white; padding:4px 12px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>✅ FINALIZADO</div>"
-            score_html = f"<h1 style='margin:0; font-size:44px; color:#1E2130; letter-spacing:4px;'>{g_h} - {g_a}</h1>"
+            badge_html = "<div style='background:#34495e; color:white; padding:4px 14px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>🏁 FINALIZADO (90')</div>"
+            score_html = f"<h1 style='margin:0; font-size:44px; color:#D4AF37; letter-spacing:4px;'>{g_h} - {g_a}</h1>"
         else:
-            badge_html = "<div style='background:#f39c12; color:white; padding:4px 12px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>⏳ POR INICIAR</div>"
-            score_html = "<h2 style='margin:0; color:#888; font-size:30px;'>VS</h2>"
+            hora_p = datos_partido.get('hora', 'Hoy')
+            badge_html = f"<div style='background:rgba(212,175,55,0.18); color:#F3E5AB; border:1px solid #D4AF37; padding:4px 14px; border-radius:12px; font-weight:bold; font-size:12px; display:inline-block;'>⏰ POR JUGAR ({hora_p})</div>"
+            score_html = "<h2 style='margin:6px 0 0 0; color:#F3E5AB; font-size:28px; font-weight:900; letter-spacing:2px;'>VS</h2>"
 
         logo_local_render = api_client.obtener_logo_oficial_equipo(equipo_local_real, datos_partido.get('logo_local', ''))
         logo_visita_render = api_client.obtener_logo_oficial_equipo(equipo_visita_real, datos_partido.get('logo_visita', ''))
@@ -1841,7 +1842,7 @@ else:
             </div>
             <div style="width:34%; text-align:center;">
                 {badge_html}
-                <h1 style='margin:0; font-size:44px; color:#D4AF37; letter-spacing:4px;'>{g_h} - {g_a}</h1>
+                {score_html}
             </div>
             <div style="text-align:center; width:33%;">
                 <img src="{logo_visita_render}" style="width:70px; height:70px; object-fit:contain; margin-bottom:6px;">
