@@ -469,3 +469,76 @@ def render_ticket_bet_builder(bet_builder_data, equipo_local: str = "", equipo_v
     )
     return html_card
 
+def render_tarjeta_partido_hoy(p_item: dict, pick_info: dict = None) -> str:
+    """
+    Renderiza una tarjeta VIP premium para la sección 'Partidos de Hoy'
+    con horario en vivo, escudos oficiales y el Pick Recomendado del Día (+EV).
+    """
+    import html
+    loc = html.escape(str(p_item.get('local', 'Local')))
+    vis = html.escape(str(p_item.get('visita', 'Visita')))
+    logo_l = p_item.get('logo_local', 'https://media.api-sports.io/football/teams/2287.png')
+    logo_v = p_item.get('logo_visita', 'https://media.api-sports.io/football/teams/2291.png')
+    hora = html.escape(str(p_item.get('hora', 'Hoy')))
+    venue = html.escape(str(p_item.get('venue', 'Estadio')))
+    st_val = str(p_item.get('status', 'NS')).upper()
+    min_val = p_item.get('minuto', 0)
+    g_l = p_item.get('goles_local', 0)
+    g_v = p_item.get('goles_visita', 0)
+
+    if st_val in ['1H', '2H', 'LIVE']:
+        st_badge = f'<span style="background:rgba(231,76,60,0.2); color:#EF5350; border:1px solid #EF5350; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🔴 EN VIVO {min_val}\'</span>'
+        marcador_box = f'<div style="background:#0D0F14; border:1.5px solid #EF5350; padding:4px 14px; border-radius:8px; font-size:20px; font-weight:900; color:#EF5350; letter-spacing:2px; text-align:center;">{g_l} - {g_v}</div>'
+    elif st_val == 'HT':
+        st_badge = '<span style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">⏸️ ENTRETIEMPO</span>'
+        marcador_box = f'<div style="background:#0D0F14; border:1.5px solid #D4AF37; padding:4px 14px; border-radius:8px; font-size:20px; font-weight:900; color:#D4AF37; letter-spacing:2px; text-align:center;">{g_l} - {g_v}</div>'
+    elif st_val in ['FT', 'AET', 'PEN']:
+        st_badge = '<span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; padding:3px 10px; border-radius:20px; font-weight:900; font-size:11px;">🏁 FINAL</span>'
+        marcador_box = f'<div style="background:#0D0F14; border:1.5px solid #D4AF37; padding:4px 14px; border-radius:8px; font-size:20px; font-weight:900; color:#D4AF37; letter-spacing:2px; text-align:center;">{g_l} - {g_v}</div>'
+    else:
+        st_badge = f'<span style="background:rgba(56,189,248,0.15); color:#38BDF8; border:1px solid #38BDF8; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:11px;">⏰ {hora}</span>'
+        marcador_box = '<div style="background:#0D0F14; border:1px solid #282F3F; padding:4px 14px; border-radius:8px; font-size:14px; font-weight:900; color:#aaa; text-align:center;">VS</div>'
+
+    # Pick Recomendado
+    pick_html = ""
+    if pick_info:
+        p_txt = html.escape(str(pick_info.get('pick', 'Doble Oportunidad')))
+        p_cuota = pick_info.get('cuota', 1.35)
+        p_prob = pick_info.get('probabilidad', 75.0)
+        p_tipo = html.escape(str(pick_info.get('tipo', '🎯 Pick Recomendado')))
+
+        pick_html = (
+            f'<div style="background:#11141C; border:1px solid #D4AF37; border-radius:10px; padding:10px 14px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">'
+            f'<div>'
+            f'<div style="color:#F3E5AB; font-size:11px; font-weight:bold; text-transform:uppercase;">{p_tipo} (Resuelve Hoy)</div>'
+            f'<div style="color:#FFFFFF; font-size:14px; font-weight:900; margin-top:2px;">🎯 {p_txt}</div>'
+            f'</div>'
+            f'<div style="display:flex; align-items:center; gap:8px;">'
+            f'<span style="background:#1A1E29; color:#D4AF37; border:1px solid #D4AF37; font-weight:900; padding:3px 10px; border-radius:8px; font-size:13px;">@{p_cuota:.2f}</span>'
+            f'<span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:3px 10px; border-radius:10px; font-size:12px;">Conf: {p_prob}%</span>'
+            f'</div>'
+            f'</div>'
+        )
+
+    card_html = (
+        f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; border-radius:14px; padding:14px 18px; margin-bottom:12px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #232938; padding-bottom:6px;">'
+        f'<div style="color:#aaa; font-size:11px; font-weight:bold;">📍 {venue}</div>'
+        f'<div>{st_badge}</div>'
+        f'</div>'
+        f'<div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; margin-bottom:4px;">'
+        f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; text-align:right;">'
+        f'<span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{loc}</span>'
+        f'<img src="{logo_l}" style="width:38px; height:38px; object-fit:contain; flex-shrink:0;">'
+        f'</div>'
+        f'{marcador_box}'
+        f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; text-align:left;">'
+        f'<img src="{logo_v}" style="width:38px; height:38px; object-fit:contain; flex-shrink:0;">'
+        f'<span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{vis}</span>'
+        f'</div>'
+        f'</div>'
+        f'{pick_html}'
+        f'</div>'
+    )
+    return card_html
+
