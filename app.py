@@ -1411,25 +1411,54 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
             with st.spinner("Procesando matriz de goles esperados y xG en partidos de hoy..."):
                 parlay_altas_data = analytics.generar_parlay_top_altas(top_n=top_n_altas)
 
-            # Renderizar boleto visual
-            st.markdown(pitch_renderer.render_ticket_parlay_altas(parlay_altas_data), unsafe_allow_html=True)
+            picks_altas = parlay_altas_data.get("picks", [])
+            cuota_tot_altas = parlay_altas_data.get("cuota_acumulada", 1.0)
+            
+            # Boleto con botones integrados en cada fila
+            st.markdown(f'''
+            <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px 20px 14px 20px; color:white; margin-bottom:12px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:6px;">
+                    <div>
+                        <div style="font-size:20px; font-weight:900; color:#D4AF37;">🔥 BOLETO PARLAY MAESTRO DE ALTAS (PARTIDOS DE HOY)</div>
+                        <div style="color:#aaa; font-size:13px;">Selección de los {len(picks_altas)} partidos de hoy con mayor xG • <i>Toca el botón con la lupa 🔍 en cualquier fila para ver su análisis</i></div>
+                    </div>
+                    <div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">
+                        <div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Combinada Total</div>
+                        <div style="font-size:24px; font-weight:900; color:#D4AF37; letter-spacing:1px;">x{cuota_tot_altas:,.2f}</div>
+                    </div>
+                </div>
+            </div>
+            ''', unsafe_allow_html=True)
 
-            # Acceso directo al análisis completo de cada partido de altas
-            st.markdown("#### 🔍 Análisis Profundo 1 a 1 de Cada Encuentro:")
-            st.markdown("<p style='color:#94A3B8; font-size:12px; margin-top:-6px;'>Haz clic en cualquier partido para abrir su análisis integral (Minuto a minuto, Monte Carlo, Bet Builder, xG, H2H y Árbitro):</p>", unsafe_allow_html=True)
+            for idx_a, p in enumerate(picks_altas):
+                loc = p.get("local", "")
+                vis = p.get("visita", "")
+                liga = p.get("liga", "")
+                hora = p.get("hora", "Hoy")
+                mercado = p.get("mercado", "Más de 1.5 Goles")
+                prob = p.get("probabilidad", 75.0)
+                cuota = p.get("cuota", 1.30)
 
-            cols_altas_grid = st.columns(2)
-            for idx_a, a_pick in enumerate(parlay_altas_data.get("picks", [])):
-                with cols_altas_grid[idx_a % 2]:
-                    l_str = a_pick.get('local', 'Local')
-                    v_str = a_pick.get('visita', 'Visita')
-                    h_str = f" ⏰ {a_pick.get('hora', 'Hoy')}" if a_pick.get('hora') else ""
-                    m_str = a_pick.get('mercado', 'Más de 1.5')
-                    c_str = a_pick.get('cuota', 1.25)
-                    btn_altas_label = f"🔍 {idx_a+1}. {l_str} vs {v_str}{h_str} • {m_str} (@{c_str:.2f})"
-                    if st.button(btn_altas_label, key=f"btn_altas_nav_{idx_a}_{a_pick.get('id', idx_a)}", use_container_width=True):
-                        st.session_state['live_partido_detalle'] = a_pick
+                col_row1, col_row2, col_row3 = st.columns([2.6, 1.4, 0.9])
+                with col_row1:
+                    st.markdown(f'''
+                    <div style="background:#11141C; border-left:4px solid #D4AF37; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:8px 12px; border-radius:8px 0 0 8px; min-height:52px; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx_a+1}. {liga} <span style="color:#38BDF8; font-size:10px; margin-left:4px;">⏰ {hora}</span></div>
+                        <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                with col_row2:
+                    st.markdown("<div style='height:3px;'></div>", unsafe_allow_html=True)
+                    if st.button(f"⚽ {mercado} 🔍", key=f"btn_row_alt_{idx_a}_{p.get('id', idx_a)}", use_container_width=True, help=f"Abrir análisis completo de {loc} vs {vis}"):
+                        st.session_state['live_partido_detalle'] = p
                         st.rerun()
+                with col_row3:
+                    st.markdown(f'''
+                    <div style="background:#11141C; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; border-right:1px solid #282F3F; padding:8px 6px; border-radius:0 8px 8px 0; min-height:52px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <div style="background:#151821; border:1px solid #F3E5AB; color:#F3E5AB; font-weight:900; padding:4px 7px; border-radius:6px; font-size:12px;">@{cuota:.2f}</div>
+                        <div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:10px; padding:4px 5px; border-radius:4px; border:1px solid #282F3F;">{prob}%</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1467,25 +1496,53 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
             with st.spinner("Procesando matriz Dixon-Coles de paridad táctica de partidos de hoy..."):
                 empates_data = analytics.generar_top_empates_oro(top_n=top_n_emp)
 
-            # Renderizar boleto visual de empates
-            st.markdown(pitch_renderer.render_ticket_empates_oro(empates_data), unsafe_allow_html=True)
+            empates_list = empates_data.get("empates", [])
+            cuota_tot_emp = empates_data.get("cuota_parlay_empates", 1.0)
 
-            # Acceso directo al análisis completo de cada partido de empates
-            st.markdown("#### 🔍 Análisis Profundo 1 a 1 de Cada Encuentro de Paridad:")
-            st.markdown("<p style='color:#94A3B8; font-size:12px; margin-top:-6px;'>Haz clic en cualquier partido para abrir su análisis integral con simulación de marcadores exactos:</p>", unsafe_allow_html=True)
+            st.markdown(f'''
+            <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px 20px 14px 20px; color:white; margin-bottom:12px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:6px;">
+                    <div>
+                        <div style="font-size:20px; font-weight:900; color:#D4AF37;">⚖️ RADAR DE EMPATES DE ORO (PARTIDOS DE HOY)</div>
+                        <div style="color:#aaa; font-size:13px;">{len(empates_list)} choques de máxima paridad táctica de hoy • <i>Toca el botón con la lupa 🔍 en cualquier fila para ver su análisis</i></div>
+                    </div>
+                    <div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">
+                        <div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Parlay Empates</div>
+                        <div style="font-size:24px; font-weight:900; color:#D4AF37; letter-spacing:1px;">x{cuota_tot_emp:,.2f}</div>
+                    </div>
+                </div>
+            </div>
+            ''', unsafe_allow_html=True)
 
-            cols_emp_grid = st.columns(2)
-            for idx_e, e_pick in enumerate(empates_data.get("empates", [])):
-                with cols_emp_grid[idx_e % 2]:
-                    l_str = e_pick.get('local', 'Local')
-                    v_str = e_pick.get('visita', 'Visita')
-                    h_str = f" ⏰ {e_pick.get('hora', 'Hoy')}" if e_pick.get('hora') else ""
-                    ce_str = e_pick.get('cuota_empate', 3.30)
-                    pe_str = e_pick.get('probabilidad_empate', 32.0)
-                    btn_emp_label = f"⚖️ {idx_e+1}. {l_str} vs {v_str}{h_str} • Empate (@{ce_str:.2f} | {pe_str}%)"
-                    if st.button(btn_emp_label, key=f"btn_emp_nav_{idx_e}_{e_pick.get('id', idx_e)}", use_container_width=True):
-                        st.session_state['live_partido_detalle'] = e_pick
+            for idx_e, e in enumerate(empates_list):
+                loc = e.get("local", "")
+                vis = e.get("visita", "")
+                liga = e.get("liga", "")
+                hora = e.get("hora", "Hoy")
+                cuota_e = e.get("cuota_empate", 3.25)
+                prob_e = e.get("probabilidad_empate", 33.0)
+                marcador = e.get("marcador_probable", "1 - 1")
+
+                col_erow1, col_erow2, col_erow3 = st.columns([2.6, 1.4, 0.9])
+                with col_erow1:
+                    st.markdown(f'''
+                    <div style="background:#11141C; border-left:4px solid #D4AF37; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:8px 12px; border-radius:8px 0 0 8px; min-height:52px; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx_e+1}. {liga} <span style="color:#38BDF8; font-size:10px; margin-left:4px;">⏰ {hora}</span></div>
+                        <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                with col_erow2:
+                    st.markdown("<div style='height:3px;'></div>", unsafe_allow_html=True)
+                    if st.button(f"⚖️ Empate ({marcador}) 🔍", key=f"btn_row_emp_{idx_e}_{e.get('id', idx_e)}", use_container_width=True, help=f"Abrir análisis completo de {loc} vs {vis}"):
+                        st.session_state['live_partido_detalle'] = e
                         st.rerun()
+                with col_erow3:
+                    st.markdown(f'''
+                    <div style="background:#11141C; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; border-right:1px solid #282F3F; padding:8px 6px; border-radius:0 8px 8px 0; min-height:52px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <div style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 7px; border-radius:6px; font-size:12px;">@{cuota_e:.2f}</div>
+                        <div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:10px; padding:4px 5px; border-radius:4px; border:1px solid #282F3F;">{prob_e}%</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
 
