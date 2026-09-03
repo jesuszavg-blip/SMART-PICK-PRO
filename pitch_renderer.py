@@ -161,12 +161,15 @@ def render_minuto_a_minuto_dividido(
     if status in ['1H', '2H', 'HT', 'LIVE']:
         status_label = f"🔴 EN VIVO {minuto_actual}'"
         status_color = "#EF5350"
+        score_center = f'<div style="background:#0D0F14; border:2px solid #D4AF37; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#D4AF37; letter-spacing:4px;">{g_l} - {g_v}</div>'
     elif status in ['FT', 'AET', 'PEN']:
         status_label = "🏁 FINALIZADO (90')"
         status_color = "#D4AF37"
+        score_center = f'<div style="background:#0D0F14; border:2px solid #D4AF37; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#D4AF37; letter-spacing:4px;">{g_l} - {g_v}</div>'
     else:
-        status_label = "⏳ PRÓXIMO ENCUENTRO"
-        status_color = "#F3E5AB"
+        status_label = "⏰ PRÓXIMO A DISPUTARSE"
+        status_color = "#38BDF8"
+        score_center = '<div style="background:#0D0F14; border:1.5px solid #D4AF37; padding:6px 22px; border-radius:10px; font-size:24px; font-weight:900; color:#F3E5AB; letter-spacing:2px;">VS</div>'
 
     # Generación de eventos por defecto si no hay eventos cargados
     if not eventos_local and not eventos_visita:
@@ -183,14 +186,14 @@ def render_minuto_a_minuto_dividido(
             ][:g_v + 2]
         else:
             eventos_local = [
-                {"min": 0, "icon": "📢", "title": "Inicio del Partido", "player": f"Alineación Oficial de {loc_name}", "detail": "Esquema táctico confirmado"},
-                {"min": 15, "icon": "🎯", "title": "Ocasión de Gol", "player": f"{loc_name}", "detail": "Disparo a puerta desviado por el arquero"},
-                {"min": 45, "icon": "⏱️", "title": "Entretiempo", "player": "Charla Técnica", "detail": "Ajustes tácticos de medio tiempo"}
+                {"min": 0, "icon": "📋", "title": "Alineación Confirmada", "player": f"11 Inicial {loc_name}", "detail": "Esquema táctico ratificado por el DT"},
+                {"min": 0, "icon": "🔥", "title": "Calentamiento Previo", "player": f"{loc_name}", "detail": "Ejercicios precompetitivos en cancha"},
+                {"min": 0, "icon": "🧠", "title": "Simulación Poisson", "player": "Smart Pick Pro VIP", "detail": "Modelos predictivos y xG calculados"}
             ]
             eventos_visita = [
-                {"min": 0, "icon": "📢", "title": "Inicio del Partido", "player": f"Alineación Oficial de {vis_name}", "detail": "Esquema táctico confirmado"},
-                {"min": 28, "icon": "🛡️", "title": "Bloqueo Defensivo", "player": f"{vis_name}", "detail": "Corte providencial en zona baja"},
-                {"min": 45, "icon": "⏱️", "title": "Entretiempo", "player": "Charla Técnica", "detail": "Reorganización de líneas"}
+                {"min": 0, "icon": "📋", "title": "Alineación Confirmada", "player": f"11 Inicial {vis_name}", "detail": "Esquema táctico ratificado por el DT"},
+                {"min": 0, "icon": "🔥", "title": "Calentamiento Previo", "player": f"{vis_name}", "detail": "Ejercicios precompetitivos en cancha"},
+                {"min": 0, "icon": "🛡️", "title": "Paridad Defensiva", "player": "Smart Pick Pro VIP", "detail": "Matriz Dixon-Coles procesada"}
             ]
 
     # Formatear lista de eventos local
@@ -230,7 +233,7 @@ def render_minuto_a_minuto_dividido(
         f'</div>'
         f'<div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:15px; margin-bottom:20px; background:#11141C; padding:15px; border-radius:12px; border:1px solid #282F3F;">'
         f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:right;">{loc_name}</span><img src="{logo_local}" style="width:48px; height:48px; object-fit:contain;"></div>'
-        f'<div style="text-align:center; padding:0 15px;"><div style="background:#0D0F14; border:2px solid #D4AF37; padding:6px 20px; border-radius:10px; font-size:28px; font-weight:900; color:#D4AF37; letter-spacing:4px;">{g_l} - {g_v}</div></div>'
+        f'<div style="text-align:center; padding:0 15px;">{score_center}</div>'
         f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:12px;"><img src="{logo_visita}" style="width:48px; height:48px; object-fit:contain;"><span style="font-size:17px; font-weight:900; color:#FFFFFF; text-align:left;">{vis_name}</span></div>'
         f'</div>'
         f'<div style="background:#11141C; padding:14px; border-radius:12px; margin-bottom:20px; border:1px solid #282F3F;">'
