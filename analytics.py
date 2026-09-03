@@ -923,11 +923,22 @@ def extraer_candidatos_reales_de_hoy() -> list:
                     la = round(1.10 + seed_v * 0.85, 2)
 
                     candidatos.append({
+                        "id": p.get("id"),
                         "local": loc,
+                        "local_id": p.get("local_id", 0),
+                        "logo_local": p.get("logo_local", ""),
                         "visita": vis,
+                        "visita_id": p.get("visita_id", 0),
+                        "logo_visita": p.get("logo_visita", ""),
+                        "venue": p.get("venue", f"Estadio {loc}"),
+                        "city": p.get("city", pais_nom),
+                        "referee": p.get("referee", "Árbitro Oficial Asignado"),
                         "liga": l_tag,
                         "hora": p.get("hora", "Hoy"),
                         "status": p.get("status", "NS"),
+                        "minuto": p.get("minuto", 0),
+                        "goles_local": p.get("goles_local", 0),
+                        "goles_visita": p.get("goles_visita", 0),
                         "lh": lh,
                         "la": la
                     })
@@ -948,21 +959,21 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
 
     if not lista_partidos:
         lista_partidos = [
-            {"local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65},
-            {"local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70},
-            {"local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45},
-            {"local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50},
-            {"local": "Real Madrid", "visita": "Atlético Madrid", "liga": "🇪🇸 LaLiga", "lh": 1.85, "la": 1.40},
-            {"local": "Arsenal", "visita": "Chelsea", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.90, "la": 1.45},
-            {"local": "Inter Milan", "visita": "Atalanta", "liga": "🇮🇹 Serie A", "lh": 2.05, "la": 1.55},
-            {"local": "Tigres UANL", "visita": "Monterrey", "liga": "🇲🇽 Liga MX", "lh": 1.75, "la": 1.50},
-            {"local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60},
-            {"local": "Benfica", "visita": "Porto", "liga": "🇵🇹 Primeira Liga", "lh": 1.80, "la": 1.40},
-            {"local": "Flamengo", "visita": "Palmeiras", "liga": "🇧🇷 Brasileirão", "lh": 1.70, "la": 1.45},
-            {"local": "Cruz Azul", "visita": "Pumas UNAM", "liga": "🇲🇽 Liga MX", "lh": 1.80, "la": 1.35},
-            {"local": "Aston Villa", "visita": "Tottenham", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.85, "la": 1.60},
-            {"local": "Bayer Leverkusen", "visita": "RB Leipzig", "liga": "🇩🇪 Bundesliga", "lh": 2.00, "la": 1.65},
-            {"local": "Ajax", "visita": "PSV Eindhoven", "liga": "🇳🇱 Eredivisie", "lh": 2.15, "la": 1.80}
+            {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65},
+            {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70},
+            {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45},
+            {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50},
+            {"id": 1301006, "local": "Real Madrid", "visita": "Atlético Madrid", "liga": "🇪🇸 LaLiga", "lh": 1.85, "la": 1.40},
+            {"id": 1301005, "local": "Arsenal", "visita": "Chelsea", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.90, "la": 1.45},
+            {"id": 1301009, "local": "Inter Milan", "visita": "Atalanta", "liga": "🇮🇹 Serie A", "lh": 2.05, "la": 1.55},
+            {"id": 1301002, "local": "Tigres UANL", "visita": "Monterrey", "liga": "🇲🇽 Liga MX", "lh": 1.75, "la": 1.50},
+            {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60},
+            {"id": 1301011, "local": "Benfica", "visita": "Porto", "liga": "🇵🇹 Primeira Liga", "lh": 1.80, "la": 1.40},
+            {"id": 1301012, "local": "Flamengo", "visita": "Palmeiras", "liga": "🇧🇷 Brasileirão", "lh": 1.70, "la": 1.45},
+            {"id": 1301003, "local": "Cruz Azul", "visita": "Pumas UNAM", "liga": "🇲🇽 Liga MX", "lh": 1.80, "la": 1.35},
+            {"id": 1301013, "local": "Aston Villa", "visita": "Tottenham", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.85, "la": 1.60},
+            {"id": 1301014, "local": "Bayer Leverkusen", "visita": "RB Leipzig", "liga": "🇩🇪 Bundesliga", "lh": 2.00, "la": 1.65},
+            {"id": 1301015, "local": "Ajax", "visita": "PSV Eindhoven", "liga": "🇳🇱 Eredivisie", "lh": 2.15, "la": 1.80}
         ]
 
     candidatos = []
@@ -995,9 +1006,21 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
 
         candidatos.append({
             "casilla": idx + 1,
+            "id": p.get("id", 1300000 + idx),
             "partido": f"{loc} vs {vis}",
             "local": loc,
+            "local_id": p.get("local_id", 0),
+            "logo_local": p.get("logo_local", ""),
             "visita": vis,
+            "visita_id": p.get("visita_id", 0),
+            "logo_visita": p.get("logo_visita", ""),
+            "venue": p.get("venue", f"Estadio {loc}"),
+            "city": p.get("city", "México"),
+            "referee": p.get("referee", "Árbitro Oficial Asignado"),
+            "status": p.get("status", "NS"),
+            "minuto": p.get("minuto", 0),
+            "goles_local": p.get("goles_local", 0),
+            "goles_visita": p.get("goles_visita", 0),
             "liga": liga,
             "hora": hora,
             "mercado": mercado_pick,
@@ -1040,22 +1063,33 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
                 lh_emp = round(1.05 + seed_d * 0.25, 2)
                 la_emp = round(1.00 + (1.0 - seed_d) * 0.25, 2)
                 lista_partidos.append({
+                    "id": p.get("id"),
                     "local": loc,
+                    "local_id": p.get("local_id", 0),
+                    "logo_local": p.get("logo_local", ""),
                     "visita": vis,
+                    "visita_id": p.get("visita_id", 0),
+                    "logo_visita": p.get("logo_visita", ""),
+                    "venue": p.get("venue", f"Estadio {loc}"),
+                    "city": p.get("city", "México"),
+                    "referee": p.get("referee", "Árbitro Oficial Asignado"),
                     "liga": p["liga"],
                     "hora": p.get("hora", "Hoy"),
                     "status": p.get("status", "NS"),
+                    "minuto": p.get("minuto", 0),
+                    "goles_local": p.get("goles_local", 0),
+                    "goles_visita": p.get("goles_visita", 0),
                     "lh": lh_emp,
                     "la": la_emp
                 })
 
     if not lista_partidos:
         lista_partidos = [
-            {"local": "Atlético San Luis", "visita": "Pachuca", "liga": "🇲🇽 Liga MX", "lh": 1.15, "la": 1.20, "h2h_e": 3},
-            {"local": "Getafe", "visita": "Mallorca", "liga": "🇪🇸 LaLiga", "lh": 0.95, "la": 0.90, "h2h_e": 4},
-            {"local": "Torino", "visita": "Empoli", "liga": "🇮🇹 Serie A", "lh": 1.10, "la": 1.05, "h2h_e": 3},
-            {"local": "Everton", "visita": "Crystal Palace", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.25, "la": 1.20, "h2h_e": 3},
-            {"local": "Racing Club", "visita": "Boca Juniors", "liga": "🇦🇷 Liga Argentina", "lh": 1.10, "la": 1.15, "h2h_e": 4}
+            {"id": 1301016, "local": "Atlético San Luis", "visita": "Pachuca", "liga": "🇲🇽 Liga MX", "lh": 1.15, "la": 1.20, "h2h_e": 3},
+            {"id": 1301017, "local": "Getafe", "visita": "Mallorca", "liga": "🇪🇸 LaLiga", "lh": 0.95, "la": 0.90, "h2h_e": 4},
+            {"id": 1301018, "local": "Torino", "visita": "Empoli", "liga": "🇮🇹 Serie A", "lh": 1.10, "la": 1.05, "h2h_e": 3},
+            {"id": 1301019, "local": "Everton", "visita": "Crystal Palace", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.25, "la": 1.20, "h2h_e": 3},
+            {"id": 1301020, "local": "Racing Club", "visita": "Boca Juniors", "liga": "🇦🇷 Liga Argentina", "lh": 1.10, "la": 1.15, "h2h_e": 4}
         ]
 
     candidatos = []
@@ -1079,9 +1113,21 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
         marcador_emp = "1 - 1" if (lh + la) >= 2.0 else "0 - 0"
 
         candidatos.append({
+            "id": p.get("id", 1300050 + idx),
             "partido": f"{loc} vs {vis}",
             "local": loc,
+            "local_id": p.get("local_id", 0),
+            "logo_local": p.get("logo_local", ""),
             "visita": vis,
+            "visita_id": p.get("visita_id", 0),
+            "logo_visita": p.get("logo_visita", ""),
+            "venue": p.get("venue", f"Estadio {loc}"),
+            "city": p.get("city", "México"),
+            "referee": p.get("referee", "Árbitro Oficial Asignado"),
+            "status": p.get("status", "NS"),
+            "minuto": p.get("minuto", 0),
+            "goles_local": p.get("goles_local", 0),
+            "goles_visita": p.get("goles_visita", 0),
             "liga": liga,
             "hora": hora,
             "probabilidad_empate": prob_emp,
