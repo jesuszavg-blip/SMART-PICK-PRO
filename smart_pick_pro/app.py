@@ -731,9 +731,20 @@ dict_ligas_globales = api_client.obtener_ligas_mundo()
 liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", list(dict_ligas_globales.keys()))
 liga_elegida_val = dict_ligas_globales[liga_elegida]
 
+# Reset reactivo: si el usuario cambia de liga o módulo en el menú lateral,
+# limpiamos automáticamente cualquier partido en detalle para que navegue libremente a cualquier sección.
+if st.session_state.get('nav_liga_actual') != liga_elegida_val:
+    st.session_state['live_partido_detalle'] = None
+    st.session_state['nav_liga_actual'] = liga_elegida_val
+
 # Partidos de la jornada
 partidos_dict = api_client.obtener_partidos_jornada(liga_elegida_val)
 partido_seleccionado = st.sidebar.selectbox("⚽ 2. Encuentro a analizar:", list(partidos_dict.keys()))
+
+# Reset reactivo: si el usuario cambia el partido en la lista desplegable
+if st.session_state.get('nav_partido_actual') != partido_seleccionado:
+    st.session_state['live_partido_detalle'] = None
+    st.session_state['nav_partido_actual'] = partido_seleccionado
 
 # Manejo de Partido Personalizado Manual
 datos_partido_custom = None
@@ -1209,26 +1220,39 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
 
         total_hoy = sum(len(d.get("partidos", [])) for d in ligas_hoy.values())
 
-        col_ctl1, col_ctl2 = st.columns([2, 1])
+        col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.3, 0.8])
         with col_ctl1:
-            filtro_hoy_txt = st.text_input("🔍 Buscar Partido o Liga de Hoy:", placeholder="Ej. América, Real Madrid, Premier League, Toluca...", key="in_hoy_search")
+            filtro_hoy_txt = st.text_input("🔍 Buscar Partido o Liga de Hoy:", placeholder="Ej. América, Premier, Real Madrid, Toluca...", key="in_hoy_search")
         with col_ctl2:
+            filtro_est_hoy = st.selectbox("⏱️ Filtrar por Estado:", ["🟢 Por Jugar Hoy (Próximos)", "🔴 En Vivo Ahora", "🌐 Todos los Partidos de Hoy", "🏁 Finalizados Hoy"], key="sel_filtro_est_hoy")
+        with col_ctl3:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-            if st.button("🔄 ACTUALIZAR PARTIDOS DE HOY", use_container_width=True, key="btn_ref_hoy"):
+            if st.button("🔄 ACTUALIZAR", use_container_width=True, key="btn_ref_hoy"):
                 api_client.obtener_partidos_de_hoy.clear()
                 st.rerun()
 
         st.markdown(f'''
         <div style="background:#151821; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">🎯 Cartelera del Día: <span style="color:#38BDF8; font-weight:900;">{total_hoy} Encuentros Disponibles</span></span>
+            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">🎯 Cartelera del Día: <span style="color:#38BDF8; font-weight:900;">{total_hoy} Encuentros Registrados</span></span>
             <span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">⚡ Cobro el Mismo Día</span>
         </div>
         ''', unsafe_allow_html=True)
 
         for l_key, l_data in ligas_hoy.items():
             p_lista = l_data.get("partidos", [])
+            
+            # Filtro por texto
             if filtro_hoy_txt:
-                p_lista = [p for p in p_lista if filtro_hoy_txt.lower() in p['local'].lower() or filtro_hoy_txt.lower() in p['visita'].lower() or filtro_hoy_txt.lower() in l_key.lower()]
+                txt_low = filtro_hoy_txt.lower()
+                p_lista = [p for p in p_lista if txt_low in p['local'].lower() or txt_low in p['visita'].lower() or txt_low in l_key.lower()]
+
+            # Filtro por estado
+            if filtro_est_hoy == "🟢 Por Jugar Hoy (Próximos)":
+                p_lista = [p for p in p_lista if p.get('status') in ['NS', 'TBD']]
+            elif filtro_est_hoy == "🔴 En Vivo Ahora":
+                p_lista = [p for p in p_lista if p.get('status') in ['1H', '2H', 'HT', 'LIVE']]
+            elif filtro_est_hoy == "🏁 Finalizados Hoy":
+                p_lista = [p for p in p_lista if p.get('status') in ['FT', 'AET', 'PEN']]
 
             if not p_lista:
                 continue
@@ -1626,9 +1650,10 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
 
 # --- MODO 3: ANÁLISIS INTEGRAL DE PARTIDO (CON PESTAÑAS ST.TABS) ---
 if st.session_state.get('live_partido_detalle'):
-    col_back, _ = st.columns([1, 2])
+    col_back, _ = st.columns([1.5, 1.5])
     with col_back:
-        if st.button("⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO", use_container_width=True):
+        lbl_retorno = "⬅️ VOLVER A PARTIDOS DE HOY" if liga_elegida_val == "TODAY_MATCHES_MODE" else "⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO"
+        if st.button(lbl_retorno, use_container_width=True, key="btn_volver_lista_general"):
             st.session_state['live_partido_detalle'] = None
             st.rerun()
 
