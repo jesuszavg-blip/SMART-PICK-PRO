@@ -497,32 +497,151 @@ def calcular_criterio_kelly(prob_pct: float, cuota: float, fraccion: float = 0.2
     except Exception:
         return {"kelly_pct": 0.0, "monto_sugerido": 0.0, "es_viable": False}
 
-def generar_bet_builder_dinamico(equipo_local: str, equipo_visita: str, stats_poisson: dict) -> list[dict]:
+def generar_bet_builder_dinamico(
+    equipo_local: str, 
+    equipo_visita: str, 
+    stats_poisson: dict,
+    promedio_tarjetas = 4.2,
+    referee_name: str = "Por definir"
+) -> dict:
+    """
+    Genera un Parlay Bet Builder Multifactorial de 4 factores de alta correlación y valor:
+    1. Resultado / Doble Oportunidad (Poisson + Dixon-Coles)
+    2. Línea de Goles Óptima (xG + Poisson)
+    3. Tarjetas Totales (Rigor del Árbitro + Tendencia de Faltas)
+    4. Tiros de Esquina / Córners (Volumen Ofensivo y Presión de Ataque)
+    """
     picks = []
 
-    p_1X = stats_poisson.get("p_1X", 70.0)
-    p_X2 = stats_poisson.get("p_X2", 70.0)
-    p_over15 = stats_poisson.get("p_over_15", 70.0)
-    p_over25 = stats_poisson.get("p_over_25", 50.0)
-    p_btts = stats_poisson.get("p_btts", 50.0)
+    p_home_win = float(stats_poisson.get("p_home_win", 40.0))
+    p_draw = float(stats_poisson.get("p_draw", 30.0))
+    p_away_win = float(stats_poisson.get("p_away_win", 30.0))
+    p_1X = float(stats_poisson.get("p_1X", round(p_home_win + p_draw, 1)))
+    p_X2 = float(stats_poisson.get("p_X2", round(p_away_win + p_draw, 1)))
+    p_12 = round(100.0 - p_draw, 1)
 
-    if p_1X >= 72.0:
-        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate", "prob": f"{p_1X}%"})
-    elif p_X2 >= 72.0:
-        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_visita} o Empate", "prob": f"{p_X2}%"})
+    lh = float(stats_poisson.get("lambda_home", 1.5))
+    la = float(stats_poisson.get("lambda_away", 1.1))
+    p_over15 = float(stats_poisson.get("p_over_15", 70.0))
+    p_over25 = float(stats_poisson.get("p_over_25", 50.0))
+    p_btts = float(stats_poisson.get("p_btts", 50.0))
+    exp_goles_total = lh + la
+
+    # =========================================================
+    # 1. MERCADO DE RESULTADO / DOBLE OPORTUNIDAD
+    # =========================================================
+    if p_home_win >= 65.0:
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_local}", "prob": f"{p_home_win:.1f}%"})
+    elif p_away_win >= 60.0:
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_visita}", "prob": f"{p_away_win:.1f}%"})
+    elif p_1X >= p_X2:
+        if p_1X >= 68.0:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate (1X)", "prob": f"{p_1X:.1f}%"})
+        else:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
     else:
-        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita}", "prob": f"{100 - stats_poisson.get('p_draw', 30):.1f}%"})
+        if p_X2 >= 68.0:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_visita} o Empate (X2)", "prob": f"{p_X2:.1f}%"})
+        else:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
 
-    if p_over15 >= 70.0:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 1.5 Goles en el Partido", "prob": f"{p_over15}%"})
-    elif p_btts >= 60.0:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Ambos Equipos Anotan (Sí)", "prob": f"{p_btts}%"})
+    # =========================================================
+    # 2. MERCADO DE GOLES DINÁMICO
+    # =========================================================
+    p_under35 = round(sum(poisson_probability(k, exp_goles_total) for k in range(4)) * 100, 1)
+    p_under35 = max(68.0, min(92.0, p_under35))
+
+    if p_over25 >= 60.0 or exp_goles_total >= 2.85:
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 2.5 Goles en el Partido", "prob": f"{p_over25:.1f}%"})
+    elif p_btts >= 60.0 and lh >= 1.25 and la >= 1.15:
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Ambos Equipos Anotan (Sí)", "prob": f"{p_btts:.1f}%"})
+    elif exp_goles_total <= 2.15 or p_over15 < 68.0:
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 3.5 Goles en el Partido", "prob": f"{p_under35:.1f}%"})
+    elif lh >= 1.95 and la <= 0.85:
+        prob_lh15 = round((1.0 - poisson_probability(0, lh) - poisson_probability(1, lh)) * 100, 1)
+        prob_lh15 = max(68.0, min(88.0, prob_lh15))
+        picks.append({"categoria": "⚽ Goles", "descripcion": f"{equipo_local}: Más de 1.5 Goles", "prob": f"{prob_lh15:.1f}%"})
     else:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 3.5 Goles en el Partido", "prob": f"{100 - p_over25:.1f}%"})
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 1.5 Goles en el Partido", "prob": f"{p_over15:.1f}%"})
 
-    picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 2.5 Tarjetas Totales", "prob": "78.5%"})
+    # =========================================================
+    # 3. MERCADO DE TARJETAS DINÁMICO (ÁRBITRO & RIGOR)
+    # =========================================================
+    try:
+        lam_cards = float(promedio_tarjetas)
+    except (ValueError, TypeError):
+        lam_cards = 4.2
 
-    return picks
+    if referee_name and referee_name != "Por definir":
+        info_ref = evaluar_rigor_arbitral(referee_name, str(lam_cards))
+        lam_cards = float(info_ref.get("tarjetas_amarillas", 3.8)) + float(info_ref.get("tarjetas_rojas", 0.2))
+
+    lam_cards = max(2.5, min(7.5, lam_cards))
+    p_cards_over25 = round((1.0 - sum(poisson_probability(k, lam_cards) for k in range(3))) * 100, 1)
+    p_cards_over35 = round((1.0 - sum(poisson_probability(k, lam_cards) for k in range(4))) * 100, 1)
+    p_cards_under55 = round((sum(poisson_probability(k, lam_cards) for k in range(6))) * 100, 1)
+
+    if lam_cards >= 4.8:
+        prob_c = max(68.0, min(86.0, p_cards_over35))
+        picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 3.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
+    elif lam_cards <= 3.4:
+        prob_c = max(72.0, min(90.0, p_cards_under55))
+        picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Menos de 5.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
+    else:
+        if p_cards_over35 >= 66.0:
+            picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 3.5 Tarjetas Totales", "prob": f"{p_cards_over35:.1f}%"})
+        else:
+            prob_c = max(72.0, min(89.0, p_cards_over25))
+            picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 2.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
+
+    # =========================================================
+    # 4. MERCADO DE TIROS DE ESQUINA (CÓRNERS)
+    # =========================================================
+    exp_corners_loc = max(3.0, min(7.5, 3.8 + (lh * 1.35)))
+    exp_corners_vis = max(2.2, min(6.0, 2.7 + (la * 1.15)))
+    lam_corners = exp_corners_loc + exp_corners_vis
+
+    p_corners_over75 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(8))) * 100, 1)
+    p_corners_over85 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(9))) * 100, 1)
+    p_corners_under115 = round((sum(poisson_probability(k, lam_corners) for k in range(12))) * 100, 1)
+
+    if lam_corners >= 10.6 and p_corners_over85 >= 68.0:
+        prob_cr = max(68.0, min(85.0, p_corners_over85))
+        picks.append({"categoria": "🚩 Córners", "descripcion": "Más de 8.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
+    elif lam_corners <= 8.2:
+        prob_cr = max(72.0, min(88.0, p_corners_under115))
+        picks.append({"categoria": "🚩 Córners", "descripcion": "Menos de 11.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
+    elif exp_corners_loc >= 5.5 and (exp_corners_loc - exp_corners_vis) >= 1.8:
+        p_cor_loc35 = round((1.0 - sum(poisson_probability(k, exp_corners_loc) for k in range(4))) * 100, 1)
+        prob_cr = max(70.0, min(86.0, p_cor_loc35))
+        picks.append({"categoria": "🚩 Córners", "descripcion": f"{equipo_local}: Más de 3.5 Córners", "prob": f"{prob_cr:.1f}%"})
+    else:
+        prob_cr = max(73.0, min(88.0, p_corners_over75))
+        picks.append({"categoria": "🚩 Córners", "descripcion": "Más de 7.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
+
+    # =========================================================
+    # 5. CÁLCULO DE CUOTAS Y CUOTA COMBINADA PARLAY
+    # =========================================================
+    cuota_total = 1.0
+    for p in picks:
+        try:
+            val_p = float(p["prob"].replace("%", "")) / 100.0
+            c_est = round(max(1.15, min(2.40, (1.0 / val_p) * 1.04)), 2)
+            p["cuota"] = c_est
+            cuota_total *= c_est
+        except Exception:
+            p["cuota"] = 1.25
+            cuota_total *= 1.25
+
+    cuota_total = round(cuota_total * 0.94, 2)
+
+    return {
+        "titulo": "🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)",
+        "local": equipo_local,
+        "visita": equipo_visita,
+        "cuota_total": cuota_total,
+        "picks": picks
+    }
 
 def evaluar_necesidad(posicion, league_id="262", *args, **kwargs) -> str:
     """Evalúa el contexto y factor necesidad según la posición en tabla y la liga"""
