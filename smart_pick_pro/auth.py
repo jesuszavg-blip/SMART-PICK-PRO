@@ -254,87 +254,92 @@ def init_db():
         cursor.execute("UPDATE users SET referral_code = ?, balance_disponible = COALESCE(balance_disponible, 0.0), total_ganado = COALESCE(total_ganado, 0.0) WHERE id = ?", (nuevo_cod, u_id))
     conn.commit()
 
-    # 6. Restaurar desde GitHub Cloud si está disponible
-    try:
-        token = _get_github_token()
-        if token and HAS_REQUESTS:
-            repo = "jesuszavg-blip/SMART-PICK-PRO"
-            url = f"https://api.github.com/repos/{repo}/contents/users_backup.json"
-            headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
-            r_gh = requests.get(url, headers=headers, timeout=4)
-            if r_gh.status_code == 200:
-                import base64
-                b64_content = r_gh.json().get("content", "")
-                if b64_content:
-                    raw_json = base64.b64decode(b64_content).decode("utf-8")
-                    cloud_users = json.loads(raw_json)
-                    if isinstance(cloud_users, list):
-                        for u_data in cloud_users:
-                            u_name = str(u_data.get("username", "")).strip().lower()
-                            u_pw = str(u_data.get("password", ""))
-                            u_role = str(u_data.get("role", "VIP"))
-                            u_active = int(u_data.get("is_active", 1))
-                            u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
-                            u_ref_by = u_data.get("referred_by")
-                            u_bal = float(u_data.get("balance_disponible", 0.0))
-                            u_tot = float(u_data.get("total_ganado", 0.0))
-                            if u_name and u_pw:
-                                cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
-                                if not cursor.fetchone():
-                                    cursor.execute(
-                                        "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                                        (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
-                                    )
-                        conn.commit()
-    except Exception as e:
-        print(f"Error cargando usuarios desde GitHub: {e}")
+    # 6. Restaurar desde fuentes persistentes SOLO SI la base de datos local está vacía (instalación limpia en la nube)
+    cursor.execute("SELECT COUNT(*) FROM users WHERE role != 'ADMIN'")
+    total_usuarios_registrados = cursor.fetchone()[0]
 
-    # 7. Restaurar desde Secrets de Streamlit / .env si están definidos
-    secrets_users = _cargar_usuarios_secrets()
-    if secrets_users:
-        for u_data in secrets_users:
-            u_name = str(u_data.get("username", "")).strip().lower()
-            u_pw = str(u_data.get("password", ""))
-            u_role = str(u_data.get("role", "VIP"))
-            u_active = int(u_data.get("is_active", 1))
-            u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
-            u_ref_by = u_data.get("referred_by")
-            u_bal = float(u_data.get("balance_disponible", 0.0))
-            u_tot = float(u_data.get("total_ganado", 0.0))
-            if u_name and u_pw:
-                cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
-                if not cursor.fetchone():
-                    pw_to_insert = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
-                    cursor.execute(
-                        "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (u_name, pw_to_insert, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
-                    )
-        conn.commit()
-
-    # 8. Restaurar desde respaldo JSON local si existe
-    if USER_BACKUP_PATH.exists():
+    if total_usuarios_registrados == 0:
+        # A) Restaurar desde GitHub Cloud si está disponible
         try:
-            with open(USER_BACKUP_PATH, "r", encoding="utf-8") as f:
-                saved_users = json.load(f)
-                for u_data in saved_users:
-                    u_name = str(u_data.get("username", "")).strip().lower()
-                    u_pw = str(u_data.get("password", ""))
-                    u_role = str(u_data.get("role", "VIP"))
-                    u_active = int(u_data.get("is_active", 1))
-                    u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
-                    u_ref_by = u_data.get("referred_by")
-                    u_bal = float(u_data.get("balance_disponible", 0.0))
-                    u_tot = float(u_data.get("total_ganado", 0.0))
-                    if u_name and u_pw:
-                        cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
-                        if not cursor.fetchone():
-                            cursor.execute(
-                                "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                                (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
-                            )
-            conn.commit()
+            token = _get_github_token()
+            if token and HAS_REQUESTS:
+                repo = "jesuszavg-blip/SMART-PICK-PRO"
+                url = f"https://api.github.com/repos/{repo}/contents/users_backup.json"
+                headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
+                r_gh = requests.get(url, headers=headers, timeout=4)
+                if r_gh.status_code == 200:
+                    import base64
+                    b64_content = r_gh.json().get("content", "")
+                    if b64_content:
+                        raw_json = base64.b64decode(b64_content).decode("utf-8")
+                        cloud_users = json.loads(raw_json)
+                        if isinstance(cloud_users, list):
+                            for u_data in cloud_users:
+                                u_name = str(u_data.get("username", "")).strip().lower()
+                                u_pw = str(u_data.get("password", ""))
+                                u_role = str(u_data.get("role", "VIP"))
+                                u_active = int(u_data.get("is_active", 1))
+                                u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
+                                u_ref_by = u_data.get("referred_by")
+                                u_bal = float(u_data.get("balance_disponible", 0.0))
+                                u_tot = float(u_data.get("total_ganado", 0.0))
+                                if u_name and u_pw:
+                                    cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                                    if not cursor.fetchone():
+                                        cursor.execute(
+                                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                            (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                                        )
+                            conn.commit()
         except Exception as e:
-            print(f"Error al restaurar respaldo de usuarios: {e}")
+            print(f"Error cargando usuarios desde GitHub: {e}")
+
+        # B) Restaurar desde Secrets de Streamlit / .env si están definidos
+        secrets_users = _cargar_usuarios_secrets()
+        if secrets_users:
+            for u_data in secrets_users:
+                u_name = str(u_data.get("username", "")).strip().lower()
+                u_pw = str(u_data.get("password", ""))
+                u_role = str(u_data.get("role", "VIP"))
+                u_active = int(u_data.get("is_active", 1))
+                u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
+                u_ref_by = u_data.get("referred_by")
+                u_bal = float(u_data.get("balance_disponible", 0.0))
+                u_tot = float(u_data.get("total_ganado", 0.0))
+                if u_name and u_pw:
+                    cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                    if not cursor.fetchone():
+                        pw_to_insert = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
+                        cursor.execute(
+                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (u_name, pw_to_insert, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                        )
+            conn.commit()
+
+        # C) Restaurar desde respaldo JSON local si existe
+        if USER_BACKUP_PATH.exists():
+            try:
+                with open(USER_BACKUP_PATH, "r", encoding="utf-8") as f:
+                    saved_users = json.load(f)
+                    for u_data in saved_users:
+                        u_name = str(u_data.get("username", "")).strip().lower()
+                        u_pw = str(u_data.get("password", ""))
+                        u_role = str(u_data.get("role", "VIP"))
+                        u_active = int(u_data.get("is_active", 1))
+                        u_ref_code = u_data.get("referral_code") or _generar_codigo_referido(u_name)
+                        u_ref_by = u_data.get("referred_by")
+                        u_bal = float(u_data.get("balance_disponible", 0.0))
+                        u_tot = float(u_data.get("total_ganado", 0.0))
+                        if u_name and u_pw:
+                            cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
+                            if not cursor.fetchone():
+                                cursor.execute(
+                                    "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                    (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                                )
+                conn.commit()
+            except Exception as e:
+                print(f"Error al restaurar respaldo de usuarios: {e}")
 
     conn.close()
 
@@ -701,10 +706,17 @@ def eliminar_usuario(user_id: int) -> bool:
         conn.close()
         return False
         
+    u_name = row[0].lower()
     cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    cursor.execute("DELETE FROM referrals_commissions WHERE referrer_username = ? OR referred_username = ?", (u_name, u_name))
+    cursor.execute("DELETE FROM payout_requests WHERE username = ?", (u_name,))
     conn.commit()
     conn.close()
     _respaldar_usuarios_json()
+    try:
+        sincronizar_con_github_cloud()
+    except Exception:
+        pass
     return True
 
 def exportar_usuarios_json() -> str:
