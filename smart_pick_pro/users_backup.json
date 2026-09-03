@@ -48,5 +48,15 @@
     "referred_by": null,
     "balance_disponible": 0.0,
     "total_ganado": 0.0
+  },
+  {
+    "username": "carlos_amigo",
+    "password": "$2b$12$9Y4pxvt1Y6MuMEpywgksAOPR8LPICJetq5NyZsEgMsdSOOrWHYCN6",
+    "role": "VIP",
+    "is_active": 1,
+    "referral_code": "SP-CARLPLE4",
+    "referred_by": "juan_promoter",
+    "balance_disponible": 0.0,
+    "total_ganado": 0.0
   }
 ]
