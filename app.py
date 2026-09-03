@@ -1717,14 +1717,15 @@ else:
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # Bet Builder Dinámico
-            picks_builder = analytics.generar_bet_builder_dinamico(equipo_local_real, equipo_visita_real, stats_poisson)
-            html_bet_builder = '<div style="background-color: #151821; color: white; padding: 20px; border-radius: 14px; border: 2px dashed #D4AF37; margin-bottom: 15px; box-shadow:0 4px 20px rgba(0,0,0,0.3);">'
-            html_bet_builder += '<h3 style="text-align: center; color: #D4AF37; margin: 0 0 6px 0; font-weight: 900; font-size: 20px;">🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)</h3>'
-            html_bet_builder += '<p style="text-align: center; color: #94A3B8; font-size: 13px; margin-bottom: 12px;">Combinación de alta efectividad basada en simulación Poisson + Dixon-Coles & xG</p>'
-            for p_item in picks_builder:
-                html_bet_builder += f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; padding:10px 14px; border-radius:8px; margin:6px 0; border:1px solid #282F3F;"><div><span style="color:#F3E5AB; font-size:12px; font-weight:bold;">{p_item["categoria"]}</span><br><span style="color:white; font-size:15px; font-weight:bold;">✅ {p_item["descripcion"]}</span></div><span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:12px; font-size:13px;">Confianza: {p_item["prob"]}</span></div>'
-            html_bet_builder += '</div>'
+            # Bet Builder Dinámico Multifactorial (Resultado, Goles, Tarjetas y Córners)
+            picks_builder = analytics.generar_bet_builder_dinamico(
+                equipo_local=equipo_local_real,
+                equipo_visita=equipo_visita_real,
+                stats_poisson=stats_poisson,
+                promedio_tarjetas=promedio_tarjetas,
+                referee_name=referee_name
+            )
+            html_bet_builder = pitch_renderer.render_ticket_bet_builder(picks_builder, equipo_local_real, equipo_visita_real)
             st.markdown(html_bet_builder, unsafe_allow_html=True)
 
             # Métricas y Donut
