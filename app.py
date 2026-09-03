@@ -578,14 +578,17 @@ if not st.session_state['autenticado']:
                 ''', unsafe_allow_html=True)
 
             reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
+            reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
             reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
             reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
             reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
 
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("✨ CREAR MI CUENTA", use_container_width=True, key="btn_reg_submit"):
-                if not reg_user or not reg_pass1:
-                    st.error("❌ Por favor completa el usuario y la contraseña.")
+                if not reg_user or not reg_pass1 or not reg_email:
+                    st.error("❌ Por favor completa el usuario, correo electrónico y contraseña.")
+                elif "@" not in reg_email or "." not in reg_email:
+                    st.error("❌ Por favor ingresa un correo electrónico válido.")
                 elif reg_pass1 != reg_pass2:
                     st.error("❌ Las contraseñas no coinciden.")
                 elif len(reg_pass1) < 4:
@@ -595,7 +598,8 @@ if not st.session_state['autenticado']:
                         username=reg_user,
                         password=reg_pass1,
                         role="VIP",
-                        codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None
+                        codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None,
+                        email=reg_email.strip().lower()
                     )
                     if ok_reg:
                         st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
@@ -846,10 +850,11 @@ if st.session_state['rol'] == 'ADMIN':
         # 5. Registrar Nuevo Usuario Manual
         st.write("#### ➕ Registrar Nuevo Usuario")
         new_u = st.text_input("Usuario:", key="admin_new_u")
+        new_em = st.text_input("Correo Electrónico (Opcional):", key="admin_new_em", placeholder="correo@ejemplo.com")
         new_p = st.text_input("Contraseña:", type="password", key="admin_new_p")
         new_r = st.selectbox("Rol:", ["VIP", "ADMIN"], key="admin_new_r")
         if st.button("➕ Crear Usuario", use_container_width=True):
-            ok, msg = auth.registrar_usuario(new_u, new_p, new_r)
+            ok, msg = auth.registrar_usuario(new_u, new_p, new_r, email=new_em)
             if ok:
                 st.success(msg)
                 st.rerun()
@@ -866,16 +871,29 @@ if st.session_state['rol'] == 'ADMIN':
                 
         st.markdown("---")
         # 7. Lista de Usuarios y Gestión de Afiliados
-        st.write("#### 📋 Usuarios & Códigos de Afiliados")
+        st.write("#### 📋 Base de Datos de Usuarios & Marketing")
+        
+        # Botón para descargar lista de correos en CSV para campañas de marketing
+        csv_marketing = auth.exportar_lista_correos_csv()
+        st.download_button(
+            label="📥 Descargar Base de Correos (.CSV Marketing)",
+            data=csv_marketing,
+            file_name="usuarios_smartpick_marketing.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+        st.markdown("<br>", unsafe_allow_html=True)
+        
         usuarios_lista = auth.listar_usuarios()
         for u in usuarios_lista:
-            u_id, u_name, u_rol, u_act, u_date, u_ref_c, u_ref_by, u_bal, u_tot = u
+            u_id, u_name, u_rol, u_act, u_date, u_ref_c, u_ref_by, u_bal, u_tot, u_em = u
             col_u1, col_u2 = st.columns([3, 1])
             with col_u1:
                 status_icon = "🟢" if u_act == 1 else "🔴"
                 ref_by_info = f" | Ref por: `{u_ref_by}`" if u_ref_by else ""
+                email_txt = f"📧 `{u_em}`" if u_em else "📧 *Sin correo registrado*"
                 st.markdown(f"**{status_icon} {u_name.upper()}** [{u_rol}]")
-                st.caption(f"Código: `{u_ref_c}` | Saldo: `${u_bal:.2f}` | Total Ganado: `${u_tot:.2f}`{ref_by_info}")
+                st.caption(f"{email_txt}\n\nCódigo: `{u_ref_c}` | Saldo: `${u_bal:.2f}` | Ganado: `${u_tot:.2f}`{ref_by_info}")
             with col_u2:
                 if u_name.lower() != config.ADMIN_INIT_USER.lower():
                     if st.button("🗑️", key=f"del_u_{u_id}", help="Eliminar usuario"):
