@@ -271,6 +271,71 @@ def generar_grafico_radar_comparativo(equipo_local: str, equipo_visita: str, sta
     
     return categories, val_loc, val_vis
 
+def generar_pick_recomendado_rapido(stats_poisson: dict, equipo_local: str, equipo_visita: str) -> dict:
+    """
+    Determina el pick individual de mayor certeza y valor matemático (+EV) para un partido.
+    Utilizado en tarjetas resumen, 'Partidos de Hoy' y fichas de difusión.
+    """
+    p_loc = float(stats_poisson.get("p_home_win", 40.0))
+    p_emp = float(stats_poisson.get("p_draw", 30.0))
+    p_vis = float(stats_poisson.get("p_away_win", 30.0))
+    p_1x = float(stats_poisson.get("p_1X", p_loc + p_emp))
+    p_x2 = float(stats_poisson.get("p_X2", p_vis + p_emp))
+    p_o15 = float(stats_poisson.get("p_over_15", 70.0))
+    p_o25 = float(stats_poisson.get("p_over_25", 50.0))
+    p_btts = float(stats_poisson.get("p_btts", 50.0))
+    lh = float(stats_poisson.get("lambda_home", 1.4))
+    la = float(stats_poisson.get("lambda_away", 1.1))
+
+    if p_loc >= 62.0:
+        pick = f"Victoria: {equipo_local}"
+        tipo = "🛡️ Resultado Directo"
+        prob = p_loc
+        cuota = round(max(1.30, min(1.95, 1.0 / (prob / 100.0) * 1.05)), 2)
+    elif p_vis >= 55.0:
+        pick = f"Victoria: {equipo_visita}"
+        tipo = "🛡️ Resultado Directo"
+        prob = p_vis
+        cuota = round(max(1.35, min(2.10, 1.0 / (prob / 100.0) * 1.06)), 2)
+    elif (lh + la) <= 2.10:
+        prob_u = min(88.0, max(72.0, round(sum(poisson_probability(k, lh + la) for k in range(4)) * 100, 1)))
+        pick = "Menos de 3.5 Goles"
+        prob = prob_u
+        tipo = "⚽ Goles Bajas"
+        cuota = round(max(1.22, min(1.50, 1.0 / (prob / 100.0) * 1.04)), 2)
+    elif p_btts >= 58.0 and lh >= 1.25 and la >= 1.15:
+        pick = "Ambos Equipos Anotan (Sí)"
+        prob = p_btts
+        tipo = "⚽ Ambos Marcan"
+        cuota = round(max(1.55, min(1.95, 1.0 / (prob / 100.0) * 1.05)), 2)
+    elif p_vis >= p_loc + 5.0 and p_x2 >= 64.0:
+        pick = f"Doble Op: {equipo_visita} o Empate (X2)"
+        prob = p_x2
+        tipo = "🛡️ Doble Oportunidad"
+        cuota = round(max(1.25, min(1.65, 1.0 / (prob / 100.0) * 1.04)), 2)
+    elif p_1x >= 66.0:
+        pick = f"Doble Op: {equipo_local} o Empate (1X)"
+        prob = p_1x
+        tipo = "🛡️ Doble Oportunidad"
+        cuota = round(max(1.20, min(1.55, 1.0 / (prob / 100.0) * 1.04)), 2)
+    elif p_o15 >= 72.0:
+        pick = "Más de 1.5 Goles en el Partido"
+        prob = p_o15
+        tipo = "⚽ Goles Altas"
+        cuota = round(max(1.22, min(1.48, 1.0 / (prob / 100.0) * 1.04)), 2)
+    else:
+        pick = f"Doble Op: {equipo_local} o {equipo_visita} (12)"
+        prob = round(100.0 - p_emp, 1)
+        tipo = "🛡️ Doble Oportunidad"
+        cuota = round(max(1.25, min(1.50, 1.0 / (prob / 100.0) * 1.04)), 2)
+
+    return {
+        "pick": pick,
+        "tipo": tipo,
+        "probabilidad": prob,
+        "cuota": cuota
+    }
+
 def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_poisson: dict, fecha_str: str = "", web_url: str = "", caliente_url: str = "") -> str:
     mc = stats_poisson.get("monte_carlo", {})
     top_3 = mc.get("top_3_marcadores", [])
@@ -280,9 +345,10 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
     p_emp = stats_poisson.get("p_draw", 30.0)
     p_vis = stats_poisson.get("p_away_win", 30.0)
     
-    if p_loc >= 44.0: pick_sug = f"{equipo_local} o Empate (1X)"
-    elif p_vis >= 44.0: pick_sug = f"{equipo_visita} o Empate (X2)"
-    else: pick_sug = f"{equipo_local} o {equipo_visita}"
+    pick_obj = generar_pick_recomendado_rapido(stats_poisson, equipo_local, equipo_visita)
+    pick_sug = pick_obj["pick"]
+    cuota_sug = pick_obj["cuota"]
+    conf_sug = pick_obj["probabilidad"]
 
     url_final = web_url if web_url else "https://smartpickprojz.com.mx"
     ixbet_link = getattr(config, "ENLACE_1XBET", "https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599")
@@ -302,9 +368,9 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
 • Both Teams to Score (BTTS): {mc.get('btts_pct', 50)}%
 • Línea Over 2.5 Goles: {mc.get('over25_pct', 50)}%
 
-💡 *APUESTA RECOMENDADA:*
-• Pick Principal: Doble Oportunidad ({pick_sug})
-• Confianza: Alta ⭐⭐⭐⭐⭐
+💡 *APUESTA RECOMENDADA (+EV):*
+• Pick Principal: *{pick_sug}* (Cuota: @{cuota_sug:.2f} | Confianza: {conf_sug}%)
+• Nivel de Seguridad: Alta ⭐⭐⭐⭐⭐
 
 🎁 *BONO 1XBET (HASTA $3,500 MXN EN TU 1ER DEPÓSITO):*
 👉 *Abre tu cuenta 1xBet aquí:* {ixbet_link}
