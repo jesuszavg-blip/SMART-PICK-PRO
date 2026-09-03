@@ -400,3 +400,72 @@ def render_ticket_empates_oro(empates_data: dict) -> str:
         f'</div>'
     )
     return html_ticket
+
+
+def render_ticket_bet_builder(bet_builder_data, equipo_local: str = "", equipo_visita: str = "") -> str:
+    """
+    Renderiza el Parlay Sugerido (Bet Builder Multifactorial) de 4 Factores
+    (Resultado + Goles + Tarjetas + Córners) con diseño VIP dorado y cuota combinada.
+    """
+    import html
+    
+    if isinstance(bet_builder_data, dict):
+        picks = bet_builder_data.get("picks", [])
+        cuota_total = bet_builder_data.get("cuota_total", 2.50)
+        loc = bet_builder_data.get("local", equipo_local)
+        vis = bet_builder_data.get("visita", equipo_visita)
+    elif isinstance(bet_builder_data, list):
+        picks = bet_builder_data
+        cuota_total = 2.50
+        loc = equipo_local
+        vis = equipo_visita
+    else:
+        return ""
+
+    html_items = ""
+    for p in picks:
+        cat = html.escape(str(p.get("categoria", "🎯 Pick")))
+        desc = html.escape(str(p.get("descripcion", "")))
+        prob = html.escape(str(p.get("prob", "75%")))
+        cuota = p.get("cuota", 1.30)
+        
+        try:
+            cuota_str = f"@{float(cuota):.2f}"
+        except (ValueError, TypeError):
+            cuota_str = "@1.30"
+
+        html_items += (
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; border:1px solid #282F3F; padding:12px 16px; border-radius:10px; margin-bottom:8px;">'
+            f'<div style="flex:1;">'
+            f'<div style="color:#F3E5AB; font-size:12px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">{cat}</div>'
+            f'<div style="color:#FFFFFF; font-size:15px; font-weight:900; margin-top:3px;">✅ {desc}</div>'
+            f'</div>'
+            f'<div style="display:flex; align-items:center; gap:8px; text-align:right;">'
+            f'<span style="background:#11141C; color:#F3E5AB; border:1px solid #D4AF37; font-weight:900; padding:4px 10px; border-radius:8px; font-size:13px;">{cuota_str}</span>'
+            f'<span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:12px; font-size:13px; box-shadow:0 2px 6px rgba(212,175,55,0.3);">Confianza: {prob}</span>'
+            f'</div>'
+            f'</div>'
+        )
+
+    vs_txt = f"{loc} vs {vis}" if loc and vis else "Encuentro Seleccionado"
+
+    html_card = (
+        f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:2px dashed #D4AF37; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(0,0,0,0.4);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:12px; margin-bottom:14px; flex-wrap:wrap; gap:10px;">'
+        f'<div>'
+        f'<div style="font-size:20px; font-weight:900; color:#D4AF37;">🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)</div>'
+        f'<div style="color:#94A3B8; font-size:13px; margin-top:2px;">{vs_txt} • 4 Factores: Poisson + Dixon-Coles + xG + Árbitro + Córners</div>'
+        f'</div>'
+        f'<div style="background:#11141C; border:1.5px solid #D4AF37; padding:6px 16px; border-radius:10px; text-align:right;">'
+        f'<div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Combinada Parlay</div>'
+        f'<div style="font-size:22px; font-weight:900; color:#D4AF37; letter-spacing:0.5px;">x{cuota_total:,.2f}</div>'
+        f'</div>'
+        f'</div>'
+        f'<div>{html_items}</div>'
+        f'<div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:8px 12px; margin-top:10px; font-size:12px; color:#F3E5AB; display:flex; align-items:center; gap:6px;">'
+        f'<span>💡</span> <span><b>Tip Pro:</b> Puedes combinar estas 4 selecciones en la pestaña <i>"Crear Apuesta" / "Bet Builder"</i> de tu casa de apuestas favorita con cuota combinada estimada de <b>x{cuota_total:,.2f}</b>.</span>'
+        f'</div>'
+        f'</div>'
+    )
+    return html_card
+
