@@ -109,16 +109,16 @@ def sincronizar_con_github_cloud() -> tuple[bool, str]:
         return False, f"Error: {e}"
 
 def _respaldar_usuarios_json():
-    """Guarda un respaldo persistente de todos los usuarios, comisiones y balances en JSON local y en GitHub Cloud"""
+    """Guarda un respaldo persistente de todos los usuarios, comisiones, emails y balances en JSON local"""
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado FROM users")
+        cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email FROM users")
         rows = cursor.fetchall()
         conn.close()
         
         users_list = []
-        for u, p, r, a, ref_c, ref_by, bal, tot in rows:
+        for u, p, r, a, ref_c, ref_by, bal, tot, em in rows:
             users_list.append({
                 "username": u,
                 "password": p,
@@ -127,7 +127,8 @@ def _respaldar_usuarios_json():
                 "referral_code": ref_c,
                 "referred_by": ref_by,
                 "balance_disponible": bal or 0.0,
-                "total_ganado": tot or 0.0
+                "total_ganado": tot or 0.0,
+                "email": em or ""
             })
             
         with open(USER_BACKUP_PATH, "w", encoding="utf-8") as f:
@@ -174,7 +175,7 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # 1. Tabla Principal de Usuarios
+    # 1. Tabla Principal de Usuarios con Email
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -186,7 +187,8 @@ def init_db():
             referral_code TEXT UNIQUE,
             referred_by TEXT,
             balance_disponible REAL DEFAULT 0.0,
-            total_ganado REAL DEFAULT 0.0
+            total_ganado REAL DEFAULT 0.0,
+            email TEXT
         )
     ''')
 
@@ -201,6 +203,8 @@ def init_db():
         cursor.execute("ALTER TABLE users ADD COLUMN balance_disponible REAL DEFAULT 0.0")
     if "total_ganado" not in columnas_existentes:
         cursor.execute("ALTER TABLE users ADD COLUMN total_ganado REAL DEFAULT 0.0")
+    if "email" not in columnas_existentes:
+        cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
 
     # 2. Tabla de Comisiones de Afiliados
     cursor.execute('''
@@ -241,8 +245,8 @@ def init_db():
         hashed_pw = _hash_password(config.ADMIN_INIT_PASS)
         admin_ref_code = "SP-ADMIN01"
         cursor.execute(
-            "INSERT INTO users (username, password, role, is_active, referral_code, balance_disponible, total_ganado) VALUES (?, ?, ?, 1, ?, 0.0, 0.0)",
-            (config.ADMIN_INIT_USER.lower(), hashed_pw, 'ADMIN', admin_ref_code)
+            "INSERT INTO users (username, password, role, is_active, referral_code, balance_disponible, total_ganado, email) VALUES (?, ?, ?, 1, ?, 0.0, 0.0, ?)",
+            (config.ADMIN_INIT_USER.lower(), hashed_pw, 'ADMIN', admin_ref_code, 'admin@smartpickprojz.com')
         )
         conn.commit()
 
@@ -283,12 +287,13 @@ def init_db():
                                 u_ref_by = u_data.get("referred_by")
                                 u_bal = float(u_data.get("balance_disponible", 0.0))
                                 u_tot = float(u_data.get("total_ganado", 0.0))
+                                u_em = str(u_data.get("email", "")).strip().lower()
                                 if u_name and u_pw:
                                     cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
                                     if not cursor.fetchone():
                                         cursor.execute(
-                                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                                            (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                            (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, u_em)
                                         )
                             conn.commit()
         except Exception as e:
@@ -306,13 +311,14 @@ def init_db():
                 u_ref_by = u_data.get("referred_by")
                 u_bal = float(u_data.get("balance_disponible", 0.0))
                 u_tot = float(u_data.get("total_ganado", 0.0))
+                u_em = str(u_data.get("email", "")).strip().lower()
                 if u_name and u_pw:
                     cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
                     if not cursor.fetchone():
                         pw_to_insert = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
                         cursor.execute(
-                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                            (u_name, pw_to_insert, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            (u_name, pw_to_insert, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, u_em)
                         )
             conn.commit()
 
@@ -330,12 +336,13 @@ def init_db():
                         u_ref_by = u_data.get("referred_by")
                         u_bal = float(u_data.get("balance_disponible", 0.0))
                         u_tot = float(u_data.get("total_ganado", 0.0))
+                        u_em = str(u_data.get("email", "")).strip().lower()
                         if u_name and u_pw:
                             cursor.execute("SELECT id FROM users WHERE username = ?", (u_name,))
                             if not cursor.fetchone():
                                 cursor.execute(
-                                    "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                                    (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                                    "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                    (u_name, u_pw, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, u_em)
                                 )
                 conn.commit()
             except Exception as e:
@@ -367,11 +374,11 @@ def verificar_credenciales(username: str, password: str) -> tuple[bool, str]:
     return False, "Contraseña incorrecta"
 
 def obtener_datos_usuario(username: str) -> dict | None:
-    """Devuelve los datos completos del usuario incluyendo balances y código de afiliado"""
+    """Devuelve los datos completos del usuario incluyendo balances, email y código de afiliado"""
     username_clean = username.strip().lower()
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado FROM users WHERE username = ?", (username_clean,))
+    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users WHERE username = ?", (username_clean,))
     row = cursor.fetchone()
     conn.close()
     if not row:
@@ -385,7 +392,8 @@ def obtener_datos_usuario(username: str) -> dict | None:
         "referral_code": row[5] or _generar_codigo_referido(row[1]),
         "referred_by": row[6],
         "balance_disponible": float(row[7] or 0.0),
-        "total_ganado": float(row[8] or 0.0)
+        "total_ganado": float(row[8] or 0.0),
+        "email": row[9] or ""
     }
 
 def buscar_usuario_por_codigo(codigo: str) -> str | None:
@@ -400,9 +408,11 @@ def buscar_usuario_por_codigo(codigo: str) -> str | None:
     conn.close()
     return row[0] if row else None
 
-def registrar_usuario(username: str, password: str, role: str = 'VIP', codigo_referido_usado: str = None) -> tuple[bool, str]:
-    """Registra un nuevo usuario asociándolo con su referente si aplica"""
+def registrar_usuario(username: str, password: str, role: str = 'VIP', codigo_referido_usado: str = None, email: str = "") -> tuple[bool, str]:
+    """Registra un nuevo usuario asociándolo con su correo y referente si aplica"""
     username_clean = username.strip().lower()
+    email_clean = email.strip().lower() if email else ""
+    
     if len(username_clean) < 3:
         return False, "El nombre de usuario debe tener al menos 3 caracteres."
     if len(password) < 4:
@@ -421,12 +431,16 @@ def registrar_usuario(username: str, password: str, role: str = 'VIP', codigo_re
     try:
         hashed_pw = _hash_password(password)
         cursor.execute(
-            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, 1, ?, ?, 0.0, 0.0)",
-            (username_clean, hashed_pw, role, nuevo_codigo, referred_by_username)
+            "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email) VALUES (?, ?, ?, 1, ?, ?, 0.0, 0.0, ?)",
+            (username_clean, hashed_pw, role, nuevo_codigo, referred_by_username, email_clean)
         )
         conn.commit()
         conn.close()
         _respaldar_usuarios_json()
+        try:
+            sincronizar_con_github_cloud()
+        except Exception:
+            pass
         
         msg_ref = f" (Referido por: {referred_by_username.upper()})" if referred_by_username else ""
         return True, f"✅ Cuenta '{username_clean}' creada exitosamente{msg_ref}."
@@ -564,10 +578,10 @@ def obtener_resumen_afiliado(username: str) -> dict:
     cursor = conn.cursor()
 
     # 1. Lista de usuarios referidos
-    cursor.execute("SELECT username, role, is_active, created_at FROM users WHERE referred_by = ? ORDER BY id DESC", (username_clean,))
+    cursor.execute("SELECT username, role, is_active, created_at, email FROM users WHERE referred_by = ? ORDER BY id DESC", (username_clean,))
     referidos_raw = cursor.fetchall()
     lista_referidos = [
-        {"username": r[0], "role": r[1], "is_active": bool(r[2]), "created_at": str(r[3])}
+        {"username": r[0], "role": r[1], "is_active": bool(r[2]), "created_at": str(r[3]), "email": r[4] or ""}
         for r in referidos_raw
     ]
     total_referidos = len(lista_referidos)
@@ -655,6 +669,10 @@ def marcar_retiro_pagado_admin(payout_id: int, nota: str = "") -> tuple[bool, st
     conn.commit()
     conn.close()
     _respaldar_usuarios_json()
+    try:
+        sincronizar_con_github_cloud()
+    except Exception:
+        pass
     return True, f"✅ Retiro #{payout_id} marcado como PAGADO."
 
 def rechazar_retiro_admin(payout_id: int, motivo: str = "") -> tuple[bool, str]:
@@ -678,12 +696,16 @@ def rechazar_retiro_admin(payout_id: int, motivo: str = "") -> tuple[bool, str]:
     conn.commit()
     conn.close()
     _respaldar_usuarios_json()
+    try:
+        sincronizar_con_github_cloud()
+    except Exception:
+        pass
     return True, f"⚠️ Retiro #{payout_id} rechazado y saldo de ${monto:.2f} MXN reembolsado a {username.upper()}."
 
 def listar_usuarios():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado FROM users ORDER BY id DESC")
+    cursor.execute("SELECT id, username, role, is_active, created_at, referral_code, referred_by, balance_disponible, total_ganado, email FROM users ORDER BY id DESC")
     users = cursor.fetchall()
     conn.close()
     return users
@@ -723,12 +745,12 @@ def exportar_usuarios_json() -> str:
     """Exporta todos los usuarios en formato JSON formateado listo para descarga/respaldo"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado FROM users")
+    cursor.execute("SELECT username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email FROM users")
     rows = cursor.fetchall()
     conn.close()
     
     users_list = []
-    for u, p, r, a, ref_c, ref_by, bal, tot in rows:
+    for u, p, r, a, ref_c, ref_by, bal, tot, em in rows:
         users_list.append({
             "username": u,
             "password": p,
@@ -737,10 +759,24 @@ def exportar_usuarios_json() -> str:
             "referral_code": ref_c,
             "referred_by": ref_by,
             "balance_disponible": bal or 0.0,
-            "total_ganado": tot or 0.0
+            "total_ganado": tot or 0.0,
+            "email": em or ""
         })
         
     return json.dumps(users_list, ensure_ascii=False, indent=2)
+
+def exportar_lista_correos_csv() -> str:
+    """Devuelve un archivo CSV con username, email, role, created_at para campañas de marketing"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, email, role, is_active, created_at FROM users ORDER BY id DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    lines = ["Usuario,Email,Rol,Activo,FechaRegistro"]
+    for u, em, r, act, cr in rows:
+        lines.append(f"{u},{em or 'Sin email'},{r},{'Si' if act else 'No'},{cr}")
+    return "\n".join(lines)
 
 def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
     """Importa usuarios desde un texto JSON, restaurándolos en la base de datos sin duplicar"""
@@ -764,6 +800,7 @@ def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
             u_ref_by = u.get("referred_by")
             u_bal = float(u.get("balance_disponible", 0.0))
             u_tot = float(u.get("total_ganado", 0.0))
+            u_em = str(u.get("email", "")).strip().lower()
             
             if u_name and u_pw:
                 pw_val = u_pw if (u_pw.startswith("$2") or u_pw.startswith("sha256:")) else _hash_password(u_pw)
@@ -771,14 +808,14 @@ def importar_usuarios_json(json_str: str) -> tuple[int, int, str]:
                 existing = cursor.fetchone()
                 if existing:
                     cursor.execute(
-                        "UPDATE users SET password = ?, role = ?, is_active = ?, referral_code = ?, referred_by = ?, balance_disponible = ?, total_ganado = ? WHERE id = ?",
-                        (pw_val, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, existing[0])
+                        "UPDATE users SET password = ?, role = ?, is_active = ?, referral_code = ?, referred_by = ?, balance_disponible = ?, total_ganado = ?, email = ? WHERE id = ?",
+                        (pw_val, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, u_em, existing[0])
                     )
                     actualizados += 1
                 else:
                     cursor.execute(
-                        "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (u_name, pw_val, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot)
+                        "INSERT INTO users (username, password, role, is_active, referral_code, referred_by, balance_disponible, total_ganado, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (u_name, pw_val, u_role, u_active, u_ref_code, u_ref_by, u_bal, u_tot, u_em)
                     )
                     insertados += 1
                     
