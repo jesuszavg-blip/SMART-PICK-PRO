@@ -1149,8 +1149,10 @@ def obtener_analisis_completo(fixture_id, id_local, id_visita):
             under_over = pred_data.get('predictions', {}).get('under_over', under_over)
             
             goals = pred_data.get('predictions', {}).get('goals', {})
-            goles_loc = str(goals.get('home', '1.5'))
-            goles_vis = str(goals.get('away', '1.1'))
+            raw_gh = str(goals.get('home', '1.5')) if goals.get('home') is not None else '1.5'
+            raw_ga = str(goals.get('away', '1.1')) if goals.get('away') is not None else '1.1'
+            goles_loc = raw_gh.replace('-', '').replace('+', '').strip() or '1.5'
+            goles_vis = raw_ga.replace('-', '').replace('+', '').strip() or '1.1'
             
             teams_pred = pred_data.get('teams', {})
             forma_loc = str(teams_pred.get('home', {}).get('league', {}).get('form', '50%'))
