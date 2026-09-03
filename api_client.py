@@ -732,15 +732,31 @@ def obtener_partidos_de_hoy() -> dict:
     para apuestas rápidas que se resuelven el mismo día.
     """
     import datetime
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
+    today = datetime.date.today()
+    today_str = today.strftime("%Y-%m-%d")
+    tomorrow_str = (today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
     
     headers = get_headers()
     try:
         url = f"{config.API_FOOTBALL_URL}/fixtures"
         resp = requests.get(url, headers=headers, params={"date": today_str, "timezone": "America/Mexico_City"}, timeout=12)
+        fixtures_raw = []
         if resp.status_code == 200 and resp.json().get('response'):
             fixtures_raw = resp.json()['response']
-            
+
+        # Contar partidos próximos/en vivo de hoy
+        upcoming_count = sum(1 for f in fixtures_raw if f.get('fixture', {}).get('status', {}).get('short', 'NS') not in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT'])
+
+        # Si hay pocos partidos por jugar hoy (ej. tarde/noche), cargar también los de mañana
+        if upcoming_count < 20:
+            try:
+                resp_tom = requests.get(url, headers=headers, params={"date": tomorrow_str, "timezone": "America/Mexico_City"}, timeout=10)
+                if resp_tom.status_code == 200 and resp_tom.json().get('response'):
+                    fixtures_raw.extend(resp_tom.json()['response'])
+            except Exception as e_tom:
+                print(f"Error cargando partidos complementarios de mañana: {e_tom}")
+
+        if fixtures_raw:
             ligas_hoy = {}
             for f in fixtures_raw:
                 l_obj = f.get('league', {})
@@ -769,8 +785,12 @@ def obtener_partidos_de_hoy() -> dict:
                 hora_str = "Hoy"
                 if "T" in str(hora_utc):
                     try:
+                        d_part = str(hora_utc).split("T")[0]
                         t_part = str(hora_utc).split("T")[1][:5]
-                        hora_str = f"{t_part} hrs (CDMX)"
+                        if d_part == tomorrow_str:
+                            hora_str = f"Mañana {t_part} hrs (CDMX)"
+                        else:
+                            hora_str = f"{t_part} hrs (CDMX)"
                     except Exception:
                         hora_str = "Hoy"
 
