@@ -28,10 +28,21 @@ ENLACE_1XBET = ENLACES_CASINOS["1xBet"]
 ENLACE_MEXPLAY = ENLACES_CASINOS["Mexplay"]
 ENLACE_POR_DEFECTO = ENLACES_CASINOS["1xBet"]
 ENLACE_WHATSAPP = "https://wa.me/526676947014?text=Hola%20Jesus,%20quiero%20obtener%20acceso%20a%20Smart%20Pick%20Pro"
-# Datos de Pago Directo (BanCoppel y PayPal)
+# Datos de Pago Directo (BanCoppel, Mercado Pago, PayPal, Bitso USDT)
 BANCOPPEL_TARJETA = os.getenv("BANCOPPEL_TARJETA", "4169 1608 7646 1600")
 BANCOPPEL_TITULAR = os.getenv("BANCOPPEL_TITULAR", "Jesús")
+MERCADOPAGO_LINK = os.getenv("MERCADOPAGO_LINK", "https://mpago.la/1ZefYpR")
 PAYPAL_LINK = os.getenv("PAYPAL_LINK", "https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2")
+BITSO_USDT_TRC20 = os.getenv("BITSO_USDT_TRC20", "TUyvrvPjGyh9v5SDYHW7GZ1g4MomKSFkh2")
+
+# Configuración del Programa de Afiliados y Membresía
+DOMINIO_APP = os.getenv("DOMINIO_APP", "https://smartpickprojz.com")
+PRECIO_VIP_MXN = float(os.getenv("PRECIO_VIP_MXN", "149.0"))
+COMISION_MES_1 = float(os.getenv("COMISION_MES_1", "0.50"))  # 50%
+COMISION_MES_2 = float(os.getenv("COMISION_MES_2", "0.40"))  # 40%
+COMISION_MES_RECURRENTE = float(os.getenv("COMISION_MES_RECURRENTE", "0.30"))  # 30%
+MINIMO_RETIRO_AFILIADO = float(os.getenv("MINIMO_RETIRO_AFILIADO", "100.0"))  # $100 MXN
 
 # API Base URL
 API_FOOTBALL_URL = "https://v3.football.api-sports.io"
+
