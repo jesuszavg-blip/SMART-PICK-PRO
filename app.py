@@ -1865,6 +1865,22 @@ else:
         # PESTAÑA 1: MINUTO A MINUTO EN PANTALLA DIVIDIDA
         # =========================================================
         with tab_vivo:
+            def safe_parse_goals(val, default_val=1.4):
+                if val is None:
+                    return default_val
+                try:
+                    v_clean = str(val).replace('-', '').replace('+', '').strip()
+                    num = float(v_clean)
+                    return num if num > 0 else default_val
+                except Exception:
+                    return default_val
+
+            gl_safe = safe_parse_goals(gl, 1.4)
+            gv_safe = safe_parse_goals(gv, 1.1)
+
+            t_loc = max(3, int(gl_safe * 3.5))
+            t_vis = max(2, int(gv_safe * 3.2))
+
             html_minuto_a_minuto = pitch_renderer.render_minuto_a_minuto_dividido(
                 equipo_local=equipo_local_real,
                 equipo_visita=equipo_visita_real,
@@ -1878,8 +1894,8 @@ else:
                 eventos_visita=eventos_vis,
                 pos_local=55 if p_win_h >= p_win_a else 45,
                 pos_visita=45 if p_win_h >= p_win_a else 55,
-                tiros_local=max(3, int(float(gl) * 3.5)),
-                tiros_visita=max(2, int(float(gv) * 3.2))
+                tiros_local=t_loc,
+                tiros_visita=t_vis
             )
             st.markdown(html_minuto_a_minuto, unsafe_allow_html=True)
 
