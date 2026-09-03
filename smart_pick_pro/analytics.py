@@ -371,6 +371,19 @@ def calcular_matriz_poisson_multifactorial(
     penalizacion_loc = num_bajas_loc * 0.03
     penalizacion_vis = num_bajas_vis * 0.03
 
+    # Ajuste por diferencia de posiciones en la tabla (si se disponen)
+    rank_mod_loc = 0.0
+    rank_mod_vis = 0.0
+    if posicion_loc is not None and posicion_vis is not None:
+        try:
+            pl_r = int(posicion_loc)
+            pv_r = int(posicion_vis)
+            diff_rank = pv_r - pl_r
+            rank_mod_loc = min(0.25, max(-0.25, diff_rank * 0.015))
+            rank_mod_vis = -rank_mod_loc
+        except (ValueError, TypeError):
+            pass
+
     try:
         lambda_home = float(goles_loc_est) if str(goles_loc_est).replace('.', '', 1).isdigit() else 1.4
     except ValueError:
@@ -381,8 +394,8 @@ def calcular_matriz_poisson_multifactorial(
     except ValueError:
         lambda_away = 1.1
 
-    lambda_home = lambda_home * (0.85 + 0.3 * f_loc) + 0.25 - penalizacion_loc
-    lambda_away = lambda_away * (0.85 + 0.3 * f_vis) - penalizacion_vis
+    lambda_home = lambda_home * (0.85 + 0.3 * f_loc) + 0.15 + rank_mod_loc - penalizacion_loc
+    lambda_away = lambda_away * (0.85 + 0.3 * f_vis) + rank_mod_vis - penalizacion_vis
 
     lambda_home = max(0.4, min(3.8, lambda_home))
     lambda_away = max(0.3, min(3.5, lambda_away))
@@ -406,9 +419,9 @@ def calcular_matriz_poisson_multifactorial(
     p_poisson_draw = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h == a)
     p_poisson_vis = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h < a)
 
-    raw_p_loc = (0.40 * p_poisson_loc) + (0.25 * p_l_base) + (0.20 * f_loc) + (0.15 * p_h2h_loc) - penalizacion_loc
-    raw_p_draw = (0.40 * p_poisson_draw) + (0.25 * p_e_base) + (0.20 * (1.0 - abs(f_loc - f_vis))) + (0.15 * p_h2h_draw)
-    raw_p_vis = (0.40 * p_poisson_vis) + (0.25 * p_v_base) + (0.20 * f_vis) + (0.15 * p_h2h_vis) - penalizacion_vis
+    raw_p_loc = (0.35 * p_poisson_loc) + (0.25 * p_l_base) + (0.15 * f_loc) + (0.15 * p_h2h_loc) + (0.10 * max(0.0, 0.5 + rank_mod_loc)) - penalizacion_loc
+    raw_p_draw = (0.35 * p_poisson_draw) + (0.25 * p_e_base) + (0.25 * (1.0 - abs(f_loc - f_vis))) + (0.15 * p_h2h_draw)
+    raw_p_vis = (0.35 * p_poisson_vis) + (0.25 * p_v_base) + (0.15 * f_vis) + (0.15 * p_h2h_vis) + (0.10 * max(0.0, 0.5 + rank_mod_vis)) - penalizacion_vis
 
     raw_p_loc = max(0.05, raw_p_loc)
     raw_p_draw = max(0.05, raw_p_draw)
@@ -505,11 +518,11 @@ def generar_bet_builder_dinamico(
     referee_name: str = "Por definir"
 ) -> dict:
     """
-    Genera un Parlay Bet Builder Multifactorial de 4 factores de alta correlación y valor:
-    1. Resultado / Doble Oportunidad (Poisson + Dixon-Coles)
-    2. Línea de Goles Óptima (xG + Poisson)
-    3. Tarjetas Totales (Rigor del Árbitro + Tendencia de Faltas)
-    4. Tiros de Esquina / Córners (Volumen Ofensivo y Presión de Ataque)
+    Genera un Parlay Bet Builder Multifactorial de 4 factores de alta correlación y valor real:
+    1. Resultado / Doble Oportunidad / DNB / Hándicap (Poisson + Dixon-Coles + Rank)
+    2. Línea de Goles Óptima y Diversificada (xG + Poisson + BTTS + Over/Under Real)
+    3. Tarjetas Totales y por Equipo (Rigor del Árbitro + Tendencia de Faltas)
+    4. Tiros de Esquina / Córners (Volumen Ofensivo, Presión de Ataque y Bandas)
     """
     picks = []
 
@@ -520,7 +533,7 @@ def generar_bet_builder_dinamico(
     p_X2 = float(stats_poisson.get("p_X2", round(p_away_win + p_draw, 1)))
     p_12 = round(100.0 - p_draw, 1)
 
-    lh = float(stats_poisson.get("lambda_home", 1.5))
+    lh = float(stats_poisson.get("lambda_home", 1.4))
     la = float(stats_poisson.get("lambda_away", 1.1))
     p_over15 = float(stats_poisson.get("p_over_15", 70.0))
     p_over25 = float(stats_poisson.get("p_over_25", 50.0))
@@ -528,41 +541,69 @@ def generar_bet_builder_dinamico(
     exp_goles_total = lh + la
 
     # =========================================================
-    # 1. MERCADO DE RESULTADO / DOBLE OPORTUNIDAD
+    # 1. MERCADO DE RESULTADO / DOBLE OPORTUNIDAD / DNB
     # =========================================================
-    if p_home_win >= 65.0:
+    if p_home_win >= 62.0:
         picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_local}", "prob": f"{p_home_win:.1f}%"})
-    elif p_away_win >= 60.0:
+    elif p_away_win >= 56.0:
         picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_visita}", "prob": f"{p_away_win:.1f}%"})
-    elif p_1X >= p_X2:
-        if p_1X >= 68.0:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate (1X)", "prob": f"{p_1X:.1f}%"})
-        else:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
-    else:
-        if p_X2 >= 68.0:
+    elif p_away_win >= p_home_win + 5.0:
+        # Visitante tiene ventaja clara (ej. Tigres vs Juárez)
+        if p_X2 >= 64.0:
             picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_visita} o Empate (X2)", "prob": f"{p_X2:.1f}%"})
         else:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Empate Apuesta No Válida (DNB): {equipo_visita}", "prob": f"{min(82.0, p_away_win + 18.0):.1f}%"})
+    elif p_home_win >= p_away_win + 8.0:
+        # Local tiene ventaja clara
+        if p_1X >= 66.0:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate (1X)", "prob": f"{p_1X:.1f}%"})
+        else:
+            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Empate Apuesta No Válida (DNB): {equipo_local}", "prob": f"{min(82.0, p_home_win + 18.0):.1f}%"})
+    elif p_draw >= 32.0:
+        # Choque sumamente parejo con alta tendencia de empate
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Hándicap Asiático +1.5: {equipo_visita if p_1X >= p_X2 else equipo_local}", "prob": f"{max(76.0, min(89.0, max(p_1X, p_X2) + 12.0)):.1f}%"})
+    else:
+        # Ambos equipos buscan el triunfo sin especular
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
 
     # =========================================================
-    # 2. MERCADO DE GOLES DINÁMICO
+    # 2. MERCADO DE GOLES DINÁMICO Y DIVERSIFICADO
     # =========================================================
+    p_under25 = round(sum(poisson_probability(k, exp_goles_total) for k in range(3)) * 100, 1)
     p_under35 = round(sum(poisson_probability(k, exp_goles_total) for k in range(4)) * 100, 1)
     p_under35 = max(68.0, min(92.0, p_under35))
 
-    if p_over25 >= 60.0 or exp_goles_total >= 2.85:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 2.5 Goles en el Partido", "prob": f"{p_over25:.1f}%"})
-    elif p_btts >= 60.0 and lh >= 1.25 and la >= 1.15:
+    p_lh15 = round((1.0 - poisson_probability(0, lh) - poisson_probability(1, lh)) * 100, 1)
+    p_la15 = round((1.0 - poisson_probability(0, la) - poisson_probability(1, la)) * 100, 1)
+
+    if exp_goles_total <= 2.15 or p_under25 >= 60.0:
+        # Partido defensivo o cerrado (Menos de 2.5 / 3.5)
+        if exp_goles_total <= 1.85:
+            prob_u25 = max(68.0, min(84.0, p_under25))
+            picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 2.5 Goles en el Partido", "prob": f"{prob_u25:.1f}%"})
+        else:
+            picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 3.5 Goles en el Partido", "prob": f"{p_under35:.1f}%"})
+    elif p_btts >= 56.0 and lh >= 1.25 and la >= 1.15:
+        # Ambos equipos marcan con consistencia ofensiva
         picks.append({"categoria": "⚽ Goles", "descripcion": "Ambos Equipos Anotan (Sí)", "prob": f"{p_btts:.1f}%"})
-    elif exp_goles_total <= 2.15 or p_over15 < 68.0:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 3.5 Goles en el Partido", "prob": f"{p_under35:.1f}%"})
-    elif lh >= 1.95 and la <= 0.85:
-        prob_lh15 = round((1.0 - poisson_probability(0, lh) - poisson_probability(1, lh)) * 100, 1)
-        prob_lh15 = max(68.0, min(88.0, prob_lh15))
-        picks.append({"categoria": "⚽ Goles", "descripcion": f"{equipo_local}: Más de 1.5 Goles", "prob": f"{prob_lh15:.1f}%"})
+    elif p_over25 >= 64.0 and exp_goles_total >= 3.0:
+        # Partido sumamente abierto / festival de goles
+        prob_o25 = max(64.0, min(85.0, p_over25))
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 2.5 Goles en el Partido", "prob": f"{prob_o25:.1f}%"})
+    elif lh >= 2.05 and lh >= (la * 1.7):
+        # Local arrollador en casa
+        prob_lh = max(68.0, min(86.0, p_lh15))
+        picks.append({"categoria": "⚽ Goles", "descripcion": f"{equipo_local}: Más de 1.5 Goles", "prob": f"{prob_lh:.1f}%"})
+    elif la >= 1.95 and la >= (lh * 1.5):
+        # Visitante arrollador fuera
+        prob_la = max(68.0, min(86.0, p_la15))
+        picks.append({"categoria": "⚽ Goles", "descripcion": f"{equipo_visita}: Más de 1.5 Goles", "prob": f"{prob_la:.1f}%"})
+    elif p_over15 >= 68.0:
+        # Línea sólida y segura para parlay
+        prob_o15 = max(70.0, min(89.0, p_over15))
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 1.5 Goles en el Partido", "prob": f"{prob_o15:.1f}%"})
     else:
-        picks.append({"categoria": "⚽ Goles", "descripcion": "Más de 1.5 Goles en el Partido", "prob": f"{p_over15:.1f}%"})
+        picks.append({"categoria": "⚽ Goles", "descripcion": "Menos de 3.5 Goles en el Partido", "prob": f"{p_under35:.1f}%"})
 
     # =========================================================
     # 3. MERCADO DE TARJETAS DINÁMICO (ÁRBITRO & RIGOR)
@@ -579,44 +620,78 @@ def generar_bet_builder_dinamico(
     lam_cards = max(2.5, min(7.5, lam_cards))
     p_cards_over25 = round((1.0 - sum(poisson_probability(k, lam_cards) for k in range(3))) * 100, 1)
     p_cards_over35 = round((1.0 - sum(poisson_probability(k, lam_cards) for k in range(4))) * 100, 1)
+    p_cards_over45 = round((1.0 - sum(poisson_probability(k, lam_cards) for k in range(5))) * 100, 1)
+    p_cards_under45 = round((sum(poisson_probability(k, lam_cards) for k in range(5))) * 100, 1)
     p_cards_under55 = round((sum(poisson_probability(k, lam_cards) for k in range(6))) * 100, 1)
 
-    if lam_cards >= 4.8:
+    if lam_cards >= 5.1:
+        # Árbitro extremadamente tarjetero
+        prob_c = max(66.0, min(84.0, p_cards_over45))
+        picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 4.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
+    elif lam_cards >= 4.3:
+        # Árbitro estricto
         prob_c = max(68.0, min(86.0, p_cards_over35))
         picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 3.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
-    elif lam_cards <= 3.4:
-        prob_c = max(72.0, min(90.0, p_cards_under55))
+    elif lam_cards <= 3.3:
+        # Árbitro muy permisivo
+        prob_c = max(72.0, min(90.0, p_cards_under45))
+        picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Menos de 4.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
+    elif lam_cards <= 3.7:
+        prob_c = max(74.0, min(92.0, p_cards_under55))
         picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Menos de 5.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
     else:
-        if p_cards_over35 >= 66.0:
-            picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 3.5 Tarjetas Totales", "prob": f"{p_cards_over35:.1f}%"})
+        # Rango moderado estándar (3.8 - 4.2)
+        if p_cards_over35 >= 62.0:
+            prob_c = max(68.0, min(84.0, p_cards_over35))
+            picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 3.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
         else:
-            prob_c = max(72.0, min(89.0, p_cards_over25))
+            prob_c = max(74.0, min(89.0, p_cards_over25))
             picks.append({"categoria": "🟨 Tarjetas", "descripcion": "Más de 2.5 Tarjetas Totales", "prob": f"{prob_c:.1f}%"})
 
     # =========================================================
     # 4. MERCADO DE TIROS DE ESQUINA (CÓRNERS)
     # =========================================================
-    exp_corners_loc = max(3.0, min(7.5, 3.8 + (lh * 1.35)))
-    exp_corners_vis = max(2.2, min(6.0, 2.7 + (la * 1.15)))
+    exp_corners_loc = max(2.5, min(8.0, 2.8 + (lh * 1.40)))
+    exp_corners_vis = max(2.0, min(7.5, 2.4 + (la * 1.30)))
     lam_corners = exp_corners_loc + exp_corners_vis
 
+    p_corners_over65 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(7))) * 100, 1)
     p_corners_over75 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(8))) * 100, 1)
     p_corners_over85 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(9))) * 100, 1)
+    p_corners_over95 = round((1.0 - sum(poisson_probability(k, lam_corners) for k in range(10))) * 100, 1)
+    p_corners_under105 = round((sum(poisson_probability(k, lam_corners) for k in range(11))) * 100, 1)
     p_corners_under115 = round((sum(poisson_probability(k, lam_corners) for k in range(12))) * 100, 1)
 
-    if lam_corners >= 10.6 and p_corners_over85 >= 68.0:
-        prob_cr = max(68.0, min(85.0, p_corners_over85))
+    p_cor_loc35 = round((1.0 - sum(poisson_probability(k, exp_corners_loc) for k in range(4))) * 100, 1)
+    p_cor_loc45 = round((1.0 - sum(poisson_probability(k, exp_corners_loc) for k in range(5))) * 100, 1)
+    p_cor_vis35 = round((1.0 - sum(poisson_probability(k, exp_corners_vis) for k in range(4))) * 100, 1)
+
+    if lam_corners >= 10.8:
+        # Partido de ida y vuelta constante por bandas
+        prob_cr = max(66.0, min(84.0, p_corners_over95))
+        picks.append({"categoria": "🚩 Córners", "descripcion": "Más de 9.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
+    elif lam_corners >= 9.6:
+        prob_cr = max(68.0, min(86.0, p_corners_over85))
         picks.append({"categoria": "🚩 Córners", "descripcion": "Más de 8.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
-    elif lam_corners <= 8.2:
-        prob_cr = max(72.0, min(88.0, p_corners_under115))
-        picks.append({"categoria": "🚩 Córners", "descripcion": "Menos de 11.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
-    elif exp_corners_loc >= 5.5 and (exp_corners_loc - exp_corners_vis) >= 1.8:
-        p_cor_loc35 = round((1.0 - sum(poisson_probability(k, exp_corners_loc) for k in range(4))) * 100, 1)
-        prob_cr = max(70.0, min(86.0, p_cor_loc35))
-        picks.append({"categoria": "🚩 Córners", "descripcion": f"{equipo_local}: Más de 3.5 Córners", "prob": f"{prob_cr:.1f}%"})
+    elif lam_corners <= 7.8:
+        # Partido cerrado en medio campo
+        prob_cr = max(72.0, min(88.0, p_corners_under105))
+        picks.append({"categoria": "🚩 Córners", "descripcion": "Menos de 10.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
+    elif exp_corners_loc >= 5.2 and (exp_corners_loc >= exp_corners_vis + 1.6):
+        # Local con claro asedio ofensivo
+        if exp_corners_loc >= 5.8:
+            prob_cr = max(68.0, min(85.0, p_cor_loc45))
+            picks.append({"categoria": "🚩 Córners", "descripcion": f"{equipo_local}: Más de 4.5 Córners", "prob": f"{prob_cr:.1f}%"})
+        else:
+            prob_cr = max(70.0, min(87.0, p_cor_loc35))
+            picks.append({"categoria": "🚩 Córners", "descripcion": f"{equipo_local}: Más de 3.5 Córners", "prob": f"{prob_cr:.1f}%"})
+    elif exp_corners_vis >= 4.6 and (exp_corners_vis >= exp_corners_loc + 0.8):
+        # Visitante con claro dominio y posesión
+        prob_cr = max(68.0, min(86.0, p_cor_vis35))
+        picks.append({"categoria": "🚩 Córners", "descripcion": f"{equipo_visita}: Más de 3.5 Córners", "prob": f"{prob_cr:.1f}%"})
     else:
-        prob_cr = max(73.0, min(88.0, p_corners_over75))
+        # Mercado general balanceado
+        prob_cr = max(72.0, min(88.0, p_corners_over75))
         picks.append({"categoria": "🚩 Córners", "descripcion": "Más de 7.5 Córners Totales", "prob": f"{prob_cr:.1f}%"})
 
     # =========================================================
