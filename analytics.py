@@ -896,8 +896,10 @@ def evaluar_predictor_ia_ensemble(equipo_local: str, equipo_visita: str, stats_p
 
 def extraer_candidatos_reales_de_hoy() -> list:
     """
-    Obtiene los partidos programados o jugándose HOY desde api_client y calcula
-    estimaciones dinámicas de Poisson y Dixon-Coles para alimentar los radares de parlays diarios.
+    Obtiene ÚNICAMENTE los partidos PRÓXIMOS A DISPUTARSE (NS, TBD) o EN VIVO (1H, 2H, HT, LIVE)
+    desde api_client y calcula estimaciones dinámicas de Poisson y Dixon-Coles.
+    EXCLUYE RIGUROSAMENTE cualquier partido ya FINALIZADO (FT, AET, PEN) para que los
+    apostadores reciban únicamente boletos con resolución en vivo o próxima.
     """
     try:
         import api_client
@@ -914,6 +916,11 @@ def extraer_candidatos_reales_de_hoy() -> list:
                     loc = p.get("local", "")
                     vis = p.get("visita", "")
                     if not loc or not vis:
+                        continue
+                    
+                    st_val = str(p.get("status", "NS")).upper().strip()
+                    # FILTRAR ESTRICTAMENTE: IGNORAR FINALIZADOS Y CANCELADOS
+                    if st_val in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT', 'FT_PEN', 'AWD', 'WO']:
                         continue
                     
                     seed_l = (zlib.crc32(loc.encode('utf-8')) % 100) / 100.0
@@ -935,7 +942,7 @@ def extraer_candidatos_reales_de_hoy() -> list:
                         "referee": p.get("referee", "Árbitro Oficial Asignado"),
                         "liga": l_tag,
                         "hora": p.get("hora", "Hoy"),
-                        "status": p.get("status", "NS"),
+                        "status": st_val,
                         "minuto": p.get("minuto", 0),
                         "goles_local": p.get("goles_local", 0),
                         "goles_visita": p.get("goles_visita", 0),
