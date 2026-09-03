@@ -7,7 +7,8 @@
     "referral_code": "SP-ADMISIX9",
     "referred_by": null,
     "balance_disponible": 0.0,
-    "total_ganado": 0.0
+    "total_ganado": 0.0,
+    "email": ""
   },
   {
     "username": "alexyjade",
@@ -17,7 +18,8 @@
     "referral_code": "SP-ALEXUIW8",
     "referred_by": null,
     "balance_disponible": 0.0,
-    "total_ganado": 0.0
+    "total_ganado": 0.0,
+    "email": ""
   },
   {
     "username": "rada",
@@ -27,6 +29,18 @@
     "referral_code": "SP-RADASO71",
     "referred_by": null,
     "balance_disponible": 0.0,
-    "total_ganado": 0.0
+    "total_ganado": 0.0,
+    "email": ""
+  },
+  {
+    "username": "test_vip_user",
+    "password": "$2b$12$1xM/w3qUMAruvrSjnNMXt.afbz5YLWHvj1ZuFziYwKA.dLSkKU3Zy",
+    "role": "VIP",
+    "is_active": 1,
+    "referral_code": "SP-TESTTH0R",
+    "referred_by": null,
+    "balance_disponible": 0.0,
+    "total_ganado": 0.0,
+    "email": ""
   }
 ]
