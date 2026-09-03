@@ -886,7 +886,17 @@ if st.session_state['rol'] == 'ADMIN':
         
         usuarios_lista = auth.listar_usuarios()
         for u in usuarios_lista:
-            u_id, u_name, u_rol, u_act, u_date, u_ref_c, u_ref_by, u_bal, u_tot, u_em = u
+            u_id = u[0]
+            u_name = u[1]
+            u_rol = u[2]
+            u_act = u[3]
+            u_date = u[4]
+            u_ref_c = u[5]
+            u_ref_by = u[6]
+            u_bal = u[7]
+            u_tot = u[8]
+            u_em = u[9] if len(u) > 9 and u[9] else ""
+            
             col_u1, col_u2 = st.columns([3, 1])
             with col_u1:
                 status_icon = "🟢" if u_act == 1 else "🔴"
