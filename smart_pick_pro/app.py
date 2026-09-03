@@ -516,6 +516,17 @@ if 'usuario' not in st.session_state:
 if 'rol' not in st.session_state:
     st.session_state['rol'] = None
 
+# Captura automática de código de afiliado desde URL (?ref=... o ?r=...)
+codigo_referido_url = ""
+try:
+    if hasattr(st, "query_params"):
+        codigo_referido_url = st.query_params.get("ref", "") or st.query_params.get("r", "") or ""
+    elif hasattr(st, "experimental_get_query_params"):
+        params_exp = st.experimental_get_query_params()
+        codigo_referido_url = params_exp.get("ref", [""])[0] if "ref" in params_exp else ""
+except Exception:
+    pass
+
 if not st.session_state['autenticado']:
     if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
         st.markdown(f'''
@@ -534,47 +545,117 @@ if not st.session_state['autenticado']:
         </div>
         ''', unsafe_allow_html=True)
     
-    col_log1, col_log2, col_log3 = st.columns([1, 2.5, 1])
+    col_log1, col_log2, col_log3 = st.columns([1, 2.8, 1])
     with col_log2:
-        st.markdown('''
-        <div style="background: #151821; padding: 25px; border-radius: 14px; border: 1px solid #282F3F; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-            <h3 style="color: white; margin: 0 0 15px 0; font-weight: 800; text-align: center;">🔒 Iniciar Sesión en tu Cuenta VIP</h3>
-        ''', unsafe_allow_html=True)
-        user_input = st.text_input("Usuario:", key="login_user")
-        pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
+        tab_login, tab_register = st.tabs(["🔒 Iniciar Sesión", "✨ Crear Cuenta Nueva / Registro"])
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True):
-            exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
-            if exito:
-                st.session_state['autenticado'] = True
-                st.session_state['usuario'] = user_input.strip().lower()
-                st.session_state['rol'] = mensaje_o_rol
-                st.rerun()
-            else:
-                st.error(f"❌ {mensaje_o_rol}")
-                
-        st.markdown("</div>", unsafe_allow_html=True)
+        with tab_login:
+            st.markdown('''
+            <div style="background: #151821; padding: 20px 20px 10px 20px; border-radius: 14px 14px 0 0; border: 1px solid #282F3F; border-bottom: none;">
+                <h4 style="color: white; margin: 0 0 10px 0; font-weight: 800; text-align: center;">Acceso a tu Cuenta VIP</h4>
+            </div>
+            ''', unsafe_allow_html=True)
+            user_input = st.text_input("Usuario:", key="login_user")
+            pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True, key="btn_login_submit"):
+                exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
+                if exito:
+                    st.session_state['autenticado'] = True
+                    st.session_state['usuario'] = user_input.strip().lower()
+                    st.session_state['rol'] = mensaje_o_rol
+                    st.rerun()
+                else:
+                    st.error(f"❌ {mensaje_o_rol}")
+
+        with tab_register:
+            if codigo_referido_url:
+                st.markdown(f'''
+                <div style="background: rgba(212, 175, 55, 0.15); border: 1.5px solid #D4AF37; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; text-align: center;">
+                    <span style="color: #F3E5AB; font-size: 13px; font-weight: bold;">🎁 ¡Invitación VIP Detectada! Código: <b style="color:#D4AF37; font-size:14px;">{codigo_referido_url.upper()}</b></span>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
+            reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
+            reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
+            reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("✨ CREAR MI CUENTA", use_container_width=True, key="btn_reg_submit"):
+                if not reg_user or not reg_pass1:
+                    st.error("❌ Por favor completa el usuario y la contraseña.")
+                elif reg_pass1 != reg_pass2:
+                    st.error("❌ Las contraseñas no coinciden.")
+                elif len(reg_pass1) < 4:
+                    st.error("❌ La contraseña debe tener al menos 4 caracteres.")
+                else:
+                    ok_reg, msg_reg = auth.registrar_usuario(
+                        username=reg_user,
+                        password=reg_pass1,
+                        role="VIP",
+                        codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None
+                    )
+                    if ok_reg:
+                        st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
+                        st.session_state['autenticado'] = True
+                        st.session_state['usuario'] = reg_user.strip().lower()
+                        st.session_state['rol'] = "VIP"
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {msg_reg}")
         
+        # --- CAJA DE MÉTODOS DE PAGO INTEGRADOS ---
         bancoppel_card = getattr(config, 'BANCOPPEL_TARJETA', '4169 1608 7646 1600')
         bancoppel_holder = getattr(config, 'BANCOPPEL_TITULAR', 'Jesús')
+        mercadopago_url = getattr(config, 'MERCADOPAGO_LINK', 'https://mpago.la/1ZefYpR')
         paypal_url = getattr(config, 'PAYPAL_LINK', 'https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2')
+        bitso_trc20 = getattr(config, 'BITSO_USDT_TRC20', 'TUyvrvPjGyh9v5SDYHW7GZ1g4MomKSFkh2')
 
         html_pago = '<div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); padding: 22px; border-radius: 14px; border: 2px dashed #D4AF37; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
         html_pago += '<div style="background: linear-gradient(90deg, #FF512F 0%, #DD2476 100%); color: white; font-weight: 900; font-size: 13px; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(221,36,118,0.4);">🔥 ¡SÚPER OFERTA POR TIEMPO LIMITADO (50% OFF)!</div>'
         html_pago += '<h3 style="color: #D4AF37; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #F3E5AB; font-size: 32px;">$149 MXN</span> / MES</h3>'
-        html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Aprovecha la súper promoción de lanzamiento por <b>$149 MXN</b>. Realiza tu pago por <b>BanCoppel, OXXO o PayPal</b> y envía tu comprobante por WhatsApp para recibir tu usuario y contraseña de inmediato:</p>'
+        html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Realiza tu pago con el método que prefieras y envía tu comprobante por WhatsApp para activación instantánea 24/7:</p>'
         
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 12px; text-align: left;"><div style="color: #F3E5AB; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 DEPÓSITO / SPEI BANCOPPEL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div><div style="color: white; font-size: 13px;"><b>No. de Tarjeta / SPEI:</b> <span style="color:#D4AF37; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div><div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Acepta transferencias SPEI 24/7 y depósitos en OXXO o Tiendas Coppel.</div></div>'
+        # 1. Mercado Pago
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #00B4D8; margin-bottom: 12px; text-align: left;">'
+        html_pago += f'<div style="color: #00B4D8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟢 1. MERCADO PAGO ($149 MXN)</div>'
+        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Acepta Tarjetas de Débito, Crédito, SPEI y Depósito en OXXO / 7-Eleven.</div>'
+        html_pago += f'<a href="{mercadopago_url}" target="_blank" style="background:#00B4D8; color:#0A192F; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,180,216,0.3);">💳 PAGAR $149 EN MERCADO PAGO</a>'
+        html_pago += f'</div>'
 
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 15px; text-align: left;"><div style="color: #38BDF8; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🔵 PAGO EN LÍNEA POR PAYPAL ($149 MXN)</div><div style="color: white; font-size: 13px;"><b>Enlace PayPal:</b> <a href="{paypal_url}" target="_blank" style="color:#38BDF8; font-weight:bold;">{paypal_url}</a></div><div style="color: #aaa; font-size: 11px; margin-top:4px;">* Paga de forma segura con cualquier tarjeta de Débito o Crédito.</div></div>'
+        # 2. PayPal
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #38BDF8; margin-bottom: 12px; text-align: left;">'
+        html_pago += f'<div style="color: #38BDF8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🔵 2. PAYPAL ($149 MXN)</div>'
+        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Pago seguro internacional con cualquier tarjeta o saldo de PayPal.</div>'
+        html_pago += f'<a href="{paypal_url}" target="_blank" style="background:#0079C1; color:white; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,121,193,0.3);">🌐 PAGAR POR PAYPAL</a>'
+        html_pago += f'</div>'
 
-        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20aprovecho%20la%20super%20oferta%20VIP%20de%20%24149%20MXN.%20Adjunto%20mi%20comprobante%20para%20activar%20mi%20cuenta" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE DE $149 POR WHATSAPP</a></div>'
+        # 3. SPEI / BanCoppel
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 12px; text-align: left;">'
+        html_pago += f'<div style="color: #F3E5AB; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 3. TRANSFERENCIA SPEI / BANCOPPEL ($149 MXN)</div>'
+        html_pago += f'<div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div>'
+        html_pago += f'<div style="color: white; font-size: 13px;"><b>No. Tarjeta / SPEI:</b> <span style="color:#D4AF37; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div>'
+        html_pago += f'<div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div>'
+        html_pago += f'</div>'
+
+        # 4. Bitso Crypto USDT TRC-20
+        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #A855F7; margin-bottom: 15px; text-align: left;">'
+        html_pago += f'<div style="color: #C084FC; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟣 4. BITSO CRYPTO (USDT - RED TRON TRC-20)</div>'
+        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 6px;">Monto: <b>8 USDT</b> (Equivalente a $149 MXN).</div>'
+        html_pago += f'<div style="color: white; font-size: 12px; word-break: break-all; background:#0D0F14; padding:8px; border-radius:6px; font-family:monospace; border:1px solid #333;"><span style="color:#A855F7; font-weight:bold;">Wallet:</span> {bitso_trc20}</div>'
+        html_pago += f'<div style="color: #aaa; font-size: 11px; margin-top:4px;">* Importante: Enviar únicamente por la Red <b>Tron (TRC-20)</b>.</div>'
+        html_pago += f'</div>'
+
+        # Botón WhatsApp
+        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20acabo%20de%20hacer%20el%20pago%20de%20%24149%20MXN%20para%20activar%20mi%20membresia%20VIP%20en%20Smart%20Pick%20Pro.%20Adjunto%20comprobante:" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE POR WHATSAPP (ACTIVACIÓN INMEDIATA)</a></div>'
         html_pago += '</div>'
 
         st.markdown(html_pago, unsafe_allow_html=True)
         
     st.stop()
+
 
 # --- PANTALLA PRINCIPAL (AUTENTICADO) ---
 
@@ -716,7 +797,53 @@ if st.session_state['rol'] == 'ADMIN':
                 st.error(f"Error al procesar archivo: {e}")
 
         st.markdown("---")
-        # 3. Registrar Nuevo Usuario
+        # 3. Solicitudes de Retiro de Afiliados
+        st.write("#### 💰 Solicitudes de Retiro de Afiliados")
+        solicitudes_pendientes = auth.listar_solicitudes_retiro_admin(filtro_estado="PENDIENTE")
+        if not solicitudes_pendientes:
+            st.info("✅ No hay solicitudes de retiro pendientes.")
+        else:
+            for s_id, s_user, s_monto, s_metodo, s_cuenta, s_titular, s_estado, s_fecha, _, _ in solicitudes_pendientes:
+                st.markdown(f"""
+                <div style="background:#11141C; border:1px solid #D4AF37; border-radius:8px; padding:10px; margin-bottom:8px;">
+                    <div style="color:#D4AF37; font-weight:900; font-size:13px;">💸 Retiro #{s_id}: ${s_monto:.2f} MXN</div>
+                    <div style="color:white; font-size:12px;"><b>Usuario:</b> {s_user.upper()}</div>
+                    <div style="color:white; font-size:12px;"><b>Método:</b> {s_metodo}</div>
+                    <div style="color:white; font-size:12px;"><b>Cuenta:</b> <code>{s_cuenta}</code></div>
+                    <div style="color:white; font-size:12px;"><b>Titular:</b> {s_titular}</div>
+                    <div style="color:#aaa; font-size:10px;">Fecha: {s_fecha}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                col_p1, col_p2 = st.columns(2)
+                with col_p1:
+                    if st.button(f"✅ Pagado #{s_id}", key=f"pay_btn_{s_id}", use_container_width=True):
+                        auth.marcar_retiro_pagado_admin(s_id, nota="Transferencia SPEI/PayPal realizada con éxito")
+                        st.success(f"Retiro #{s_id} marcado como pagado.")
+                        st.rerun()
+                with col_p2:
+                    if st.button(f"❌ Rechazar #{s_id}", key=f"rec_btn_{s_id}", use_container_width=True):
+                        auth.rechazar_retiro_admin(s_id, motivo="Datos de cuenta incorrectos o incompletos")
+                        st.warning(f"Retiro #{s_id} rechazado y saldo devuelto.")
+                        st.rerun()
+
+        st.markdown("---")
+        # 4. Activación VIP y Liquidación Rápida de Comisión
+        st.write("#### ⚡ Activar VIP & Liquidar Comisión")
+        vip_act_user = st.text_input("Usuario a Activar VIP:", placeholder="ej. usuario_amigo", key="admin_vip_act_in")
+        vip_act_monto = st.number_input("Monto Pagado ($ MXN):", value=149.0, step=10.0, key="admin_vip_act_monto")
+        if st.button("👑 Activar VIP y Calcular Comisión", use_container_width=True):
+            if vip_act_user:
+                ok_vip, msg_vip = auth.activar_vip_y_procesar_comision(vip_act_user.strip().lower(), monto_pago=vip_act_monto)
+                if ok_vip:
+                    st.success(msg_vip)
+                    st.rerun()
+                else:
+                    st.error(msg_vip)
+            else:
+                st.warning("Escribe el nombre de usuario.")
+
+        st.markdown("---")
+        # 5. Registrar Nuevo Usuario Manual
         st.write("#### ➕ Registrar Nuevo Usuario")
         new_u = st.text_input("Usuario:", key="admin_new_u")
         new_p = st.text_input("Contraseña:", type="password", key="admin_new_p")
@@ -730,7 +857,7 @@ if st.session_state['rol'] == 'ADMIN':
                 st.error(msg)
                 
         st.markdown("---")
-        # 4. Configuración de API Key
+        # 6. Configuración de API Key
         st.write("#### ⚙️ Clave API-Sports")
         api_k_input = st.text_input("API Key:", value=config.API_KEY, type="password")
         if st.button("💾 Guardar API Key", use_container_width=True):
@@ -738,15 +865,17 @@ if st.session_state['rol'] == 'ADMIN':
             st.success("✅ API Key actualizada.")
                 
         st.markdown("---")
-        # 5. Lista de Usuarios y Gestión
-        st.write("#### 📋 Usuarios Registrados")
+        # 7. Lista de Usuarios y Gestión de Afiliados
+        st.write("#### 📋 Usuarios & Códigos de Afiliados")
         usuarios_lista = auth.listar_usuarios()
         for u in usuarios_lista:
-            u_id, u_name, u_rol, u_act, u_date = u
+            u_id, u_name, u_rol, u_act, u_date, u_ref_c, u_ref_by, u_bal, u_tot = u
             col_u1, col_u2 = st.columns([3, 1])
             with col_u1:
                 status_icon = "🟢" if u_act == 1 else "🔴"
+                ref_by_info = f" | Ref por: `{u_ref_by}`" if u_ref_by else ""
                 st.markdown(f"**{status_icon} {u_name.upper()}** [{u_rol}]")
+                st.caption(f"Código: `{u_ref_c}` | Saldo: `${u_bal:.2f}` | Total Ganado: `${u_tot:.2f}`{ref_by_info}")
             with col_u2:
                 if u_name.lower() != config.ADMIN_INIT_USER.lower():
                     if st.button("🗑️", key=f"del_u_{u_id}", help="Eliminar usuario"):
@@ -797,6 +926,245 @@ def render_tarjeta_live_segura(p_item):
         </div>
     </div>
     '''
+
+# --- MODO: PROGRAMA DE AFILIADOS VIP (50% / 40% / 30%) ---
+if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
+    usuario_actual = st.session_state.get('usuario', 'vip')
+    resumen_af = auth.obtener_resumen_afiliado(usuario_actual)
+
+    st.markdown('''
+    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2312 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 24px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 25px rgba(212, 175, 55, 0.25);">
+        <div style="display:inline-block; background:rgba(212,175,55,0.15); border:1px solid #D4AF37; border-radius:20px; padding:4px 16px; margin-bottom:8px;">
+            <span style="color:#D4AF37; font-weight:900; font-size:12px; letter-spacing:1px; text-transform:uppercase;">🤝 PROGRAMA OFICIAL DE SOCIOS Y AFILIADOS</span>
+        </div>
+        <h2 style="color: white; margin: 0; font-weight: 900; font-size: 30px; letter-spacing: 0.5px;">💰 GANA DINERO RECOMENDANDO SMART PICK PRO</h2>
+        <p style="color: #E2E8F0; margin: 8px auto 0 auto; font-size: 15px; opacity: 0.95; max-width:750px;">
+            Comparte tu enlace personalizado con amigos, grupos de apuestas o en redes sociales y gana comisiones recurrentes automáticas directamente a tu cuenta bancaria o PayPal.
+        </p>
+    </div>
+    ''', unsafe_allow_html=True)
+
+    # 1. Tarjetas de Niveles de Comisión Escalonada
+    p_mes1 = int(getattr(config, 'COMISION_MES_1', 0.50) * 100)
+    p_mes2 = int(getattr(config, 'COMISION_MES_2', 0.40) * 100)
+    p_rec = int(getattr(config, 'COMISION_MES_RECURRENTE', 0.30) * 100)
+    precio_vip = getattr(config, 'PRECIO_VIP_MXN', 149.0)
+
+    gan_mes1 = precio_vip * (p_mes1 / 100.0)
+    gan_mes2 = precio_vip * (p_mes2 / 100.0)
+    gan_rec = precio_vip * (p_rec / 100.0)
+
+    st.markdown(f'''
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:22px;">
+        <div style="background:linear-gradient(135deg, #182618 0%, #151821 100%); border:1.5px solid #2ECC71; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(46,204,113,0.2);">
+            <div style="background:#2ECC71; color:#0A1E0D; font-weight:900; font-size:11px; padding:3px 10px; border-radius:12px; display:inline-block; margin-bottom:6px;">🥇 MES 1 (REGISTRO)</div>
+            <div style="color:#FFFFFF; font-weight:900; font-size:32px; margin:2px 0;">{p_mes1}% <span style="font-size:16px; color:#A7F3D0;">(${gan_mes1:.2f} MXN)</span></div>
+            <p style="color:#CCD6F6; font-size:12px; margin:0;">Ganas la mitad del primer pago de cada amigo que invites a Smart Pick Pro.</p>
+        </div>
+        <div style="background:linear-gradient(135deg, #2B2312 0%, #151821 100%); border:1.5px solid #F59E0B; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(245,158,11,0.2);">
+            <div style="background:#F59E0B; color:#2A1A00; font-weight:900; font-size:11px; padding:3px 10px; border-radius:12px; display:inline-block; margin-bottom:6px;">🥈 MES 2 (RENOVACIÓN)</div>
+            <div style="color:#FFFFFF; font-weight:900; font-size:32px; margin:2px 0;">{p_mes2}% <span style="font-size:16px; color:#FDE68A;">(${gan_mes2:.2f} MXN)</span></div>
+            <p style="color:#CCD6F6; font-size:12px; margin:0;">Ganas el 40% en su segundo mes cuando continúe aprovechando el sistema.</p>
+        </div>
+        <div style="background:linear-gradient(135deg, #142238 0%, #151821 100%); border:1.5px solid #38BDF8; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(56,189,248,0.2);">
+            <div style="background:#38BDF8; color:#082438; font-weight:900; font-size:11px; padding:3px 10px; border-radius:12px; display:inline-block; margin-bottom:6px;">🔁 MES 3+ (DE POR VIDA)</div>
+            <div style="color:#FFFFFF; font-weight:900; font-size:32px; margin:2px 0;">{p_rec}% <span style="font-size:16px; color:#BAE6FD;">(${gan_rec:.2f} MXN)</span></div>
+            <p style="color:#CCD6F6; font-size:12px; margin:0;">Ingreso pasivo mensual continuo mientras tu referido mantenga su suscripción.</p>
+        </div>
+    </div>
+    ''', unsafe_allow_html=True)
+
+    # 2. Enlace Único de Afiliado & Botones de Difusión
+    enlace_af = resumen_af.get('enlace_afiliado', f"https://smartpickprojz.com/?ref={resumen_af.get('referral_code', 'SP-VIP')}")
+    cod_af = resumen_af.get('referral_code', 'SP-VIP')
+
+    st.markdown('''
+    <div style="background:#151821; border:1px solid #282F3F; border-radius:14px; padding:20px; margin-bottom:20px;">
+        <h3 style="color:#D4AF37; margin:0 0 10px 0; font-weight:900; font-size:18px;">🔗 Tu Enlace de Afiliado Exclusivo</h3>
+        <p style="color:#94A3B8; font-size:13px; margin-bottom:12px;">Comparte este enlace para que cualquier usuario que se registre quede asignado automáticamente como tu referido:</p>
+    ''', unsafe_allow_html=True)
+
+    col_link1, col_link2 = st.columns([3, 1])
+    with col_link1:
+        st.code(enlace_af, language="text")
+    with col_link2:
+        st.markdown(f'''
+        <div style="background:#11141C; border:1px solid #D4AF37; border-radius:8px; padding:10px; text-align:center;">
+            <div style="color:#aaa; font-size:10px; font-weight:bold;">TU CÓDIGO</div>
+            <div style="color:#D4AF37; font-weight:900; font-size:18px; letter-spacing:1px;">{cod_af}</div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+    # Botones de compartir rápido por WhatsApp y Telegram
+    import urllib.parse
+    msg_promo = f"¡Hola! Te invito a probar Smart Pick Pro, la plataforma de IA para pronósticos deportivos, parlays VIP y optimizador de Progol. Entra con mi enlace oficial y obtén la promo del 50% de descuento: {enlace_af}"
+    encoded_promo_wa = urllib.parse.quote(msg_promo)
+    encoded_promo_tg = urllib.parse.quote(enlace_af)
+    encoded_promo_tg_text = urllib.parse.quote("Prueba Smart Pick Pro VIP con IA predictiva:")
+
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        st.markdown(f'''
+        <a href="https://wa.me/?text={encoded_promo_wa}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:11px 18px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; box-shadow:0 4px 12px rgba(37,211,102,0.3);">
+            💬 COMPARTIR EN WHATSAPP (1 CLIC)
+        </a>
+        ''', unsafe_allow_html=True)
+    with col_btn2:
+        st.markdown(f'''
+        <a href="https://t.me/share/url?url={encoded_promo_tg}&text={encoded_promo_tg_text}" target="_blank" style="background:#0088CC; color:white; font-weight:900; padding:11px 18px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; box-shadow:0 4px 12px rgba(0,136,204,0.3);">
+            ✈️ COMPARTIR EN TELEGRAM (1 CLIC)
+        </a>
+        ''', unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # 3. Métricas en Tiempo Real (Tarjetas KPI)
+    tot_ref = resumen_af.get('total_referidos', 0)
+    vip_act = resumen_af.get('referidos_vip', 0)
+    bal_disp = resumen_af.get('balance_disponible', 0.0)
+    tot_gan = resumen_af.get('total_ganado', 0.0)
+
+    col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
+    with col_kpi1:
+        st.markdown(f'''
+        <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:16px; text-align:center;">
+            <div style="font-size:24px; margin-bottom:4px;">👥</div>
+            <div style="color:#aaa; font-size:11px; font-weight:bold; text-transform:uppercase;">Amigos Registrados</div>
+            <div style="color:white; font-size:26px; font-weight:900; margin-top:4px;">{tot_ref}</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    with col_kpi2:
+        st.markdown(f'''
+        <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:16px; text-align:center;">
+            <div style="font-size:24px; margin-bottom:4px;">👑</div>
+            <div style="color:#aaa; font-size:11px; font-weight:bold; text-transform:uppercase;">VIPs Activos</div>
+            <div style="color:#38BDF8; font-size:26px; font-weight:900; margin-top:4px;">{vip_act}</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    with col_kpi3:
+        st.markdown(f'''
+        <div style="background:#151821; border:1.5px solid #2ECC71; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(46,204,113,0.15);">
+            <div style="font-size:24px; margin-bottom:4px;">💵</div>
+            <div style="color:#2ECC71; font-size:11px; font-weight:bold; text-transform:uppercase;">Saldo Retirable</div>
+            <div style="color:#FFFFFF; font-size:26px; font-weight:900; margin-top:4px;">${bal_disp:.2f} <span style="font-size:12px; color:#aaa;">MXN</span></div>
+        </div>
+        ''', unsafe_allow_html=True)
+    with col_kpi4:
+        st.markdown(f'''
+        <div style="background:#151821; border:1.5px solid #D4AF37; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(212,175,55,0.15);">
+            <div style="font-size:24px; margin-bottom:4px;">🏆</div>
+            <div style="color:#D4AF37; font-size:11px; font-weight:bold; text-transform:uppercase;">Total Ganado</div>
+            <div style="color:#FFFFFF; font-size:26px; font-weight:900; margin-top:4px;">${tot_gan:.2f} <span style="font-size:12px; color:#aaa;">MXN</span></div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 4. Pestañas de Gestión: Solicitar Retiro, Historial de Comisiones, Historial de Retiros, Amigos
+    tab_retirar, tab_hist_com, tab_hist_ret, tab_mis_ref = st.tabs([
+        "💸 Solicitar Retiro de Saldo",
+        "💰 Historial de Comisiones",
+        "📤 Historial de Retiros",
+        "👥 Mis Amigos Registrados"
+    ])
+
+    with tab_retirar:
+        st.markdown('''
+        <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:18px; margin-bottom:15px;">
+            <h4 style="color:#D4AF37; margin:0 0 6px 0; font-weight:900;">Transferencia Directa de tus Ganancias</h4>
+            <p style="color:#94A3B8; font-size:13px; margin:0;">
+                Puedes retirar tu saldo acumulado a través de <b>Transferencia SPEI (México)</b> o <b>PayPal (Internacional)</b>. Los retiros se procesan en un plazo máximo de 24 horas.
+            </p>
+        </div>
+        ''', unsafe_allow_html=True)
+
+        min_ret = getattr(config, 'MINIMO_RETIRO_AFILIADO', 100.0)
+
+        col_ret1, col_ret2 = st.columns(2)
+        with col_ret1:
+            metodo_retiro = st.selectbox("1. Método de Pago:", ["SPEI (Transferencia Bancaria México - CLABE)", "PayPal (Correo Electrónico)"], key="af_metodo_in")
+            titular_retiro = st.text_input("2. Nombre Completo del Titular:", key="af_titular_in", placeholder="ej. Juan Pérez Rodríguez")
+        with col_ret2:
+            placeholder_cta = "CLABE Interbancaria (18 dígitos)" if "SPEI" in metodo_retiro else "correo@ejemplo.com (Cuenta PayPal)"
+            cuenta_retiro = st.text_input(f"3. {'CLABE (18 dígitos)' if 'SPEI' in metodo_retiro else 'Correo PayPal'}:", placeholder=placeholder_cta, key="af_cta_in")
+            monto_retiro = st.number_input(f"4. Monto a Retirar (Mínimo ${min_ret:.2f} MXN):", min_value=float(min_ret), max_value=max(float(min_ret), float(bal_disp)), value=min(max(float(min_ret), float(bal_disp)), float(bal_disp)) if bal_disp >= min_ret else float(min_ret), step=50.0, key="af_monto_in")
+
+        if st.button("🚀 ENVIAR SOLICITUD DE RETIRO", use_container_width=True, key="btn_solicitar_retiro"):
+            if bal_disp < min_ret:
+                st.error(f"❌ Saldo insuficiente para retirar. El mínimo es de ${min_ret:.2f} MXN y tu saldo actual es de ${bal_disp:.2f} MXN.")
+            elif not titular_retiro.strip() or not cuenta_retiro.strip():
+                st.error("❌ Por favor completa todos los datos bancarios / PayPal.")
+            else:
+                ok_ret, msg_ret = auth.solicitar_retiro(
+                    username=usuario_actual,
+                    monto=monto_retiro,
+                    metodo="SPEI" if "SPEI" in metodo_retiro else "PAYPAL",
+                    detalles_cuenta=cuenta_retiro,
+                    titular=titular_retiro
+                )
+                if ok_ret:
+                    st.success(msg_ret)
+                    st.rerun()
+                else:
+                    st.error(f"❌ {msg_ret}")
+
+    with tab_hist_com:
+        hist_com = resumen_af.get('historial_comisiones', [])
+        if not hist_com:
+            st.info("ℹ️ Aún no has generado comisiones. ¡Comparte tu enlace de afiliado para empezar a ganar!")
+        else:
+            df_com_data = []
+            for c in hist_com:
+                df_com_data.append({
+                    "Amigo Referido": c["referred"].upper(),
+                    "Nivel / Mes": f"Mes {c['mes_numero']}",
+                    "% Comisión": f"{c['porcentaje']}%",
+                    "Monto Pago": f"${c['monto_pago']:.2f} MXN",
+                    "Tu Comisión": f"${c['monto_comision']:.2f} MXN",
+                    "Fecha": c["fecha"],
+                    "Estado": f"🟢 {c['estado']}"
+                })
+            import pandas as pd
+            st.dataframe(pd.DataFrame(df_com_data), use_container_width=True)
+
+    with tab_hist_ret:
+        hist_ret = resumen_af.get('historial_retiros', [])
+        if not hist_ret:
+            st.info("ℹ️ No tienes solicitudes de retiro registradas todavía.")
+        else:
+            df_ret_data = []
+            for r in hist_ret:
+                st_icon = "🟢" if r["estado"] == "PAGADO" else ("🟡" if r["estado"] == "PENDIENTE" else "🔴")
+                df_ret_data.append({
+                    "ID": f"#{r['id']}",
+                    "Monto": f"${r['monto']:.2f} MXN",
+                    "Método": r["metodo"],
+                    "Cuenta / CLABE": r["detalles_cuenta"],
+                    "Titular": r["titular"],
+                    "Estado": f"{st_icon} {r['estado']}",
+                    "Fecha Solicitud": r["fecha_solicitud"],
+                    "Fecha Pago": r["fecha_pago"]
+                })
+            import pandas as pd
+            st.dataframe(pd.DataFrame(df_ret_data), use_container_width=True)
+
+    with tab_mis_ref:
+        mis_ref_list = resumen_af.get('lista_referidos', [])
+        if not mis_ref_list:
+            st.info("ℹ️ Aún no tienes personas registradas con tu código. ¡Empieza a compartir tu link!")
+        else:
+            df_ref_data = []
+            for ref in mis_ref_list:
+                rol_badge = "👑 VIP ACTIVO" if ref["role"] == "VIP" and ref["is_active"] else "⏳ REGISTRADO"
+                df_ref_data.append({
+                    "Usuario": ref["username"].upper(),
+                    "Membresía": rol_badge,
+                    "Fecha Registro": ref["created_at"]
+                })
+            import pandas as pd
+            st.dataframe(pd.DataFrame(df_ref_data), use_container_width=True)
+
+    st.stop()
 
 # --- MODO 0: RADAR DE PARTIDOS EN VIVO MULTILIGAS ---
 if liga_elegida_val == "LIVE_RADAR_MODE":
