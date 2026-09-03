@@ -812,7 +812,31 @@ def obtener_partidos_de_hoy() -> dict:
                 ligas_hoy[key_liga]["partidos"].append(partido_dict)
                 
             if ligas_hoy:
-                return ligas_hoy
+                def sort_partido(p):
+                    st_val = p.get('status', 'NS')
+                    if st_val in ['1H', '2H', 'HT', 'LIVE']: return (0, p.get('hora', ''))
+                    if st_val in ['NS', 'TBD']: return (1, p.get('hora', ''))
+                    return (2, p.get('hora', ''))
+
+                top_priority_countries = ["Mexico", "England", "Spain", "World", "Europe", "Italy", "Germany", "Argentina", "Brazil", "Colombia", "USA"]
+
+                def sort_liga(item):
+                    l_k, l_v = item
+                    c_name = l_v.get('pais', '')
+                    priority = 99
+                    for idx, tc in enumerate(top_priority_countries):
+                        if tc.lower() in c_name.lower():
+                            priority = idx
+                            break
+                    has_live_or_upcoming = any(p.get('status') not in ['FT', 'AET', 'PEN'] for p in l_v.get('partidos', []))
+                    live_score = 0 if has_live_or_upcoming else 100
+                    return (live_score, priority, l_k)
+
+                for l_k in ligas_hoy:
+                    ligas_hoy[l_k]["partidos"].sort(key=sort_partido)
+
+                ligas_ordenadas = dict(sorted(ligas_hoy.items(), key=sort_liga))
+                return ligas_ordenadas
     except Exception as e:
         print(f"Error al obtener partidos de hoy: {e}")
 
