@@ -10,6 +10,12 @@ import plotly.graph_objects as go
 import random
 import html
 import json
+import textwrap
+
+def render_html(html_str: str):
+    """Renderiza HTML limpio y sin sangrías evitando falsos bloques de código en Markdown."""
+    if html_str:
+        st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
 # Importación segura de pandas con resguardo anti-fallos
 try:
@@ -51,7 +57,7 @@ st.set_page_config(
 )
 
 # Inyección de Meta-tags PWA para instalación móvil nativa (iOS / Android)
-st.markdown("""
+render_html("""
 <head>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -61,7 +67,7 @@ st.markdown("""
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jesuszavg-blip/SMART-PICK-PRO/main/assets/app_icon.jpg">
     <link rel="manifest" href="manifest.json">
 </head>
-""", unsafe_allow_html=True)
+""")
 
 # Botón Flotante Balón ⚽ Indestructible (Funciona en Móvil, PC y Modo Embebido)
 import streamlit.components.v1 as _st_components
@@ -137,7 +143,7 @@ _st_components.html("""
 """, height=0, width=0)
 
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP (Paleta Oficial Dorado & Obsidiana)
-st.markdown("""
+render_html("""
 <style>
     /* Ocultar controles de Streamlit (Fork, GitHub, Deploy, MainMenu) */
     #MainMenu { display: none !important; visibility: hidden !important; }
@@ -506,7 +512,7 @@ st.markdown("""
         font-weight: 700 !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 # Manejo de Sesión de Autenticación
 if 'autenticado' not in st.session_state:
@@ -529,13 +535,13 @@ except Exception:
 
 if not st.session_state['autenticado']:
     if assets_data and hasattr(assets_data, 'LOGO_WEB_B64') and assets_data.LOGO_WEB_B64:
-        st.markdown(f'''
+        render_html(f'''
         <div style="text-align:center; margin-top:20px; margin-bottom:20px;">
             <img src="data:image/png;base64,{assets_data.LOGO_WEB_B64}" style="max-width:480px; width:90%; height:auto; filter:drop-shadow(0 12px 30px rgba(0,0,0,0.8));" />
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
     else:
-        st.markdown('''
+        render_html('''
         <div class="hero-banner" style="margin-top: 25px;">
             <h1 style="color: white; margin: 0; font-weight: 900; font-size: 38px; letter-spacing: 1px;">🏆 SMART PICK PRO VIP</h1>
             <p style="color: white; margin: 8px 0 0 0; font-size: 18px; opacity: 0.95;">Sistema de IA Predictiva • Optimizador de Reducciones Progol • Buscador $+EV$</p>
@@ -543,18 +549,18 @@ if not st.session_state['autenticado']:
                 ⭐ +85.4% de Efectividad Comprobada en Quinielas y Parlays VIP
             </div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
     
     col_log1, col_log2, col_log3 = st.columns([1, 2.8, 1])
     with col_log2:
         tab_login, tab_register = st.tabs(["🔒 Iniciar Sesión", "✨ Crear Cuenta Nueva / Registro"])
         
         with tab_login:
-            st.markdown('''
+            render_html('''
             <div style="background: #151821; padding: 20px 20px 10px 20px; border-radius: 14px 14px 0 0; border: 1px solid #282F3F; border-bottom: none;">
                 <h4 style="color: white; margin: 0 0 10px 0; font-weight: 800; text-align: center;">Acceso a tu Cuenta VIP</h4>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
             user_input = st.text_input("Usuario:", key="login_user")
             pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
             
@@ -571,11 +577,11 @@ if not st.session_state['autenticado']:
 
         with tab_register:
             if codigo_referido_url:
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background: rgba(212, 175, 55, 0.15); border: 1.5px solid #D4AF37; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; text-align: center;">
                     <span style="color: #F3E5AB; font-size: 13px; font-weight: bold;">🎁 ¡Invitación VIP Detectada! Código: <b style="color:#D4AF37; font-size:14px;">{codigo_referido_url.upper()}</b></span>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
 
             reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
             reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
@@ -678,11 +684,11 @@ st.markdown(header_html, unsafe_allow_html=True)
 # Botón WhatsApp Superior & Logout
 col_top1, col_top2 = st.columns([8, 2])
 with col_top1:
-    st.markdown(f'''
+    render_html(f'''
     <a href="{config.ENLACE_WHATSAPP}" target="_blank" class="whatsapp-btn">
         💬 Soporte WhatsApp VIP
     </a>
-    ''', unsafe_allow_html=True)
+    ''')
 with col_top2:
     if st.button("🔴 Cerrar Sesión", use_container_width=True):
         st.session_state['autenticado'] = False
@@ -711,7 +717,7 @@ if assets_data and hasattr(assets_data, 'APP_ICON_B64') and assets_data.APP_ICON
     ''', unsafe_allow_html=True)
 
 with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
-    st.markdown('''
+    render_html('''
     <div style="background:#151821; padding:12px; border-radius:10px; border:1px solid #282F3F; font-size:13px; line-height:1.4;">
         <b style="color:#D4AF37;">🍏 En iPhone / iPad (Safari):</b><br>
         1. Toca el botón <b>Compartir</b> (ícono <span style="font-size:14px;">⬆️</span> abajo).<br>
@@ -722,7 +728,7 @@ with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
         2. Elige <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b> 📥.<br>
         3. ¡Listo! Se abrirá a pantalla completa.
     </div>
-    ''', unsafe_allow_html=True)
+    ''')
 
 sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%);padding:12px;border-radius:12px;border:1px solid #282F3F;margin-top:10px;margin-bottom:14px;text-align:center;"><div style="color:#D4AF37;font-weight:900;font-size:11px;margin-bottom:8px;letter-spacing:0.5px;">💎 CASAS RECOMENDADAS (+EV)</div><div style="display:flex;gap:6px;justify-content:center;"><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🔵 1xBet</a><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🟡 Mexplay</a></div></div>'
 st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
@@ -735,6 +741,10 @@ liga_elegida_val = dict_ligas_globales[liga_elegida]
 # limpiamos automáticamente cualquier partido en detalle para que navegue libremente a cualquier sección.
 if st.session_state.get('nav_liga_actual') != liga_elegida_val:
     st.session_state['live_partido_detalle'] = None
+    st.session_state['ver_top_altas_match'] = False
+    st.session_state['ver_top_empates_match'] = False
+    st.session_state['ver_pick_seguro_match'] = False
+    st.session_state['ver_parlay_oro_match'] = False
     st.session_state['nav_liga_actual'] = liga_elegida_val
 
 # Partidos de la jornada
@@ -744,6 +754,10 @@ partido_seleccionado = st.sidebar.selectbox("⚽ 2. Encuentro a analizar:", list
 # Reset reactivo: si el usuario cambia el partido en la lista desplegable
 if st.session_state.get('nav_partido_actual') != partido_seleccionado:
     st.session_state['live_partido_detalle'] = None
+    st.session_state['ver_top_altas_match'] = False
+    st.session_state['ver_top_empates_match'] = False
+    st.session_state['ver_pick_seguro_match'] = False
+    st.session_state['ver_parlay_oro_match'] = False
     st.session_state['nav_partido_actual'] = partido_seleccionado
 
 # Manejo de Partido Personalizado Manual
@@ -776,7 +790,7 @@ if st.session_state['rol'] == 'ADMIN':
         # 1. Estado de Persistencia
         est_pers = auth.obtener_estado_persistencia()
         st.write("#### 🛡️ Persistencia y Base de Datos")
-        st.markdown(f"""
+        render_html(f"""
         - 👥 **Total Usuarios Activos:** `{est_pers['total_usuarios']}`
         - 📁 **Respaldo Local JSON:** `{'✅ Activo' if est_pers['backup_local_existe'] else '❌ Inactivo'}`
         - ☁️ **GitHub Cloud Permanente:** `{'✅ Conectado' if est_pers['nube_activa'] else '❌ Sin Token'}`
@@ -819,7 +833,7 @@ if st.session_state['rol'] == 'ADMIN':
             st.info("✅ No hay solicitudes de retiro pendientes.")
         else:
             for s_id, s_user, s_monto, s_metodo, s_cuenta, s_titular, s_estado, s_fecha, _, _ in solicitudes_pendientes:
-                st.markdown(f"""
+                render_html(f"""
                 <div style="background:#11141C; border:1px solid #D4AF37; border-radius:8px; padding:10px; margin-bottom:8px;">
                     <div style="color:#D4AF37; font-weight:900; font-size:13px;">💸 Retiro #{s_id}: ${s_monto:.2f} MXN</div>
                     <div style="color:white; font-size:12px;"><b>Usuario:</b> {s_user.upper()}</div>
@@ -828,7 +842,7 @@ if st.session_state['rol'] == 'ADMIN':
                     <div style="color:white; font-size:12px;"><b>Titular:</b> {s_titular}</div>
                     <div style="color:#aaa; font-size:10px;">Fecha: {s_fecha}</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 col_p1, col_p2 = st.columns(2)
                 with col_p1:
                     if st.button(f"✅ Pagado #{s_id}", key=f"pay_btn_{s_id}", use_container_width=True):
@@ -971,7 +985,7 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
     usuario_actual = st.session_state.get('usuario', 'vip')
     resumen_af = auth.obtener_resumen_afiliado(usuario_actual)
 
-    st.markdown('''
+    render_html('''
     <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2312 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 24px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 25px rgba(212, 175, 55, 0.25);">
         <div style="display:inline-block; background:rgba(212,175,55,0.15); border:1px solid #D4AF37; border-radius:20px; padding:4px 16px; margin-bottom:8px;">
             <span style="color:#D4AF37; font-weight:900; font-size:12px; letter-spacing:1px; text-transform:uppercase;">🤝 PROGRAMA OFICIAL DE SOCIOS Y AFILIADOS</span>
@@ -981,7 +995,7 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
             Comparte tu enlace personalizado con amigos, grupos de apuestas o en redes sociales y gana comisiones recurrentes automáticas directamente a tu cuenta bancaria o PayPal.
         </p>
     </div>
-    ''', unsafe_allow_html=True)
+    ''')
 
     # 1. Tarjetas de Niveles de Comisión Escalonada
     p_mes1 = int(getattr(config, 'COMISION_MES_1', 0.50) * 100)
@@ -993,7 +1007,7 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
     gan_mes2 = precio_vip * (p_mes2 / 100.0)
     gan_rec = precio_vip * (p_rec / 100.0)
 
-    st.markdown(f'''
+    render_html(f'''
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:22px;">
         <div style="background:linear-gradient(135deg, #182618 0%, #151821 100%); border:1.5px solid #2ECC71; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(46,204,113,0.2);">
             <div style="background:#2ECC71; color:#0A1E0D; font-weight:900; font-size:11px; padding:3px 10px; border-radius:12px; display:inline-block; margin-bottom:6px;">🥇 MES 1 (REGISTRO)</div>
@@ -1011,28 +1025,28 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
             <p style="color:#CCD6F6; font-size:12px; margin:0;">Ingreso pasivo mensual continuo mientras tu referido mantenga su suscripción.</p>
         </div>
     </div>
-    ''', unsafe_allow_html=True)
+    ''')
 
     # 2. Enlace Único de Afiliado & Botones de Difusión
     enlace_af = resumen_af.get('enlace_afiliado', f"https://smartpickprojz.com/?ref={resumen_af.get('referral_code', 'SP-VIP')}")
     cod_af = resumen_af.get('referral_code', 'SP-VIP')
 
-    st.markdown('''
+    render_html('''
     <div style="background:#151821; border:1px solid #282F3F; border-radius:14px; padding:20px; margin-bottom:20px;">
         <h3 style="color:#D4AF37; margin:0 0 10px 0; font-weight:900; font-size:18px;">🔗 Tu Enlace de Afiliado Exclusivo</h3>
         <p style="color:#94A3B8; font-size:13px; margin-bottom:12px;">Comparte este enlace para que cualquier usuario que se registre quede asignado automáticamente como tu referido:</p>
-    ''', unsafe_allow_html=True)
+    ''')
 
     col_link1, col_link2 = st.columns([3, 1])
     with col_link1:
         st.code(enlace_af, language="text")
     with col_link2:
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#11141C; border:1px solid #D4AF37; border-radius:8px; padding:10px; text-align:center;">
             <div style="color:#aaa; font-size:10px; font-weight:bold;">TU CÓDIGO</div>
             <div style="color:#D4AF37; font-weight:900; font-size:18px; letter-spacing:1px;">{cod_af}</div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
     # Botones de compartir rápido por WhatsApp y Telegram
     import urllib.parse
@@ -1043,17 +1057,17 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        st.markdown(f'''
+        render_html(f'''
         <a href="https://wa.me/?text={encoded_promo_wa}" target="_blank" style="background:#25D366; color:white; font-weight:900; padding:11px 18px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; box-shadow:0 4px 12px rgba(37,211,102,0.3);">
             💬 COMPARTIR EN WHATSAPP (1 CLIC)
         </a>
-        ''', unsafe_allow_html=True)
+        ''')
     with col_btn2:
-        st.markdown(f'''
+        render_html(f'''
         <a href="https://t.me/share/url?url={encoded_promo_tg}&text={encoded_promo_tg_text}" target="_blank" style="background:#0088CC; color:white; font-weight:900; padding:11px 18px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; box-shadow:0 4px 12px rgba(0,136,204,0.3);">
             ✈️ COMPARTIR EN TELEGRAM (1 CLIC)
         </a>
-        ''', unsafe_allow_html=True)
+        ''')
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1065,37 +1079,37 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
 
     col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
     with col_kpi1:
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:16px; text-align:center;">
             <div style="font-size:24px; margin-bottom:4px;">👥</div>
             <div style="color:#aaa; font-size:11px; font-weight:bold; text-transform:uppercase;">Amigos Registrados</div>
             <div style="color:white; font-size:26px; font-weight:900; margin-top:4px;">{tot_ref}</div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
     with col_kpi2:
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:16px; text-align:center;">
             <div style="font-size:24px; margin-bottom:4px;">👑</div>
             <div style="color:#aaa; font-size:11px; font-weight:bold; text-transform:uppercase;">VIPs Activos</div>
             <div style="color:#38BDF8; font-size:26px; font-weight:900; margin-top:4px;">{vip_act}</div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
     with col_kpi3:
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border:1.5px solid #2ECC71; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(46,204,113,0.15);">
             <div style="font-size:24px; margin-bottom:4px;">💵</div>
             <div style="color:#2ECC71; font-size:11px; font-weight:bold; text-transform:uppercase;">Saldo Retirable</div>
             <div style="color:#FFFFFF; font-size:26px; font-weight:900; margin-top:4px;">${bal_disp:.2f} <span style="font-size:12px; color:#aaa;">MXN</span></div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
     with col_kpi4:
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border:1.5px solid #D4AF37; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(212,175,55,0.15);">
             <div style="font-size:24px; margin-bottom:4px;">🏆</div>
             <div style="color:#D4AF37; font-size:11px; font-weight:bold; text-transform:uppercase;">Total Ganado</div>
             <div style="color:#FFFFFF; font-size:26px; font-weight:900; margin-top:4px;">${tot_gan:.2f} <span style="font-size:12px; color:#aaa;">MXN</span></div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1108,14 +1122,14 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
     ])
 
     with tab_retirar:
-        st.markdown('''
+        render_html('''
         <div style="background:#151821; border:1px solid #282F3F; border-radius:12px; padding:18px; margin-bottom:15px;">
             <h4 style="color:#D4AF37; margin:0 0 6px 0; font-weight:900;">Transferencia Directa de tus Ganancias</h4>
             <p style="color:#94A3B8; font-size:13px; margin:0;">
                 Puedes retirar tu saldo acumulado a través de <b>Transferencia SPEI (México)</b> o <b>PayPal (Internacional)</b>. Los retiros se procesan en un plazo máximo de 24 horas.
             </p>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
         min_ret = getattr(config, 'MINIMO_RETIRO_AFILIADO', 100.0)
 
@@ -1208,12 +1222,12 @@ if liga_elegida_val == "AFFILIATE_PROGRAM_MODE":
 # --- MODO 00: PARTIDOS DE HOY (RESUELVEN HOY MISMO) ---
 if liga_elegida_val == "TODAY_MATCHES_MODE":
     if not st.session_state.get('live_partido_detalle'):
-        st.markdown('''
+        render_html('''
         <div style="background: linear-gradient(135deg, #1C202B 0%, #152238 50%, #0D0F14 100%); border:1.5px solid #38BDF8; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);">
             <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">📅 PARTIDOS DE HOY (RESUELVE TU APUESTA HOY)</h2>
             <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Encuentros programados para la fecha de hoy con horarios locales, escudos oficiales y Pick Destacado (+EV) para cobrar el mismo día.</p>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
         with st.spinner("📅 Conectando con API satelital y cargando partidos de hoy..."):
             ligas_hoy = api_client.obtener_partidos_de_hoy()
@@ -1231,12 +1245,12 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
                 api_client.obtener_partidos_de_hoy.clear()
                 st.rerun()
 
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">🎯 Cartelera del Día: <span style="color:#38BDF8; font-weight:900;">{total_hoy} Encuentros Registrados</span></span>
             <span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">⚡ Cobro el Mismo Día</span>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
         for l_key, l_data in ligas_hoy.items():
             p_lista = l_data.get("partidos", [])
@@ -1260,12 +1274,12 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
             pais_nombre = l_data.get("pais", "Internacional")
             liga_nombre = l_data.get("nombre", "Torneo")
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="display:flex; align-items:center; justify-content:space-between; background:#151821; border-left:5px solid #D4AF37; border-radius:10px; padding:10px 16px; margin:20px 0 12px 0; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                 <span style="font-size:16px; font-weight:900; color:#FFFFFF;">🏆 {pais_nombre} - {liga_nombre}</span>
                 <span style="background:#D4AF37; color:#0D0F14; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">{len(p_lista)} partidos</span>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
             cols_hoy = st.columns(2)
             for idx_p, p_item in enumerate(p_lista):
@@ -1287,12 +1301,12 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
 # --- MODO 0: RADAR DE PARTIDOS EN VIVO MULTILIGAS ---
 if liga_elegida_val == "LIVE_RADAR_MODE":
     if not st.session_state.get('live_partido_detalle'):
-        st.markdown('''
+        render_html('''
         <div style="background: linear-gradient(135deg, #1C202B 0%, #3D1A1A 100%); border:1.5px solid #EF5350; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(239, 83, 80, 0.25);">
             <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">🔴 RADAR DE PARTIDOS EN VIVO MULTILIGAS</h2>
             <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Marcadores en tiempo real, minutos jugados y eventos de todos los encuentros activos en el mundo.</p>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
         
         col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.5, 1])
         with col_ctl1:
@@ -1310,12 +1324,12 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 
         total_partidos = sum(len(d.get("partidos", [])) for d in ligas_en_vivo.values())
         
-        st.markdown(f'''
+        render_html(f'''
         <div style="background:#151821; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">📡 Conexión Satelital API-Sports: <span style="color:#38BDF8; font-weight:900;">ACTIVA (HTTP 200 OK)</span></span>
             <span style="background:#38BDF8; color:#0D0F14; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">🟢 {total_partidos} Partidos en Juego</span>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
         ligas_filtradas = {}
         for l_key, l_data in ligas_en_vivo.items():
@@ -1343,7 +1357,7 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 
         if not ligas_filtradas:
             if total_partidos == 0:
-                st.markdown('''
+                render_html('''
                 <div style="background: #151821; border: 1.5px solid #282F3F; border-radius: 14px; padding: 30px; text-align: center; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
                     <div style="font-size: 40px; margin-bottom: 10px;">⏱️</div>
                     <h3 style="color: #F3E5AB; margin: 0 0 8px 0; font-weight: 900;">Sin Partidos en Juego en Este Momento</h3>
@@ -1354,7 +1368,7 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
                         💡 Puedes seleccionar una liga en el menú de la izquierda para analizar los próximos partidos o el Cazador de Parlays
                     </div>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
             else:
                 st.info("ℹ️ No se encontraron partidos activos con los filtros de búsqueda seleccionados.")
         else:
@@ -1363,14 +1377,14 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
                 pais_nombre = l_data.get("pais", "Internacional")
                 liga_nombre = l_data.get("nombre", "Torneo")
                 
-                st.markdown(f'''
+                render_html(f'''
                 <div style="display:flex; align-items:center; justify-content:space-between; background:#151821; border-left:5px solid #38BDF8; border-radius:10px; padding:10px 16px; margin:20px 0 12px 0; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:16px; font-weight:900; color:#FFFFFF;">🏆 {pais_nombre} - {liga_nombre}</span>
                     </div>
                     <span style="background:#38BDF8; color:#0D0F14; font-weight:900; padding:2px 10px; border-radius:12px; font-size:12px;">{len(p_lista)} en juego</span>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
                 
                 cols_live = st.columns(2)
                 for idx_p, p_item in enumerate(p_lista):
@@ -1386,12 +1400,12 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 # --- MODO 0.5: CAZADOR DE PARLAYS VIP (TOP 15 ALTAS & TOP 5 EMPATES) ---
 elif liga_elegida_val == "PARLAY_HUNTER_MODE":
     if not st.session_state.get('live_partido_detalle'):
-        st.markdown('''
+        render_html('''
         <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);">
             <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">💎 CAZADOR DE PARLAYS VIP (+ALTAS & EMPATES DE ORO)</h2>
             <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Partidos de Hoy con Cuotas de Valor y Cobro Inmediato.</p>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
         
         subtab_altas, subtab_empates = st.tabs([
             "🔥 1. Parlay Maestro de Altas (Top 15 Partidos)",
@@ -1415,7 +1429,7 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
             cuota_tot_altas = parlay_altas_data.get("cuota_acumulada", 1.0)
             
             # Boleto con botones integrados en cada fila
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px 20px 14px 20px; color:white; margin-bottom:12px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:6px;">
                     <div>
@@ -1428,7 +1442,7 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
                     </div>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
             for idx_a, p in enumerate(picks_altas):
                 loc = p.get("local", "")
@@ -1441,24 +1455,24 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 
                 col_row1, col_row2, col_row3 = st.columns([2.6, 1.4, 0.9])
                 with col_row1:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#11141C; border-left:4px solid #D4AF37; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:8px 12px; border-radius:8px 0 0 8px; min-height:52px; display:flex; flex-direction:column; justify-content:center;">
                         <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx_a+1}. {liga} <span style="color:#38BDF8; font-size:10px; margin-left:4px;">⏰ {hora}</span></div>
                         <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
                 with col_row2:
                     st.markdown("<div style='height:3px;'></div>", unsafe_allow_html=True)
                     if st.button(f"⚽ {mercado} 🔍", key=f"btn_row_alt_{idx_a}_{p.get('id', idx_a)}", use_container_width=True, help=f"Abrir análisis completo de {loc} vs {vis}"):
                         st.session_state['live_partido_detalle'] = p
                         st.rerun()
                 with col_row3:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#11141C; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; border-right:1px solid #282F3F; padding:8px 6px; border-radius:0 8px 8px 0; min-height:52px; display:flex; align-items:center; justify-content:center; gap:5px;">
                         <div style="background:#151821; border:1px solid #F3E5AB; color:#F3E5AB; font-weight:900; padding:4px 7px; border-radius:6px; font-size:12px;">@{cuota:.2f}</div>
                         <div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:10px; padding:4px 5px; border-radius:4px; border:1px solid #282F3F;">{prob}%</div>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
 
             st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1469,11 +1483,11 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 
             col_w1, col_w2 = st.columns(2)
             with col_w1:
-                st.markdown(f'''
+                render_html(f'''
                 <a href="https://wa.me/?text={encoded_altas}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
                     💬 COMPARTIR PARLAY DE ALTAS EN WHATSAPP (1 CLIC)
                 </a>
-                ''', unsafe_allow_html=True)
+                ''')
             with col_w2:
                 st.download_button(
                     label="📥 Descargar Ficha de Altas (.txt)",
@@ -1499,7 +1513,7 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
             empates_list = empates_data.get("empates", [])
             cuota_tot_emp = empates_data.get("cuota_parlay_empates", 1.0)
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px 20px 14px 20px; color:white; margin-bottom:12px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:6px;">
                     <div>
@@ -1512,7 +1526,7 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
                     </div>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
             for idx_e, e in enumerate(empates_list):
                 loc = e.get("local", "")
@@ -1525,24 +1539,24 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 
                 col_erow1, col_erow2, col_erow3 = st.columns([2.6, 1.4, 0.9])
                 with col_erow1:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#11141C; border-left:4px solid #D4AF37; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:8px 12px; border-radius:8px 0 0 8px; min-height:52px; display:flex; flex-direction:column; justify-content:center;">
                         <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx_e+1}. {liga} <span style="color:#38BDF8; font-size:10px; margin-left:4px;">⏰ {hora}</span></div>
                         <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
                 with col_erow2:
                     st.markdown("<div style='height:3px;'></div>", unsafe_allow_html=True)
                     if st.button(f"⚖️ Empate ({marcador}) 🔍", key=f"btn_row_emp_{idx_e}_{e.get('id', idx_e)}", use_container_width=True, help=f"Abrir análisis completo de {loc} vs {vis}"):
                         st.session_state['live_partido_detalle'] = e
                         st.rerun()
                 with col_erow3:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#11141C; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; border-right:1px solid #282F3F; padding:8px 6px; border-radius:0 8px 8px 0; min-height:52px; display:flex; align-items:center; justify-content:center; gap:5px;">
                         <div style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 7px; border-radius:6px; font-size:12px;">@{cuota_e:.2f}</div>
                         <div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:10px; padding:4px 5px; border-radius:4px; border:1px solid #282F3F;">{prob_e}%</div>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
 
             st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1552,11 +1566,11 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 
             col_we1, col_we2 = st.columns(2)
             with col_we1:
-                st.markdown(f'''
+                render_html(f'''
                 <a href="https://wa.me/?text={encoded_empates}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
                     💬 COMPARTIR RADAR DE EMPATES EN WHATSAPP (1 CLIC)
                 </a>
-                ''', unsafe_allow_html=True)
+                ''')
             with col_we2:
                 st.download_button(
                     label="📥 Descargar Reporte de Empates (.txt)",
@@ -1570,12 +1584,12 @@ elif liga_elegida_val == "PARLAY_HUNTER_MODE":
 
 # --- MODO 1: PROGOL TRADICIONAL ---
 elif liga_elegida_val == "PROGOL_MODE":
-    st.markdown('''
+    render_html('''
     <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
         <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">🎯 OPTIMIZADOR INTELIGENTE DE QUINIELA PROGOL</h2>
         <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px;">Configura tus dobles y triples deseados sobre los 14 partidos oficiales.</p>
     </div>
-    ''', unsafe_allow_html=True)
+    ''')
     
     with st.expander("📝 Cargar / Editar los 14 Partidos Oficiales Progol de esta Semana"):
         st.info("💡 Ingresa los nombres reales de los equipos locales y visitantes de la boleta oficial:")
@@ -1607,24 +1621,24 @@ elif liga_elegida_val == "PROGOL_MODE":
         
         for item in boleta:
             p_match = jornada_oficial[item['casilla'] - 1]
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:#151821; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                 <b style="color:white; font-size:15px;">Casilla {item['casilla']}:</b> 
                 <span style="color:#FFFFFF; font-weight:bold;">{p_match['local']} vs {p_match['visita']}</span> -> 
                 <span style="color:{item['color_borde']}; font-weight:900; font-size:16px;">{item['sugerencia']}</span>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
             
     st.stop()
 
 # --- MODO 2: OPTIMIZADOR DE REDUCCIONES ---
 elif liga_elegida_val == "REDUCCIONES_MODE":
-    st.markdown('''
+    render_html('''
     <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
         <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">⚙️ Panel de Reducciones Inteligentes Pro</h2>
         <p style="color: #E2E8F0; margin: 5px 0 0 0; font-size: 15px;">Matriz matemática de reducciones aplicadas a los 14 partidos oficiales</p>
     </div>
-    ''', unsafe_allow_html=True)
+    ''')
     
     with st.expander("📝 Cargar / Editar los 14 Partidos Oficiales Progol de esta Semana"):
         st.info("💡 Ingresa los nombres reales de los equipos locales y visitantes:")
@@ -1663,12 +1677,12 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
                 tipo_txt = "Fijo Local (1)" if idx % 2 != 0 else "Fijo Visita (2)"
                 color_borde = "#F3E5AB"
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:#151821; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {color_borde}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                 <b style="color:white;">Casilla {idx}:</b> <span style="color:#FFFFFF; font-weight:bold;">{match_title} -> </span>
                 <span style="color:{color_borde}; font-weight:900; font-size:15px;">{tipo_txt}</span>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
     with col_red2:
         st.write("### 📊 Ranking de Aciertos Estimados")
@@ -1737,12 +1751,12 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
                     p_part = p_sub['partido']
                     p_pk = p_sub['pick']
                     c_color = "#D4AF37" if p_pk == '1' else ("#38BDF8" if p_pk == 'X' else "#EF4444")
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#151821; padding:5px 10px; border-radius:6px; margin:2px 0; border:1px solid #282F3F;">
                         <span style="color:white; font-size:12px;"><b>Casilla {p_c}:</b> {p_part}</span>
                         <span style="background:{c_color}; color:#0D0F14; font-weight:900; padding:1px 8px; border-radius:8px; font-size:13px;">{p_pk}</span>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
 
     st.stop()
 
@@ -1750,9 +1764,20 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
 if st.session_state.get('live_partido_detalle'):
     col_back, _ = st.columns([1.5, 1.5])
     with col_back:
-        lbl_retorno = "⬅️ VOLVER A PARTIDOS DE HOY" if liga_elegida_val == "TODAY_MATCHES_MODE" else "⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO"
+        if liga_elegida_val == "TODAY_MATCHES_MODE":
+            lbl_retorno = "⬅️ VOLVER A PARTIDOS DE HOY"
+        elif liga_elegida_val == "PARLAY_HUNTER_MODE":
+            lbl_retorno = "⬅️ VOLVER AL CAZADOR DE PARLAYS VIP"
+        elif liga_elegida_val == "LIVE_RADAR_MODE":
+            lbl_retorno = "⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO"
+        else:
+            lbl_retorno = f"⬅️ VOLVER A LA LISTA DE {liga_elegida.upper()}"
         if st.button(lbl_retorno, use_container_width=True, key="btn_volver_lista_general"):
             st.session_state['live_partido_detalle'] = None
+            st.session_state['ver_top_altas_match'] = False
+            st.session_state['ver_top_empates_match'] = False
+            st.session_state['ver_pick_seguro_match'] = False
+            st.session_state['ver_parlay_oro_match'] = False
             st.rerun()
 
 datos_partido = datos_partido_custom if datos_partido_custom else (st.session_state.get('live_partido_detalle') if st.session_state.get('live_partido_detalle') else partidos_dict.get(partido_seleccionado))
@@ -1834,7 +1859,7 @@ else:
         logo_visita_render = api_client.obtener_logo_oficial_equipo(equipo_visita_real, datos_partido.get('logo_visita', ''))
 
         # Marcador Superior Principal
-        st.markdown(f'''
+        render_html(f'''
         <div style="display:flex; align-items:center; justify-content:space-around; background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; padding:20px 15px; border-radius:16px; box-shadow:0 6px 25px rgba(0,0,0,0.5); margin-bottom:15px;">
             <div style="text-align:center; width:33%;">
                 <img src="{logo_local_render}" style="width:70px; height:70px; object-fit:contain; margin-bottom:6px;">
@@ -1849,7 +1874,7 @@ else:
                 <h3 style="margin:0; color:#FFFFFF; font-size:17px; font-weight:800;">{equipo_visita_real}</h3>
             </div>
         </div>
-        ''', unsafe_allow_html=True)
+        ''')
 
         # --- ESTRUCTURA EN PESTAÑAS (ST.TABS) ---
         tab_vivo, tab_resumen, tab_modelos, tab_h2h, tab_cancha, tab_cuotas = st.tabs([
@@ -1903,43 +1928,6 @@ else:
         # PESTAÑA 2: RESUMEN & PICKS VIP
         # =========================================================
         with tab_resumen:
-            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
-            with col_b1:
-                if st.button("⚡ PICK SENCILLO SEGURO", use_container_width=True):
-                    v_p1x = stats_poisson.get("p_1X", 70.0)
-                    v_px2 = stats_poisson.get("p_X2", 70.0)
-                    if v_p1x >= v_px2:
-                        st.success(f"🎯 **PICK SEGURO:** {equipo_local_real} o Empate (1X) | Confianza: **{v_p1x:.1f}%**")
-                    else:
-                        st.success(f"🎯 **PICK SEGURO:** {equipo_visita_real} o Empate (X2) | Confianza: **{v_px2:.1f}%**")
-            with col_b2:
-                if st.button("🎫 PARLAY DE ORO", use_container_width=True):
-                    # Generar dinámicamente según los dos factores principales del Bet Builder
-                    p_res_text = picks_builder['picks'][0]['descripcion'] if len(picks_builder.get('picks', [])) > 0 else f"{equipo_local_real} o Empate (1X)"
-                    p_gol_text = picks_builder['picks'][1]['descripcion'] if len(picks_builder.get('picks', [])) > 1 else "Más de 1.5 Goles"
-                    c1_val = picks_builder['picks'][0].get('cuota', 1.30) if len(picks_builder.get('picks', [])) > 0 else 1.30
-                    c2_val = picks_builder['picks'][1].get('cuota', 1.35) if len(picks_builder.get('picks', [])) > 1 else 1.35
-                    cuota_oro = round(c1_val * c2_val * 0.95, 2)
-                    st.success(f"🎟️ **PARLAY DE ORO RECOMENDADO:** {p_res_text} + {p_gol_text} | Cuota Combinada: **@{cuota_oro:.2f}**")
-            with col_b3:
-                if st.button("🔥 TOP 15 ALTAS (PARLAY)", use_container_width=True):
-                    st.session_state['ver_top_altas_match'] = not st.session_state.get('ver_top_altas_match', False)
-            with col_b4:
-                if st.button("⚖️ TOP 5 EMPATES (VALOR)", use_container_width=True):
-                    st.session_state['ver_top_empates_match'] = not st.session_state.get('ver_top_empates_match', False)
-
-            if st.session_state.get('ver_top_altas_match'):
-                st.markdown("### 🔥 Parlay Maestro de Altas en Goles (Top 15 Partidos)")
-                p_altas_box = analytics.generar_parlay_top_altas(top_n=15)
-                st.markdown(pitch_renderer.render_ticket_parlay_altas(p_altas_box), unsafe_allow_html=True)
-
-            if st.session_state.get('ver_top_empates_match'):
-                st.markdown("### ⚖️ Radar de Empates de Oro (Top 5 Choques con Paridad)")
-                p_empates_box = analytics.generar_top_empates_oro(top_n=5)
-                st.markdown(pitch_renderer.render_ticket_empates_oro(p_empates_box), unsafe_allow_html=True)
-
-            st.markdown("<br>", unsafe_allow_html=True)
-
             # Bet Builder Dinámico Multifactorial (Resultado, Goles, Tarjetas y Córners)
             picks_builder = analytics.generar_bet_builder_dinamico(
                 equipo_local=equipo_local_real,
@@ -1948,8 +1936,53 @@ else:
                 promedio_tarjetas=promedio_tarjetas,
                 referee_name=referee_name
             )
+
+            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+            with col_b1:
+                if st.button("⚡ PICK SENCILLO SEGURO", use_container_width=True, key=f"btn_pick_seg_{fixture_id}"):
+                    st.session_state['ver_pick_seguro_match'] = True
+                    st.session_state['ver_parlay_oro_match'] = False
+            with col_b2:
+                if st.button("🎫 PARLAY DE ORO", use_container_width=True, key=f"btn_parlay_oro_{fixture_id}"):
+                    st.session_state['ver_parlay_oro_match'] = True
+                    st.session_state['ver_pick_seguro_match'] = False
+            with col_b3:
+                if st.button("🔥 TOP 15 ALTAS (PARLAY)", use_container_width=True, key=f"btn_top_altas_{fixture_id}"):
+                    st.session_state['ver_top_altas_match'] = not st.session_state.get('ver_top_altas_match', False)
+            with col_b4:
+                if st.button("⚖️ TOP 5 EMPATES (VALOR)", use_container_width=True, key=f"btn_top_emp_{fixture_id}"):
+                    st.session_state['ver_top_empates_match'] = not st.session_state.get('ver_top_empates_match', False)
+
+            if st.session_state.get('ver_pick_seguro_match'):
+                v_p1x = stats_poisson.get("p_1X", 70.0)
+                v_px2 = stats_poisson.get("p_X2", 70.0)
+                if v_p1x >= v_px2:
+                    st.success(f"🎯 **PICK SEGURO:** {equipo_local_real} o Empate (1X) | Confianza Matemática: **{v_p1x:.1f}%**")
+                else:
+                    st.success(f"🎯 **PICK SEGURO:** {equipo_visita_real} o Empate (X2) | Confianza Matemática: **{v_px2:.1f}%**")
+
+            if st.session_state.get('ver_parlay_oro_match'):
+                p_res_text = picks_builder['picks'][0]['descripcion'] if len(picks_builder.get('picks', [])) > 0 else f"{equipo_local_real} o Empate (1X)"
+                p_gol_text = picks_builder['picks'][1]['descripcion'] if len(picks_builder.get('picks', [])) > 1 else "Más de 1.5 Goles"
+                c1_val = picks_builder['picks'][0].get('cuota', 1.30) if len(picks_builder.get('picks', [])) > 0 else 1.30
+                c2_val = picks_builder['picks'][1].get('cuota', 1.35) if len(picks_builder.get('picks', [])) > 1 else 1.35
+                cuota_oro = round(c1_val * c2_val * 0.95, 2)
+                st.success(f"🎟️ **PARLAY DE ORO RECOMENDADO:** {p_res_text} + {p_gol_text} | Cuota Combinada: **@{cuota_oro:.2f}**")
+
+            if st.session_state.get('ver_top_altas_match'):
+                st.markdown("### 🔥 Parlay Maestro de Altas en Goles (Top 15 Partidos)")
+                p_altas_box = analytics.generar_parlay_top_altas(top_n=15)
+                render_html(pitch_renderer.render_ticket_parlay_altas(p_altas_box))
+
+            if st.session_state.get('ver_top_empates_match'):
+                st.markdown("### ⚖️ Radar de Empates de Oro (Top 5 Choques con Paridad)")
+                p_empates_box = analytics.generar_top_empates_oro(top_n=5)
+                render_html(pitch_renderer.render_ticket_empates_oro(p_empates_box))
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
             html_bet_builder = pitch_renderer.render_ticket_bet_builder(picks_builder, equipo_local_real, equipo_visita_real)
-            st.markdown(html_bet_builder, unsafe_allow_html=True)
+            render_html(html_bet_builder)
 
             # Métricas y Donut
             st.info(f"💡 **Consejo Analítico:** {consejo_dinamico}")
@@ -1987,14 +2020,14 @@ else:
             else:
                 import urllib.parse
                 encoded_txt = urllib.parse.quote(ficha_txt)
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); border-radius:12px; padding:16px; border:2px solid #2ECC71; text-align:center; margin-top:10px;">
                     <h4 style="color:#2ECC71; margin:0 0 6px 0; font-size:17px; font-weight:900;">📲 RECOMIENDA ESTE PRONÓSTICO VIP CON UN AMIGO</h4>
                     <a href="https://wa.me/?text={encoded_txt}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:10px 22px; border-radius:25px; text-decoration:none; display:inline-block; font-size:14px; margin-top:8px;">
                         💬 COMPARTIR EN WHATSAPP (1 CLIC)
                     </a>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
 
         # =========================================================
         # PESTAÑA 2: MODELOS & SIMULACIÓN
@@ -2010,21 +2043,21 @@ else:
 
             col_mc1, col_mc2 = st.columns([1.2, 0.8])
             with col_mc1:
-                st.markdown('''
+                render_html('''
                 <div style="background:#151821; border-radius:12px; padding:16px; border-left:6px solid #D4AF37; border:1px solid #282F3F; color:white;">
                     <h4 style="margin:0 0 10px 0; color:#D4AF37; font-size:16px; font-weight:900;">🎯 Top 3 Marcadores Exactos Más Probables</h4>
-                ''', unsafe_allow_html=True)
+                ''')
                 medallas = ["🥇 1er Lugar", "🥈 2do Lugar", "🥉 3er Lugar"]
                 colores_mc = ["#D4AF37", "#38BDF8", "#F3E5AB"]
                 for idx_m, item_m in enumerate(top_3_sc):
                     lbl_med = medallas[idx_m] if idx_m < len(medallas) else "🎯 Marcador"
                     c_badge = colores_mc[idx_m] if idx_m < len(colores_mc) else "#FFFFFF"
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; padding:8px 12px; border-radius:8px; margin:5px 0; border:1px solid #282F3F;">
                         <span style="color:#E0E0E0; font-size:14px; font-weight:bold;">{lbl_med}: <b style="color:white; font-size:17px; margin-left:8px;">{item_m['marcador']}</b></span>
                         <span style="background:{c_badge}; color:#0D0F14; font-weight:900; padding:3px 10px; border-radius:12px; font-size:13px;">Prob: {item_m['prob']}%</span>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
                 st.markdown('</div>', unsafe_allow_html=True)
 
             with col_mc2:
@@ -2034,7 +2067,7 @@ else:
                 c_btts = "#D4AF37" if btts_val >= 50.0 else "#EF4444"
                 txt_over25 = "SÍ (+2.5)" if over25_val >= 50.0 else "NO (-2.5)"
                 c_over25 = "#D4AF37" if over25_val >= 50.0 else "#EF4444"
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background:#151821; border-radius:12px; padding:16px; border:1px solid #282F3F; color:white;">
                     <h4 style="margin:0 0 10px 0; color:#D4AF37; font-size:16px; font-weight:900;">⚽ Proyecciones Monte Carlo</h4>
                     <div style="margin:6px 0; background:#1A1E29; padding:8px 12px; border-radius:8px; border:1px solid #282F3F;">
@@ -2046,7 +2079,7 @@ else:
                         <div style="color:{c_over25}; font-size:18px; font-weight:900;">{txt_over25} ({over25_val}%)</div>
                     </div>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
 
             st.markdown("---")
             # Módulo xG
@@ -2057,12 +2090,12 @@ else:
             xg_c2.metric("Modelo xG", "Ajustado por Simulación", "Dixon-Coles")
             xg_c3.metric(f"xG {equipo_visita_real}", f"{xg_data['xg_visita']} xG", f"Eficiencia: {xg_data['eficiencia_vis']}%")
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:#151821; padding:12px 16px; border-radius:10px; border-left:5px solid #D4AF37; border:1px solid #282F3F; margin:10px 0; color:white;">
                 <div style="color:#D4AF37; font-weight:900; font-size:14px;">📌 Análisis de Ocasiones Clave (Expected Goals):</div>
                 <div style="color:#E0E0E0; font-size:13px; margin-top:4px;">{xg_data['alerta_xg']}</div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
             st.markdown("---")
             # Predictor IA Ensemble
@@ -2070,7 +2103,7 @@ else:
             bajas_info = api_client.obtener_bajas_equipo(fixture_id, datos_partido.get("local_id", 0), datos_partido.get("visita_id", 0), equipo_local_real, equipo_visita_real)
             ia_info = analytics.evaluar_predictor_ia_ensemble(equipo_local_real, equipo_visita_real, stats_poisson, bajas_info)
             
-            st.markdown(f'''
+            render_html(f'''
             <div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); border-radius:14px; padding:18px; border:2px solid #38BDF8; margin:10px 0; color:white; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h4 style="margin:0; color:#38BDF8; font-size:17px; font-weight:900;">{ia_info['tendencia_ia']}</h4>
@@ -2087,7 +2120,7 @@ else:
                     </ul>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
         # =========================================================
         # PESTAÑA 3: ESTADÍSTICAS & H2H
@@ -2152,7 +2185,7 @@ else:
                     st.plotly_chart(fig_h2h, use_container_width=True)
 
                 with col_h2h_metrics:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#151821; padding:12px; border-radius:10px; border:1px solid #282F3F; text-align:center;">
                         <h5 style="color:#D4AF37; margin:0 0 8px 0; font-weight:900;">⚽ Goles en H2H</h5>
                         <div style="display:flex; justify-content:space-around; align-items:center;">
@@ -2161,7 +2194,7 @@ else:
                             <div><span style="color:#EF4444; font-size:22px; font-weight:900;">{goles_tot_vis}</span><br><small style="color:#aaa;">{equipo_visita_real}</small></div>
                         </div>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
 
             st.markdown("---")
             # Duelo de Rendimiento
@@ -2172,7 +2205,7 @@ else:
                 icon_title = iconos_cat[idx_c] if idx_c < len(iconos_cat) else f"📌 {cat_nombre}"
                 val_l = v_loc_rad[idx_c]
                 val_v = v_vis_rad[idx_c]
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background:#151821; border-radius:10px; padding:10px 16px; margin:6px 0; border:1px solid #282F3F;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                         <span style="color:#38BDF8; font-weight:900; font-size:14px;">🔵 {equipo_local_real}: <b>{val_l}%</b></span>
@@ -2184,7 +2217,7 @@ else:
                         <div style="width:{val_v}%; background:#EF4444; height:100%; margin-left:auto;"></div>
                     </div>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
 
             st.markdown("---")
             # Rachas Recientes
@@ -2194,22 +2227,22 @@ else:
             col_r1, col_r2 = st.columns(2)
             with col_r1:
                 b_html_l = "".join([f'<span style="background:{b["bg"]}; color:{b["color"]}; border:2px solid {b["borde"]}; font-weight:900; font-size:13px; width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">{b["letra"]}</span>' for b in badges_l])
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background:#151821; border-radius:12px; padding:14px; border-left:5px solid #38BDF8; border:1px solid #282F3F;">
                     <h4 style="margin:0 0 6px 0; color:white; font-size:15px; font-weight:900;">🔵 {equipo_local_real}</h4>
                     <div style="display:flex; margin-bottom:8px;">{b_html_l}</div>
                     <div style="background:#0D0F14; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold; border:1px solid #282F3F;">{tend_l}</div>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
             with col_r2:
                 b_html_v = "".join([f'<span style="background:{b["bg"]}; color:{b["color"]}; border:2px solid {b["borde"]}; font-weight:900; font-size:13px; width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">{b["letra"]}</span>' for b in badges_v])
-                st.markdown(f'''
+                render_html(f'''
                 <div style="background:#151821; border-radius:12px; padding:14px; border-left:5px solid #EF4444; border:1px solid #282F3F;">
                     <h4 style="margin:0 0 6px 0; color:white; font-size:15px; font-weight:900;">🔴 {equipo_visita_real}</h4>
                     <div style="display:flex; margin-bottom:8px;">{b_html_v}</div>
                     <div style="background:#0D0F14; padding:6px 10px; border-radius:6px; color:#E0E0E0; font-size:12px; font-weight:bold; border:1px solid #282F3F;">{tend_v}</div>
                 </div>
-                ''', unsafe_allow_html=True)
+                ''')
 
             st.markdown("---")
             # Bajas y Lesiones
@@ -2251,7 +2284,7 @@ else:
             cx2.metric("Altitud Estimada", f"{info_af['altitud_m']}m", "Sobre Nivel del Mar")
             cx3.metric("Desgaste de Sede", info_af['tag_altitud'].split('(')[0].strip())
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:#151821; padding:12px 16px; border-radius:10px; border:1px solid #282F3F; margin:10px 0; color:white;">
                 <div style="color:#D4AF37; font-weight:bold; font-size:14px; margin-bottom:4px;">📌 Impacto Aeróbico & Físico:</div>
                 <div style="color:#E0E0E0; font-size:13px;">{info_af['desc_altitud']}</div>
@@ -2260,7 +2293,7 @@ else:
                     <span>🔴 <b>{equipo_visita_real}:</b> {info_af['fatiga_vis']}</span>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
             st.markdown("---")
             # Árbitro y Rigor
@@ -2271,13 +2304,13 @@ else:
             ref_col2.metric("Prom. Tarjetas Amarillas", f"{info_ref['tarjetas_amarillas']} / partido")
             ref_col3.metric("Rigor Arbitral", info_ref['rigor'].split('(')[0].strip())
 
-            st.markdown(f'''
+            render_html(f'''
             <div style="background:#151821; padding:12px 16px; border-radius:10px; border-left:5px solid #D4AF37; border:1px solid #282F3F; margin:10px 0; color:white;">
                 <div style="color:#D4AF37; font-weight:bold; font-size:14px; margin-bottom:4px;">🎯 Análisis de Fricción & Recomendación de Mercado:</div>
                 <div style="color:#E0E0E0; font-size:13px;">{info_ref['recomendacion']}</div>
                 <div style="color:#94A3B8; font-size:12px; margin-top:4px;">Promedio Expulsiones: {info_ref['tarjetas_rojas']} rojas/partido | Promedio Penales: {info_ref['penales_prom']}/partido</div>
             </div>
-            ''', unsafe_allow_html=True)
+            ''')
 
         # =========================================================
         # PESTAÑA 5: CUOTAS & BANKROLL
@@ -2330,8 +2363,8 @@ else:
             st.markdown(t_html, unsafe_allow_html=True)
 
             if apuestas_valor:
-                st.markdown('''<div style="background-color: rgba(212, 175, 55, 0.12); border-left: 5px solid #D4AF37; padding: 14px; border-radius: 6px; margin-bottom: 15px; border-top: 1px solid #282F3F; border-right: 1px solid #282F3F; border-bottom: 1px solid #282F3F;">
-                <h4 style="color: #D4AF37; margin-top:0;">🔥 ALERTAS DE VALOR ESPERADO POSITIVO (+EV)</h4>''', unsafe_allow_html=True)
+                render_html('''<div style="background-color: rgba(212, 175, 55, 0.12); border-left: 5px solid #D4AF37; padding: 14px; border-radius: 6px; margin-bottom: 15px; border-top: 1px solid #282F3F; border-right: 1px solid #282F3F; border-bottom: 1px solid #282F3F;">
+                <h4 style="color: #D4AF37; margin-top:0;">🔥 ALERTAS DE VALOR ESPERADO POSITIVO (+EV)</h4>''')
                 for av in apuestas_valor:
                     st.markdown(f"- {av}")
                 st.markdown("</div>", unsafe_allow_html=True)
@@ -2350,13 +2383,13 @@ else:
             if mejor_cuota_ev > 1.0 and mejor_prob_ev > 0:
                 res_kelly = analytics.calcular_criterio_kelly(mejor_prob_ev, mejor_cuota_ev, fraccion=f_val, bankroll=bankroll)
                 if res_kelly["es_viable"]:
-                    st.markdown(f'''
+                    render_html(f'''
                     <div style="background:#151821; border-radius:10px; padding:14px; border:2px solid #D4AF37; margin:10px 0;">
                         <h4 style="color:#D4AF37; margin:0 0 6px 0;">💎 Apuesta Óptima Sugerida por Criterio de Kelly:</h4>
                         <div style="font-size:18px; color:white; font-weight:bold;">Apostar: <span style="color:#D4AF37;">${res_kelly['monto_sugerido']:,.2f} MXN</span> ({res_kelly['kelly_pct']}% de tu bankroll) en cuota {mejor_cuota_ev}</div>
                         <small style="color:#aaa;">* Calculado con ventaja matemática positiva (+EV) y control de riesgo.</small>
                     </div>
-                    ''', unsafe_allow_html=True)
+                    ''')
 
             c_b1, c_b2, c_b3 = st.columns(3)
             c_b1.metric("Stake Seguro (5%)", f"${bankroll * 0.05:,.2f}")
@@ -2374,16 +2407,16 @@ else:
 
                 ct1, ct2 = st.columns(2)
                 with ct1:
-                    st.markdown(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #38BDF8; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
+                    render_html(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #38BDF8; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <h4 style="color:white; margin:0 0 6px 0;">🔵 {equipo_local_real}</h4>
                     <p style="color:#ddd; font-size:13px; margin:0 0 6px 0;">Posición: {pos_l}° | Puntos: {pts_l} | Racha: {forma_l}</p>
                     <div style="background:rgba(56,189,248,0.12); padding:8px; border-radius:6px; border:1px solid rgba(56,189,248,0.2);">
                         <p style="color:#e0e0e0; margin:0; font-size:12px;">📌 {txt_nec_l}</p>
-                    </div></div>''', unsafe_allow_html=True)
+                    </div></div>''')
                 with ct2:
-                    st.markdown(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #EF4444; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
+                    render_html(f'''<div style="background:#151821; padding:14px; border-radius:10px; border-left:5px solid #EF4444; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
                     <h4 style="color:white; margin:0 0 6px 0;">🔴 {equipo_visita_real}</h4>
                     <p style="color:#ddd; font-size:13px; margin:0 0 6px 0;">Posición: {pos_v}° | Puntos: {pts_v} | Racha: {forma_v}</p>
                     <div style="background:rgba(239,68,68,0.12); padding:8px; border-radius:6px; border:1px solid rgba(239,68,68,0.2);">
                         <p style="color:#e0e0e0; margin:0; font-size:12px;">📌 {txt_nec_v}</p>
-                    </div></div>''', unsafe_allow_html=True)
+                    </div></div>''')
