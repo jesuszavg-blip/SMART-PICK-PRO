@@ -142,6 +142,49 @@ _st_components.html("""
 </script>
 """, height=0, width=0)
 
+def obtener_fondo_estadio_url() -> str:
+    """Obtiene el fondo de estadio nocturno en Base64 o URL remota de respaldo."""
+    try:
+        ruta = os.path.join(os.path.dirname(__file__), "assets", "fondos_demo", "opcion1_estadio_nocturno.jpg")
+        if os.path.exists(ruta):
+            import base64
+            with open(ruta, "rb") as f:
+                return f"data:image/jpeg;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+    except Exception:
+        pass
+    return "https://raw.githubusercontent.com/jesuszavg-blip/SMART-PICK-PRO/main/assets/fondos_demo/opcion1_estadio_nocturno.jpg"
+
+fondo_estadio_data = obtener_fondo_estadio_url()
+
+# Inyección del Fondo de Estadio Nocturno Glassmorphism VIP
+render_html(f"""
+<style>
+    /* Fondo Inmersivo de Estadio Nocturno VIP */
+    .stApp {{
+        background: linear-gradient(180deg, rgba(10, 13, 20, 0.86) 0%, rgba(13, 17, 24, 0.93) 100%),
+                    url('{fondo_estadio_data}') no-repeat center center fixed !important;
+        background-size: cover !important;
+        color: #FFFFFF !important;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }}
+    
+    /* Efecto Glassmorphism en la Barra Lateral */
+    [data-testid="stSidebar"] {{
+        background: rgba(15, 18, 26, 0.92) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-right: 1px solid rgba(212, 175, 55, 0.25) !important;
+    }}
+
+    /* Tarjetas y Banners con Glassmorphism Premium */
+    .card-dark, .hero-banner {{
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.15) !important;
+    }}
+</style>
+""")
+
 # Estilos CSS Personalizados de Máximo Contraste Visual y Estética Premium VIP (Paleta Oficial Dorado & Obsidiana)
 render_html("""
 <style>
