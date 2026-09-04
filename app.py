@@ -1953,19 +1953,21 @@ else:
                 if st.button("⚖️ TOP 5 EMPATES (VALOR)", use_container_width=True, key=f"btn_top_emp_{fixture_id}"):
                     st.session_state['ver_top_empates_match'] = not st.session_state.get('ver_top_empates_match', False)
 
+            pick_seguro_obj = picks_builder.get("pick_seguro", picks_builder['picks'][0] if picks_builder.get('picks') else {})
+            p_seg_desc = pick_seguro_obj.get("descripcion", f"{equipo_local_real} o Empate (1X)")
+            p_seg_prob = pick_seguro_obj.get("prob", "75.0%")
+            p_seg_cuota = float(pick_seguro_obj.get("cuota", 1.30))
+
             if st.session_state.get('ver_pick_seguro_match'):
-                v_p1x = stats_poisson.get("p_1X", 70.0)
-                v_px2 = stats_poisson.get("p_X2", 70.0)
-                if v_p1x >= v_px2:
-                    st.success(f"🎯 **PICK SEGURO:** {equipo_local_real} o Empate (1X) | Confianza Matemática: **{v_p1x:.1f}%**")
-                else:
-                    st.success(f"🎯 **PICK SEGURO:** {equipo_visita_real} o Empate (X2) | Confianza Matemática: **{v_px2:.1f}%**")
+                st.success(f"🎯 **PICK SEGURO (+EV):** {p_seg_desc} | Cuota: **@{p_seg_cuota:.2f}** | Confianza Matemática: **{p_seg_prob}**")
 
             if st.session_state.get('ver_parlay_oro_match'):
-                p_res_text = picks_builder['picks'][0]['descripcion'] if len(picks_builder.get('picks', [])) > 0 else f"{equipo_local_real} o Empate (1X)"
-                p_gol_text = picks_builder['picks'][1]['descripcion'] if len(picks_builder.get('picks', [])) > 1 else "Más de 1.5 Goles"
-                c1_val = picks_builder['picks'][0].get('cuota', 1.30) if len(picks_builder.get('picks', [])) > 0 else 1.30
-                c2_val = picks_builder['picks'][1].get('cuota', 1.35) if len(picks_builder.get('picks', [])) > 1 else 1.35
+                p1_obj = picks_builder['picks'][0] if len(picks_builder.get('picks', [])) > 0 else {'descripcion': f"{equipo_local_real} o Empate (1X)", 'cuota': 1.30}
+                p2_obj = picks_builder['picks'][1] if len(picks_builder.get('picks', [])) > 1 else {'descripcion': "Más de 1.5 Goles", 'cuota': 1.35}
+                p_res_text = p1_obj.get('descripcion', '')
+                p_gol_text = p2_obj.get('descripcion', '')
+                c1_val = float(p1_obj.get('cuota', 1.30))
+                c2_val = float(p2_obj.get('cuota', 1.35))
                 cuota_oro = round(c1_val * c2_val * 0.95, 2)
                 st.success(f"🎟️ **PARLAY DE ORO RECOMENDADO:** {p_res_text} + {p_gol_text} | Cuota Combinada: **@{cuota_oro:.2f}**")
 
@@ -1985,7 +1987,8 @@ else:
             render_html(html_bet_builder)
 
             # Métricas y Donut
-            st.info(f"💡 **Consejo Analítico:** {consejo_dinamico}")
+            consejo_final = picks_builder.get("consejo_analitico", f"Mercado Recomendado: {p_seg_desc} | Alta solidez matemática.")
+            st.info(f"💡 **Consejo Analítico:** {consejo_final}")
             col_m1, col_m2, col_m3, col_m4 = st.columns(4)
             col_m1.metric(f"Gana {equipo_local_real}", f"{stats_poisson['p_home_win']}%")
             col_m2.metric("Empate", f"{stats_poisson['p_draw']}%")
@@ -2013,10 +2016,17 @@ else:
                 pass
 
             # Ficha de Difusión WhatsApp
-            ficha_txt = analytics.generar_ficha_vip_whatsapp(equipo_local_real, equipo_visita_real, stats_poisson, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'), caliente_url=config.ENLACE_POR_DEFECTO)
+            ficha_txt = analytics.generar_ficha_vip_whatsapp(
+                equipo_local_real, 
+                equipo_visita_real, 
+                stats_poisson, 
+                web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'), 
+                caliente_url=config.ENLACE_POR_DEFECTO,
+                picks_builder=picks_builder
+            )
             if st.session_state['rol'] == 'ADMIN':
                 st.write("#### 📲 Ficha VIP para Difusión en Canales (Herramienta Admin)")
-                st.text_area("📋 Reporte VIP copiable:", value=ficha_txt, height=200, key=f"admin_ficha_{fixture_id}")
+                st.text_area("📋 Reporte VIP copiable:", value=ficha_txt, height=220, key=f"admin_ficha_{fixture_id}")
             else:
                 import urllib.parse
                 encoded_txt = urllib.parse.quote(ficha_txt)
