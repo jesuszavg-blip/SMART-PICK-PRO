@@ -271,18 +271,42 @@ def generar_grafico_radar_comparativo(equipo_local: str, equipo_visita: str, sta
     
     return categories, val_loc, val_vis
 
-def generar_pick_recomendado_rapido(stats_poisson: dict, equipo_local: str, equipo_visita: str) -> dict:
+def calcular_cuota_probabilidad(prob_pct, margin_factor: float = 1.04) -> float:
+    """
+    Calcula la cuota justa estimada a partir de la probabilidad con margen de casa.
+    Función única y canónica para toda la plataforma.
+    """
+    try:
+        prob = float(str(prob_pct).replace('%', '')) / 100.0
+        if prob <= 0:
+            return 1.90
+        cuota = (1.0 / prob) * margin_factor
+        return round(max(1.12, min(3.80, cuota)), 2)
+    except Exception:
+        return 1.25
+
+def generar_pick_recomendado_rapido(stats_poisson: dict, equipo_local: str, equipo_visita: str, picks_builder: dict = None) -> dict:
     """
     Determina el pick individual de mayor certeza y valor matemático (+EV) para un partido.
     Utilizado en tarjetas resumen, 'Partidos de Hoy' y fichas de difusión.
+    Garantiza 100% de consistencia con el Bet Builder y las cuotas de la plataforma.
     """
+    if picks_builder and isinstance(picks_builder, dict) and picks_builder.get("pick_seguro"):
+        ps = picks_builder["pick_seguro"]
+        prob_val = float(str(ps.get("prob", "75%")).replace("%", ""))
+        return {
+            "pick": ps.get("descripcion", f"Victoria: {equipo_local}"),
+            "tipo": ps.get("categoria", "🎯 Pick Recomendado"),
+            "probabilidad": prob_val,
+            "cuota": ps.get("cuota", calcular_cuota_probabilidad(prob_val))
+        }
+
     p_loc = float(stats_poisson.get("p_home_win", 40.0))
     p_emp = float(stats_poisson.get("p_draw", 30.0))
     p_vis = float(stats_poisson.get("p_away_win", 30.0))
     p_1x = float(stats_poisson.get("p_1X", p_loc + p_emp))
     p_x2 = float(stats_poisson.get("p_X2", p_vis + p_emp))
     p_o15 = float(stats_poisson.get("p_over_15", 70.0))
-    p_o25 = float(stats_poisson.get("p_over_25", 50.0))
     p_btts = float(stats_poisson.get("p_btts", 50.0))
     lh = float(stats_poisson.get("lambda_home", 1.4))
     la = float(stats_poisson.get("lambda_away", 1.1))
@@ -291,43 +315,37 @@ def generar_pick_recomendado_rapido(stats_poisson: dict, equipo_local: str, equi
         pick = f"Victoria: {equipo_local}"
         tipo = "🛡️ Resultado Directo"
         prob = p_loc
-        cuota = round(max(1.30, min(1.95, 1.0 / (prob / 100.0) * 1.05)), 2)
     elif p_vis >= 55.0:
         pick = f"Victoria: {equipo_visita}"
         tipo = "🛡️ Resultado Directo"
         prob = p_vis
-        cuota = round(max(1.35, min(2.10, 1.0 / (prob / 100.0) * 1.06)), 2)
+    elif p_btts >= 58.0 and lh >= 1.25 and la >= 1.15:
+        pick = "Ambos Equipos Anotan (Sí)"
+        prob = p_btts
+        tipo = "⚽ Ambos Marcan"
     elif (lh + la) <= 2.10:
         prob_u = min(88.0, max(72.0, round(sum(poisson_probability(k, lh + la) for k in range(4)) * 100, 1)))
         pick = "Menos de 3.5 Goles"
         prob = prob_u
         tipo = "⚽ Goles Bajas"
-        cuota = round(max(1.22, min(1.50, 1.0 / (prob / 100.0) * 1.04)), 2)
-    elif p_btts >= 58.0 and lh >= 1.25 and la >= 1.15:
-        pick = "Ambos Equipos Anotan (Sí)"
-        prob = p_btts
-        tipo = "⚽ Ambos Marcan"
-        cuota = round(max(1.55, min(1.95, 1.0 / (prob / 100.0) * 1.05)), 2)
     elif p_vis >= p_loc + 5.0 and p_x2 >= 64.0:
         pick = f"Doble Op: {equipo_visita} o Empate (X2)"
         prob = p_x2
         tipo = "🛡️ Doble Oportunidad"
-        cuota = round(max(1.25, min(1.65, 1.0 / (prob / 100.0) * 1.04)), 2)
     elif p_1x >= 66.0:
         pick = f"Doble Op: {equipo_local} o Empate (1X)"
         prob = p_1x
         tipo = "🛡️ Doble Oportunidad"
-        cuota = round(max(1.20, min(1.55, 1.0 / (prob / 100.0) * 1.04)), 2)
     elif p_o15 >= 72.0:
         pick = "Más de 1.5 Goles en el Partido"
         prob = p_o15
         tipo = "⚽ Goles Altas"
-        cuota = round(max(1.22, min(1.48, 1.0 / (prob / 100.0) * 1.04)), 2)
     else:
         pick = f"Doble Op: {equipo_local} o {equipo_visita} (12)"
         prob = round(100.0 - p_emp, 1)
         tipo = "🛡️ Doble Oportunidad"
-        cuota = round(max(1.25, min(1.50, 1.0 / (prob / 100.0) * 1.04)), 2)
+
+    cuota = calcular_cuota_probabilidad(prob)
 
     return {
         "pick": pick,
@@ -336,7 +354,15 @@ def generar_pick_recomendado_rapido(stats_poisson: dict, equipo_local: str, equi
         "cuota": cuota
     }
 
-def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_poisson: dict, fecha_str: str = "", web_url: str = "", caliente_url: str = "") -> str:
+def generar_ficha_vip_whatsapp(
+    equipo_local: str, 
+    equipo_visita: str, 
+    stats_poisson: dict, 
+    fecha_str: str = "", 
+    web_url: str = "", 
+    caliente_url: str = "",
+    picks_builder: dict = None
+) -> str:
     mc = stats_poisson.get("monte_carlo", {})
     top_3 = mc.get("top_3_marcadores", [])
     sc_txt = ", ".join([f"{item['marcador']} ({item['prob']}%)" for item in top_3]) if top_3 else "2-1, 1-1"
@@ -345,10 +371,22 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
     p_emp = stats_poisson.get("p_draw", 30.0)
     p_vis = stats_poisson.get("p_away_win", 30.0)
     
-    pick_obj = generar_pick_recomendado_rapido(stats_poisson, equipo_local, equipo_visita)
+    if not picks_builder or not isinstance(picks_builder, dict) or "picks" not in picks_builder:
+        picks_builder = generar_bet_builder_dinamico(equipo_local, equipo_visita, stats_poisson)
+    
+    pick_obj = generar_pick_recomendado_rapido(stats_poisson, equipo_local, equipo_visita, picks_builder=picks_builder)
     pick_sug = pick_obj["pick"]
     cuota_sug = pick_obj["cuota"]
     conf_sug = pick_obj["probabilidad"]
+
+    # Líneas del Parlay Bet Builder Multifactorial
+    parlay_lines = []
+    for p in picks_builder.get('picks', []):
+        c_val = p.get('cuota', 1.25)
+        parlay_lines.append(f"• {p.get('categoria', '🎯')}: *{p.get('descripcion', '')}* (@{c_val:.2f} | Confianza: {p.get('prob', '')})")
+    
+    parlay_txt_block = "\n".join(parlay_lines) if parlay_lines else f"• 🛡️ Resultado: *Doble Op: {equipo_local} o {equipo_visita} (12)*"
+    cuota_parlay_val = picks_builder.get("cuota_total", 3.20)
 
     url_final = web_url if web_url else "https://smartpickprojz.com.mx"
     ixbet_link = getattr(config, "ENLACE_1XBET", "https://reffpa.com/L?tag=d_6029550m_1599c_&site=6029550&ad=1599")
@@ -371,6 +409,9 @@ def generar_ficha_vip_whatsapp(equipo_local: str, equipo_visita: str, stats_pois
 💡 *APUESTA RECOMENDADA (+EV):*
 • Pick Principal: *{pick_sug}* (Cuota: @{cuota_sug:.2f} | Confianza: {conf_sug}%)
 • Nivel de Seguridad: Alta ⭐⭐⭐⭐⭐
+
+🧩 *PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL - CUOTA COMBINADA x{cuota_parlay_val:,.2f}):*
+{parlay_txt_block}
 
 🎁 *BONO 1XBET (HASTA $3,500 MXN EN TU 1ER DEPÓSITO):*
 👉 *Abre tu cuenta 1xBet aquí:* {ixbet_link}
@@ -766,8 +807,8 @@ def generar_bet_builder_dinamico(
     cuota_total = 1.0
     for p in picks:
         try:
-            val_p = float(p["prob"].replace("%", "")) / 100.0
-            c_est = round(max(1.15, min(2.40, (1.0 / val_p) * 1.04)), 2)
+            val_p_str = p["prob"].replace("%", "")
+            c_est = calcular_cuota_probabilidad(val_p_str)
             p["cuota"] = c_est
             cuota_total *= c_est
         except Exception:
@@ -776,12 +817,38 @@ def generar_bet_builder_dinamico(
 
     cuota_total = round(cuota_total * 0.94, 2)
 
+    # Identificar pick seguro (mayor probabilidad) y armar consejo analítico 100% coherente
+    picks_sorted = sorted(picks, key=lambda x: float(str(x.get('prob', '0')).replace('%', '')), reverse=True)
+    pick_seguro = picks_sorted[0] if picks_sorted else {
+        "categoria": "🛡️ Resultado",
+        "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)",
+        "prob": "70.0%",
+        "cuota": 1.35
+    }
+
+    desc_seg = pick_seguro.get("descripcion", "")
+    prob_seg = pick_seguro.get("prob", "")
+    if "Ambos Equipos Anotan" in desc_seg:
+        consejo_txt = f"Mercado Recomendado: Ambos Equipos Anotan (Sí) ({prob_seg}) | Duelo abierto con alta frecuencia goleadora."
+    elif "Más de" in desc_seg and "Goles" in desc_seg:
+        consejo_txt = f"Mercado Recomendado: {desc_seg} ({prob_seg}) | Fuerte volumen ofensivo esperado."
+    elif "Menos de" in desc_seg and "Goles" in desc_seg:
+        consejo_txt = f"Mercado Recomendado: {desc_seg} ({prob_seg}) | Planteamiento defensivo cerrado y pocos espacios."
+    elif "Victoria" in desc_seg:
+        consejo_txt = f"Pick Principal: {desc_seg} ({prob_seg}) | Clara ventaja táctica y superioridad estadística."
+    elif "Doble Op" in desc_seg:
+        consejo_txt = f"Pick Principal: {desc_seg} ({prob_seg}) | Máxima solidez matemática y cobertura ante paridad."
+    else:
+        consejo_txt = f"Pick Principal: {desc_seg} ({prob_seg}) | Alta solidez matemática recomendada."
+
     return {
         "titulo": "🧩 PARLAY SUGERIDO (BET BUILDER MULTIFACTORIAL)",
         "local": equipo_local,
         "visita": equipo_visita,
         "cuota_total": cuota_total,
-        "picks": picks
+        "picks": picks,
+        "pick_seguro": pick_seguro,
+        "consejo_analitico": consejo_txt
     }
 
 def evaluar_necesidad(posicion, league_id="262", *args, **kwargs) -> str:
