@@ -97,22 +97,36 @@ def _dibujar_nombre_equipo(draw: ImageDraw.Draw, cx: int, cy: int, name: str, ma
         _draw_shadow_text(draw, (cx, cy), name, font=f, fill=(255, 255, 255), anchor="mt")
 
 
-def _dibujar_pick_completo(draw: ImageDraw.Draw, left_x: int, top_y: int, text: str, max_w: int = 670, base_size: int = 46):
-    """Renderiza el pronóstico completo en 1 o 2 líneas con texto grande y sin truncamientos."""
+def _dibujar_pick_completo(draw: ImageDraw.Draw, left_x: int, top_y: int, text: str, max_w: int = 670, base_size: int = 44):
+    """Renderiza el pronóstico completo en 1 o 2 líneas grandes, legibles y sin truncar ninguna palabra."""
     if not text:
         return
-    text = str(text).strip()
+    display_text = str(text).strip()
+    
+    # 1. Probar en 1 sola línea si cabe holgadamente
     for s in [base_size, base_size - 4, base_size - 8]:
         f = _obtener_fuente(s, bold=True)
-        bbox = f.getbbox(text)
+        bbox = f.getbbox(display_text)
         if (bbox[2] - bbox[0]) <= max_w:
-            _draw_shadow_text(draw, (left_x, top_y), text, font=f, fill=(255, 255, 255))
+            _draw_shadow_text(draw, (left_x, top_y), display_text, font=f, fill=(255, 255, 255))
             return
             
-    words = text.split()
+    # 2. Si contiene ' o Empate' o ' o ', dividir por ahí con resalte dorado
+    if " o Empate" in display_text:
+        parts = display_text.split(" o Empate")
+        l1 = parts[0].strip()
+        l2 = "o Empate" + (parts[1] if len(parts) > 1 else "")
+        f1 = _obtener_fuente(base_size - 2, bold=True)
+        f2 = _obtener_fuente(base_size - 2, bold=True)
+        _draw_shadow_text(draw, (left_x, top_y - 8), l1, font=f1, fill=(255, 255, 255))
+        _draw_shadow_text(draw, (left_x, top_y + 36), l2.strip(), font=f2, fill=(253, 230, 138))
+        return
+
+    # 3. División fluida por palabras respetando el ancho máximo
+    words = display_text.split()
     lines = []
     curr = ""
-    f = _obtener_fuente(base_size - 6, bold=True)
+    f = _obtener_fuente(base_size - 4, bold=True)
     for w in words:
         test = (curr + " " + w).strip()
         bbox = f.getbbox(test)
@@ -124,10 +138,10 @@ def _dibujar_pick_completo(draw: ImageDraw.Draw, left_x: int, top_y: int, text: 
     if curr:
         lines.append(curr)
         
-    curr_y = top_y - 6
+    curr_y = top_y - 8
     for l in lines[:2]:
         _draw_shadow_text(draw, (left_x, curr_y), l, font=f, fill=(255, 255, 255))
-        curr_y += 44
+        curr_y += 42
 
 
 def _obtener_imagen_logo(url_o_path: str, size: tuple = (160, 160)) -> Image.Image:
