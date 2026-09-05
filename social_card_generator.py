@@ -20,23 +20,49 @@ APP_ICON = os.path.join(ASSETS_DIR, "app_icon.png")
 _LOGO_CACHE = {}
 
 def _obtener_fuente(size: int, bold: bool = False):
-    """Carga fuentes TrueType disponibles en Windows o Linux con fallback seguro."""
-    nombres_fuente = [
-        "arialbd.ttf" if bold else "arial.ttf",
-        "segoeuib.ttf" if bold else "segoeui.ttf",
-        "tahomabd.ttf" if bold else "tahoma.ttf",
-        "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf",
-        "calibrib.ttf" if bold else "calibri.ttf"
+    """Carga fuentes TrueType con prioridad en assets/ del proyecto y luego rutas del sistema."""
+    local_candidates = [
+        os.path.join(ASSETS_DIR, "font_bold.ttf") if bold else os.path.join(ASSETS_DIR, "font_regular.ttf"),
+        os.path.join(ASSETS_DIR, "arialbd.ttf") if bold else os.path.join(ASSETS_DIR, "arial.ttf"),
+        os.path.join(ASSETS_DIR, "segoeuib.ttf") if bold else os.path.join(ASSETS_DIR, "segoeui.ttf"),
+        os.path.join(ASSETS_DIR, "DejaVuSans-Bold.ttf") if bold else os.path.join(ASSETS_DIR, "DejaVuSans.ttf"),
     ]
-    for nf in nombres_fuente:
+    for p in local_candidates:
+        if os.path.exists(p):
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                pass
+
+    linux_candidates = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf" if bold else "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+        "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf"
+    ]
+    for p in linux_candidates:
+        if os.path.exists(p):
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                pass
+
+    system_names = [
+        "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf",
+        "LiberationSans-Bold.ttf" if bold else "LiberationSans-Regular.ttf",
+        "arialbd.ttf" if bold else "arial.ttf",
+        "arial.ttf"
+    ]
+    for sn in system_names:
         try:
-            return ImageFont.truetype(nf, size)
+            return ImageFont.truetype(sn, size)
         except Exception:
-            continue
+            pass
+
     try:
-        return ImageFont.load_default()
+        return ImageFont.load_default(size=size)
     except Exception:
-        return None
+        return ImageFont.load_default()
 
 
 def _draw_shadow_text(draw: ImageDraw.Draw, pos: tuple, text: str, font, fill=(255, 255, 255), shadow_fill=(0, 0, 0, 240), offset=(2, 2), anchor=None):
@@ -100,7 +126,7 @@ def _crear_escudo_placeholder(size: tuple = (160, 160)) -> Image.Image:
     w, h = size
     draw.ellipse([(6, 6), (w - 6, h - 6)], fill=(21, 24, 33, 240), outline=(212, 175, 55, 240), width=4)
     f = _obtener_fuente(int(w * 0.4), bold=True)
-    draw.text((w // 2, h // 2 - int(w * 0.05)), "⚽", fill=(212, 175, 55), font=f, anchor="mm")
+    draw.text((w // 2, h // 2), "SP", fill=(212, 175, 55), font=f, anchor="mm")
     return img
 
 
@@ -209,17 +235,17 @@ def generar_ficha_partido_hd(
             col_accent = (239, 68, 68)          # Rojo Fuego
             col_accent_soft = (254, 202, 202)
             col_badge_bg = (220, 38, 38)
-            badge_header_text = "🔥 SMART PICK PRO VIP • FESTIVAL DE GOLES"
+            badge_header_text = "FESTIVAL DE GOLES • SMART PICK PRO VIP"
         elif estilo == "neon_pro":
             col_accent = (56, 189, 248)          # Cyan Neón
             col_accent_soft = (186, 230, 253)
             col_badge_bg = (14, 165, 233)
-            badge_header_text = "⚡ SMART PICK PRO VIP • ANÁLISIS DE VALOR (+EV)"
+            badge_header_text = "ANÁLISIS DE VALOR (+EV) • SMART PICK PRO VIP"
         else:
             col_accent = (212, 175, 55)          # Oro VIP
             col_accent_soft = (253, 230, 138)
             col_badge_bg = (212, 175, 55)
-            badge_header_text = "💎 SMART PICK PRO VIP • PRONÓSTICO OFICIAL"
+            badge_header_text = "PRONÓSTICO OFICIAL • SMART PICK PRO VIP"
 
         _dibujar_marco_exterior(draw, width, height, color_primario=col_accent)
 
@@ -227,8 +253,11 @@ def generar_ficha_partido_hd(
         visita_name = partido_data.get("visita", "Equipo Visita")
         logo_loc_url = partido_data.get("logo_local", "")
         logo_vis_url = partido_data.get("logo_visita", "")
-        liga_name = str(partido_data.get("liga", "Liga Profesional")).upper()
-        hora_partido = str(partido_data.get("hora", "Hoy")).upper()
+        
+        # Limpieza de liga y horario (quitar emojis que causen cuadros vacíos)
+        raw_liga = str(partido_data.get("liga", "Liga Profesional")).upper()
+        clean_liga = raw_liga.replace("🇲🇽", "").replace("🇪🇸", "").replace("🏴󠁧󠁢󠁥󠁮󠁧󠁿", "").replace("🏆", "").strip()
+        raw_hora = str(partido_data.get("hora", "Hoy")).upper().replace("⏰", "").strip()
 
         if not pick_data:
             pick_data = {
@@ -261,7 +290,7 @@ def generar_ficha_partido_hd(
             box_w = width - (box_x * 2)  # 996px
 
             # 1. HEADER (y: 35 a 125)
-            badge_w, badge_h = 750, 48
+            badge_w, badge_h = 760, 48
             badge_x = (width - badge_w) // 2
             draw.rounded_rectangle(
                 [(badge_x, 35), (badge_x + badge_w, 35 + badge_h)],
@@ -272,7 +301,7 @@ def generar_ficha_partido_hd(
             draw.text((width // 2, 45), badge_header_text, fill=(13, 15, 20), font=f_hdr, anchor="mt")
 
             f_sub = _obtener_fuente(24, bold=True)
-            _draw_shadow_text(draw, (width // 2, 94), f"🏆 {liga_name}   •   ⏰ {hora_partido}", font=f_sub, fill=(226, 232, 240), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, 94), f"{clean_liga}   •   {raw_hora}", font=f_sub, fill=(226, 232, 240), anchor="mt")
 
             # 2. ENCUENTRO Y ESCUDOS (y: 135 a 420, h=285px)
             t_box_y = 135
@@ -297,16 +326,16 @@ def generar_ficha_partido_hd(
             draw.ellipse([(vs_cx - 38, t_box_y + 58), (vs_cx + 38, t_box_y + 134)], fill=(13, 15, 20, 245), outline=col_accent + (220,), width=3)
             draw.text((vs_cx, t_box_y + 93), "VS", fill=col_accent_soft, font=_obtener_fuente(34, bold=True), anchor="mm")
 
-            # Nombres de Equipos Grandes (46px)
-            f_team = _obtener_fuente(46, bold=True)
-            loc_lbl = local_name if len(local_name) <= 13 else local_name[:12] + ".."
-            vis_lbl = visita_name if len(visita_name) <= 13 else visita_name[:12] + ".."
+            # Nombres de Equipos Grandes (44px)
+            f_team = _obtener_fuente(44, bold=True)
+            loc_lbl = local_name if len(local_name) <= 16 else local_name[:15] + ".."
+            vis_lbl = visita_name if len(visita_name) <= 16 else visita_name[:15] + ".."
             _draw_shadow_text(draw, (loc_cx, t_box_y + 185), loc_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
             _draw_shadow_text(draw, (vis_cx, t_box_y + 185), vis_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
 
             # Tag inferior de Jornada
             f_tag = _obtener_fuente(20, bold=True)
-            _draw_shadow_text(draw, (vs_cx, t_box_y + 246), "⚽ PARTIDO ANALIZADO CON MODELOS MATEMÁTICOS", font=f_tag, fill=col_accent_soft, anchor="mt")
+            _draw_shadow_text(draw, (vs_cx, t_box_y + 246), "ENCUENTRO ANALIZADO CON INTELIGENCIA ARTIFICIAL", font=f_tag, fill=col_accent_soft, anchor="mt")
 
             # 3. TARJETA PRINCIPAL DEL PICK (y: 435 a 695, h=260px)
             p_box_y = 435
@@ -317,18 +346,18 @@ def generar_ficha_partido_hd(
             canvas.paste(panel_p, (box_x, p_box_y), panel_p)
 
             # Título de Sección Pick
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 22), "🎯 PRONÓSTICO OFICIAL RECOMENDADO (+EV):", font=_obtener_fuente(24, bold=True), fill=col_accent_soft)
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 22), "PRONÓSTICO OFICIAL RECOMENDADO (+EV):", font=_obtener_fuente(24, bold=True), fill=col_accent_soft)
 
-            # Texto del Pick Enorme (48px)
-            f_pick = _obtener_fuente(48, bold=True)
-            pick_disp = pick_text if len(pick_text) <= 24 else pick_text[:23] + "..."
+            # Texto del Pick Enorme (46px) con ajuste de texto
+            f_pick = _obtener_fuente(46, bold=True)
+            pick_disp = pick_text if len(pick_text) <= 26 else pick_text[:25] + "..."
             _draw_shadow_text(draw, (box_x + 32, p_box_y + 66), pick_disp, font=f_pick, fill=(255, 255, 255))
 
             # Fila de Probabilidad y Stake
             f_metric_lbl = _obtener_fuente(24, bold=True)
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 138), f"📊 Probabilidad Estimada: {prob_val}", font=f_metric_lbl, fill=(56, 189, 248))
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 174), f"💰 Gestión de Capital: Stake Sugerido {stake_val}", font=f_metric_lbl, fill=(250, 204, 21))
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 212), "⚡ Simulación Poisson & Dixon-Coles Validada", font=_obtener_fuente(20, bold=False), fill=(148, 163, 184))
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 138), f"• Probabilidad Estimada: {prob_val}", font=f_metric_lbl, fill=(56, 189, 248))
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 174), f"• Gestión de Capital: Stake Sugerido {stake_val}", font=f_metric_lbl, fill=(250, 204, 21))
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 212), "• Simulación Poisson & Dixon-Coles Validada", font=_obtener_fuente(20, bold=False), fill=(148, 163, 184))
 
             # Cuadro de Cuota Gigante a la Derecha (y: 455 a 675)
             c_box_w, c_box_h = 240, 200
@@ -351,9 +380,9 @@ def generar_ficha_partido_hd(
             s_card_w = (box_w - 30) // 3
             
             stats_items = [
-                {"lbl": "⚽ EXPECTATIVA xG", "val": str(xg_val), "sub": "Goles Estimados", "col": (56, 189, 248)},
-                {"lbl": "🔥 AMBOS ANOTAN", "val": str(btts_val), "sub": "Probabilidad BTTS", "col": (239, 68, 68)},
-                {"lbl": "📈 MÁS DE 2.5 GOLES", "val": str(o25_val), "sub": "Tendencia Over", "col": (245, 158, 11)}
+                {"lbl": "EXPECTATIVA xG", "val": str(xg_val), "sub": "Goles Estimados", "col": (56, 189, 248)},
+                {"lbl": "AMBOS ANOTAN", "val": str(btts_val), "sub": "Probabilidad BTTS", "col": (239, 68, 68)},
+                {"lbl": "MÁS DE 2.5 GOLES", "val": str(o25_val), "sub": "Tendencia Over", "col": (245, 158, 11)}
             ]
 
             for idx, s in enumerate(stats_items):
@@ -375,9 +404,9 @@ def generar_ficha_partido_hd(
             draw_pf.rounded_rectangle([(0, 0), (box_w, f_box_h)], radius=16, outline=col_accent + (100,), width=2)
             canvas.paste(panel_f, (box_x, f_box_y), panel_f)
 
-            _draw_shadow_text(draw, (width // 2, f_box_y + 18), "🛡️ SMART PICK PRO VIP • DATA INTELLIGENCE & IA DEPORTIVA", font=_obtener_fuente(24, bold=True), fill=col_accent, anchor="mt")
-            _draw_shadow_text(draw, (width // 2, f_box_y + 55), "🌐 Consulta los picks de todas las ligas en: smartpickprojz.com.mx", font=_obtener_fuente(22, bold=True), fill=(255, 255, 255), anchor="mt")
-            draw.text((width // 2, f_box_y + 92), "⭐ Pronósticos verificados con estadísticas oficiales en tiempo real", fill=(148, 163, 184), font=_obtener_fuente(18, bold=False), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 18), "SMART PICK PRO VIP • DATA INTELLIGENCE & IA DEPORTIVA", font=_obtener_fuente(24, bold=True), fill=col_accent, anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 55), "Accede a todos los picks en: smartpickprojz.com.mx", font=_obtener_fuente(22, bold=True), fill=(255, 255, 255), anchor="mt")
+            draw.text((width // 2, f_box_y + 92), "Pronósticos verificados con estadísticas oficiales en tiempo real", fill=(148, 163, 184), font=_obtener_fuente(18, bold=False), anchor="mt")
 
         # =========================================================================
         # FORMATO 9:16 HISTORIA / STORY (1080 x 1920) - DISTRIBUCIÓN VERTICAL PERFECTA
@@ -396,7 +425,7 @@ def generar_ficha_partido_hd(
             )
             draw.text((width // 2, 82), badge_header_text, fill=(13, 15, 20), font=_obtener_fuente(28, bold=True), anchor="mt")
 
-            _draw_shadow_text(draw, (width // 2, 145), f"🏆 {liga_name}   •   ⏰ {hora_partido}", font=_obtener_fuente(28, bold=True), fill=(226, 232, 240), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, 145), f"{clean_liga}   •   {raw_hora}", font=_obtener_fuente(28, bold=True), fill=(226, 232, 240), anchor="mt")
 
             # 2. ENCUENTRO Y ESCUDOS (y: 205 a 585, h=380px)
             t_box_y = 205
@@ -420,13 +449,13 @@ def generar_ficha_partido_hd(
             draw.ellipse([(vs_cx - 45, t_box_y + 75), (vs_cx + 45, t_box_y + 165)], fill=(13, 15, 20, 250), outline=col_accent + (220,), width=4)
             draw.text((vs_cx, t_box_y + 118), "VS", fill=col_accent_soft, font=_obtener_fuente(40, bold=True), anchor="mm")
 
-            f_team = _obtener_fuente(52, bold=True)
-            loc_lbl = local_name if len(local_name) <= 12 else local_name[:11] + ".."
-            vis_lbl = visita_name if len(visita_name) <= 12 else visita_name[:11] + ".."
+            f_team = _obtener_fuente(50, bold=True)
+            loc_lbl = local_name if len(local_name) <= 15 else local_name[:14] + ".."
+            vis_lbl = visita_name if len(visita_name) <= 15 else visita_name[:14] + ".."
             _draw_shadow_text(draw, (loc_cx, t_box_y + 230), loc_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
             _draw_shadow_text(draw, (vis_cx, t_box_y + 230), vis_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
 
-            _draw_shadow_text(draw, (vs_cx, t_box_y + 315), "⚽ JORNADA OFICIAL • ANÁLISIS EN TIEMPO REAL", font=_obtener_fuente(24, bold=True), fill=col_accent_soft, anchor="mt")
+            _draw_shadow_text(draw, (vs_cx, t_box_y + 315), "ENCUENTRO ANALIZADO CON MODELOS MATEMÁTICOS", font=_obtener_fuente(24, bold=True), fill=col_accent_soft, anchor="mt")
 
             # 3. TARJETA PRINCIPAL DEL PICK (y: 610 a 950, h=340px)
             p_box_y = 610
@@ -436,16 +465,16 @@ def generar_ficha_partido_hd(
             draw_pp.rounded_rectangle([(0, 0), (box_w, p_box_h)], radius=24, outline=col_accent + (250,), width=4)
             canvas.paste(panel_p, (box_x, p_box_y), panel_p)
 
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 28), "🎯 PRONÓSTICO OFICIAL CON VALOR (+EV):", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 28), "PRONÓSTICO OFICIAL CON VALOR (+EV):", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
 
-            f_pick = _obtener_fuente(54, bold=True)
-            pick_disp = pick_text if len(pick_text) <= 22 else pick_text[:21] + "..."
+            f_pick = _obtener_fuente(52, bold=True)
+            pick_disp = pick_text if len(pick_text) <= 24 else pick_text[:23] + "..."
             _draw_shadow_text(draw, (box_x + 35, p_box_y + 80), pick_disp, font=f_pick, fill=(255, 255, 255))
 
             f_info = _obtener_fuente(28, bold=True)
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 165), f"📊 Confianza Matemática: {prob_val}", font=f_info, fill=(56, 189, 248))
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 215), f"💰 Gestión Bankroll: Stake {stake_val}", font=f_info, fill=(250, 204, 21))
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 265), "⚡ Algoritmo Poisson + Dixon-Coles Validado", font=_obtener_fuente(24, bold=False), fill=(148, 163, 184))
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 165), f"• Confianza Matemática: {prob_val}", font=f_info, fill=(56, 189, 248))
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 215), f"• Gestión Bankroll: Stake {stake_val}", font=f_info, fill=(250, 204, 21))
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 265), "• Algoritmo Poisson + Dixon-Coles Validado", font=_obtener_fuente(24, bold=False), fill=(148, 163, 184))
 
             # Cuadro de Cuota Gigante a la Derecha
             c_box_w, c_box_h = 260, 240
@@ -468,9 +497,9 @@ def generar_ficha_partido_hd(
             s_card_w = (box_w - 30) // 3
 
             stats_items = [
-                {"lbl": "⚽ EXPECTATIVA xG", "val": str(xg_val), "sub": "Goles Esperados", "col": (56, 189, 248)},
-                {"lbl": "🔥 AMBOS ANOTAN", "val": str(btts_val), "sub": "Probabilidad BTTS", "col": (239, 68, 68)},
-                {"lbl": "📈 MÁS DE 2.5 GOLES", "val": str(o25_val), "sub": "Tendencia Over", "col": (245, 158, 11)}
+                {"lbl": "EXPECTATIVA xG", "val": str(xg_val), "sub": "Goles Esperados", "col": (56, 189, 248)},
+                {"lbl": "AMBOS ANOTAN", "val": str(btts_val), "sub": "Probabilidad BTTS", "col": (239, 68, 68)},
+                {"lbl": "MÁS DE 2.5 GOLES", "val": str(o25_val), "sub": "Tendencia Over", "col": (245, 158, 11)}
             ]
 
             for idx, s in enumerate(stats_items):
@@ -492,13 +521,13 @@ def generar_ficha_partido_hd(
             draw_pm.rounded_rectangle([(0, 0), (box_w, m_box_h)], radius=22, outline=col_accent + (140,), width=3)
             canvas.paste(panel_m, (box_x, m_box_y), panel_m)
 
-            _draw_shadow_text(draw, (box_x + 35, m_box_y + 30), "🧠 MODELO PREDICTIVO & GESTIÓN DE CAPITAL VIP:", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
+            _draw_shadow_text(draw, (box_x + 35, m_box_y + 30), "MODELO PREDICTIVO & GESTIÓN DE CAPITAL VIP:", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
 
             recs = [
-                ("🎯 Ventaja Matemática", "Simulación Poisson y Dixon-Coles con más de 10,000 iteraciones."),
-                ("📈 Valor Esperado (+EV)", "Probabilidad calculada por el sistema superior a la línea de la casa."),
-                ("💰 Criterio Kelly", f"Gestión fraccional sugerida con stake {stake_val} del bankroll."),
-                ("🛡️ Datos Oficiales", "Escaneo de alineaciones, xG reciente y factores clave en vivo.")
+                ("Ventaja Matemática", "Simulación Poisson y Dixon-Coles con más de 10,000 iteraciones."),
+                ("Valor Esperado (+EV)", "Probabilidad calculada por el sistema superior a la línea de la casa."),
+                ("Criterio Kelly", f"Gestión fraccional sugerida con stake {stake_val} del bankroll."),
+                ("Datos Oficiales", "Escaneo de alineaciones, xG reciente y factores clave en vivo.")
             ]
             r_y = m_box_y + 90
             for r_title, r_desc in recs:
@@ -514,18 +543,16 @@ def generar_ficha_partido_hd(
             draw_pf.rounded_rectangle([(0, 0), (box_w, f_box_h)], radius=22, outline=col_accent + (140,), width=3)
             canvas.paste(panel_f, (box_x, f_box_y), panel_f)
 
-            _draw_shadow_text(draw, (width // 2, f_box_y + 24), "📲 SMART PICK PRO VIP • SOFTWARE DE IA DEPORTIVA", font=_obtener_fuente(30, bold=True), fill=col_accent, anchor="mt")
-            _draw_shadow_text(draw, (width // 2, f_box_y + 74), "🌐 Consulta todos los pronósticos en: smartpickprojz.com.mx", font=_obtener_fuente(26, bold=True), fill=(255, 255, 255), anchor="mt")
-            draw.text((width // 2, f_box_y + 124), "⭐ Guarda esta historia y activa notificaciones para los mejores picks", fill=(148, 163, 184), font=_obtener_fuente(22, bold=False), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 24), "SMART PICK PRO VIP • SOFTWARE DE IA DEPORTIVA", font=_obtener_fuente(30, bold=True), fill=col_accent, anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 74), "Consulta todos los pronósticos en: smartpickprojz.com.mx", font=_obtener_fuente(26, bold=True), fill=(255, 255, 255), anchor="mt")
+            draw.text((width // 2, f_box_y + 124), "Guarda esta historia y activa notificaciones para los mejores picks", fill=(148, 163, 184), font=_obtener_fuente(22, bold=False), anchor="mt")
 
-        # Guardar PNG en buffer
         output_buf = io.BytesIO()
         canvas.save(output_buf, format="PNG", quality=95, optimize=True)
         return output_buf.getvalue()
 
     except Exception as e:
         print(f"Error generando ficha partido HD: {e}")
-        # Retornar imagen de respaldo válida
         err_canvas = Image.new("RGBA", (1080, 1080), (21, 24, 33, 255))
         draw_err = ImageDraw.Draw(err_canvas)
         draw_err.text((540, 540), "SMART PICK PRO VIP\nFicha Generada", fill=(212, 175, 55), font=_obtener_fuente(36, bold=True), anchor="mm")
@@ -555,17 +582,17 @@ def generar_ficha_parlay_hd(
             col_accent = (239, 68, 68)
             col_accent_soft = (254, 202, 202)
             col_badge_bg = (220, 38, 38)
-            header_title = "🔥 BOLETO PARLAY MAESTRO • FESTIVAL DE GOLES"
+            header_title = "BOLETO PARLAY MAESTRO • FESTIVAL DE GOLES"
         elif estilo == "neon_pro":
             col_accent = (56, 189, 248)
             col_accent_soft = (186, 230, 253)
             col_badge_bg = (14, 165, 233)
-            header_title = "⚡ BOLETO PARLAY PRO • ANÁLISIS DE VALOR"
+            header_title = "BOLETO PARLAY PRO • ANÁLISIS DE VALOR"
         else:
             col_accent = (212, 175, 55)
             col_accent_soft = (253, 230, 138)
             col_badge_bg = (212, 175, 55)
-            header_title = "💎 BOLETO PARLAY VIP • SMART PICK PRO"
+            header_title = "BOLETO PARLAY VIP • SMART PICK PRO"
 
         _dibujar_marco_exterior(draw, width, height, color_primario=col_accent)
 
@@ -579,7 +606,6 @@ def generar_ficha_parlay_hd(
         # PARLAY 1:1 CUADRADO (1080 x 1080)
         # =========================================================================
         if formato == "1:1":
-            # Header
             badge_w, badge_h = 780, 50
             badge_x = (width - badge_w) // 2
             draw.rounded_rectangle(
@@ -611,7 +637,7 @@ def generar_ficha_parlay_hd(
             for idx, p in enumerate(visible_picks):
                 it_y = items_start_y + idx * (item_h + 12)
                 partido_nombre = str(p.get("partido", f"{p.get('local', 'Local')} vs {p.get('visita', 'Visita')}"))
-                liga_nombre = str(p.get("liga", "Torneo Oficial"))
+                liga_nombre = str(p.get("liga", "Torneo Oficial")).replace("🇲🇽", "").replace("🇪🇸", "").replace("🏴󠁧󠁢󠁥󠁮󠁧󠁿", "").strip()
                 pick_txt = str(p.get("pick", p.get("mercado", "Más de 1.5 Goles")))
                 c_val = float(p.get("cuota", 1.35))
                 conf_val = str(p.get("confianza", p.get("probabilidad", "75%")))
@@ -625,8 +651,8 @@ def generar_ficha_parlay_hd(
                 canvas.paste(panel_it, (box_x, it_y), panel_it)
 
                 _draw_shadow_text(draw, (box_x + 30, it_y + 18), f"{idx+1}. {partido_nombre}", font=_obtener_fuente(32, bold=True), fill=(255, 255, 255))
-                draw.text((box_x + 30, it_y + 60), f"🏆 {liga_nombre}", fill=(148, 163, 184), font=_obtener_fuente(20, bold=False))
-                _draw_shadow_text(draw, (box_x + 30, it_y + 92), f"🎯 {pick_txt}", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
+                draw.text((box_x + 30, it_y + 60), f"[{liga_nombre}]", fill=(148, 163, 184), font=_obtener_fuente(20, bold=False))
+                _draw_shadow_text(draw, (box_x + 30, it_y + 92), f"Pick: {pick_txt}", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
 
                 # Badge de Cuota
                 draw.rounded_rectangle(
@@ -647,15 +673,14 @@ def generar_ficha_parlay_hd(
             draw_pf.rounded_rectangle([(0, 0), (box_w, f_box_h)], radius=16, outline=col_accent + (100,), width=2)
             canvas.paste(panel_f, (box_x, f_box_y), panel_f)
 
-            _draw_shadow_text(draw, (width // 2, f_box_y + 18), "📲 SMART PICK PRO VIP • PARLAY COMBINADO DE ALTO VALOR", font=_obtener_fuente(24, bold=True), fill=col_accent, anchor="mt")
-            _draw_shadow_text(draw, (width // 2, f_box_y + 55), "🌐 Consulta todos los boletos oficiales en: smartpickprojz.com.mx", font=_obtener_fuente(22, bold=True), fill=(255, 255, 255), anchor="mt")
-            draw.text((width // 2, f_box_y + 90), "⭐ Multiplica tu inversión con selección de valor matemático", fill=(148, 163, 184), font=_obtener_fuente(18, bold=False), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 18), "SMART PICK PRO VIP • PARLAY COMBINADO DE ALTO VALOR", font=_obtener_fuente(24, bold=True), fill=col_accent, anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 55), "Consulta todos los boletos oficiales en: smartpickprojz.com.mx", font=_obtener_fuente(22, bold=True), fill=(255, 255, 255), anchor="mt")
+            draw.text((width // 2, f_box_y + 90), "Multiplica tu inversión con selección de valor matemático", fill=(148, 163, 184), font=_obtener_fuente(18, bold=False), anchor="mt")
 
         # =========================================================================
         # PARLAY 9:16 HISTORIA (1080 x 1920)
         # =========================================================================
         else:
-            # Header
             badge_w, badge_h = 820, 60
             badge_x = (width - badge_w) // 2
             draw.rounded_rectangle(
@@ -675,7 +700,7 @@ def generar_ficha_parlay_hd(
 
             _draw_shadow_text(draw, (box_x + 35, q_box_y + 28), "CUOTA COMBINADA PARLAY VIP:", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
             _draw_shadow_text(draw, (box_x + 35, q_box_y + 75), f"Boleto Maestro de {len(picks)} Encuentros VIP", font=_obtener_fuente(26, bold=False), fill=(203, 213, 225))
-            _draw_shadow_text(draw, (box_x + 35, q_box_y + 118), "🟢 Probabilidad Acumulada Validada (+EV)", font=_obtener_fuente(22, bold=False), fill=(56, 189, 248))
+            _draw_shadow_text(draw, (box_x + 35, q_box_y + 118), "Probabilidad Acumulada Validada (+EV)", font=_obtener_fuente(22, bold=False), fill=(56, 189, 248))
 
             _draw_shadow_text(draw, (box_x + box_w - 45, q_box_y + 35), f"x{cuota_total:,.2f}", font=_obtener_fuente(82, bold=True), fill=col_accent, anchor="rt")
 
@@ -687,7 +712,7 @@ def generar_ficha_parlay_hd(
             for idx, p in enumerate(picks[:max_items]):
                 it_y = items_start_y + idx * (item_h + 18)
                 partido_nombre = str(p.get("partido", f"{p.get('local', 'Local')} vs {p.get('visita', 'Visita')}"))
-                liga_nombre = str(p.get("liga", "Torneo Oficial"))
+                liga_nombre = str(p.get("liga", "Torneo Oficial")).replace("🇲🇽", "").replace("🇪🇸", "").replace("🏴󠁧󠁢󠁥󠁮󠁧󠁿", "").strip()
                 pick_txt = str(p.get("pick", p.get("mercado", "Más de 1.5 Goles")))
                 c_val = float(p.get("cuota", 1.35))
                 conf_val = str(p.get("confianza", p.get("probabilidad", "75%")))
@@ -701,9 +726,9 @@ def generar_ficha_parlay_hd(
                 canvas.paste(panel_it, (box_x, it_y), panel_it)
 
                 _draw_shadow_text(draw, (box_x + 35, it_y + 24), f"{idx+1}. {partido_nombre}", font=_obtener_fuente(38, bold=True), fill=(255, 255, 255))
-                draw.text((box_x + 35, it_y + 78), f"🏆 {liga_nombre}", fill=(148, 163, 184), font=_obtener_fuente(24, bold=False))
-                _draw_shadow_text(draw, (box_x + 35, it_y + 125), f"🎯 {pick_txt}", font=_obtener_fuente(34, bold=True), fill=col_accent_soft)
-                draw.text((box_x + 35, it_y + 175), "⚡ Validado por Simulación Monte Carlo", fill=(56, 189, 248), font=_obtener_fuente(20, bold=False))
+                draw.text((box_x + 35, it_y + 78), f"[{liga_nombre}]", fill=(148, 163, 184), font=_obtener_fuente(24, bold=False))
+                _draw_shadow_text(draw, (box_x + 35, it_y + 125), f"Pick: {pick_txt}", font=_obtener_fuente(34, bold=True), fill=col_accent_soft)
+                draw.text((box_x + 35, it_y + 175), "Validado por Simulación Monte Carlo", fill=(56, 189, 248), font=_obtener_fuente(20, bold=False))
 
                 # Badge de Cuota
                 draw.rounded_rectangle(
@@ -724,9 +749,9 @@ def generar_ficha_parlay_hd(
             draw_pf.rounded_rectangle([(0, 0), (box_w, f_box_h)], radius=22, outline=col_accent + (140,), width=3)
             canvas.paste(panel_f, (box_x, f_box_y), panel_f)
 
-            _draw_shadow_text(draw, (width // 2, f_box_y + 24), "📲 SMART PICK PRO VIP • SOFTWARE DE IA DEPORTIVA", font=_obtener_fuente(30, bold=True), fill=col_accent, anchor="mt")
-            _draw_shadow_text(draw, (width // 2, f_box_y + 74), "🌐 Consulta todos los pronósticos en: smartpickprojz.com.mx", font=_obtener_fuente(26, bold=True), fill=(255, 255, 255), anchor="mt")
-            draw.text((width // 2, f_box_y + 124), "⭐ Guarda esta historia y activa notificaciones para los mejores picks", fill=(148, 163, 184), font=_obtener_fuente(22, bold=False), anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 24), "SMART PICK PRO VIP • SOFTWARE DE IA DEPORTIVA", font=_obtener_fuente(30, bold=True), fill=col_accent, anchor="mt")
+            _draw_shadow_text(draw, (width // 2, f_box_y + 74), "Consulta todos los pronósticos en: smartpickprojz.com.mx", font=_obtener_fuente(26, bold=True), fill=(255, 255, 255), anchor="mt")
+            draw.text((width // 2, f_box_y + 124), "Guarda esta historia y activa notificaciones para los mejores picks", fill=(148, 163, 184), font=_obtener_fuente(22, bold=False), anchor="mt")
 
         output_buf = io.BytesIO()
         canvas.save(output_buf, format="PNG", quality=95, optimize=True)
