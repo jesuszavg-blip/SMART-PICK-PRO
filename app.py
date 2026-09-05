@@ -17,6 +17,26 @@ def render_html(html_str: str):
     if html_str:
         st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
+def render_image_preview(img_bytes: bytes, caption: str = "", max_width: str = "600px"):
+    """Renderiza vista previa de imagen en base64 HTML nativo, 100% inmune a errores de Pillow/st.image."""
+    if not img_bytes:
+        return
+    import base64
+    try:
+        b64_str = base64.b64encode(img_bytes).decode('utf-8')
+        cap_html = f'<div style="text-align:center; color:#94A3B8; font-size:13px; font-weight:600; margin-top:8px;">{html.escape(caption)}</div>' if caption else ''
+        render_html(f'''
+        <div style="text-align:center; margin: 8px 0 14px 0;">
+            <img src="data:image/png;base64,{b64_str}" style="width:100%; max-width:{max_width}; border-radius:12px; border:1.5px solid #282F3F; box-shadow:0 8px 30px rgba(0,0,0,0.6); display:inline-block;" />
+            {cap_html}
+        </div>
+        ''')
+    except Exception:
+        try:
+            st.image(img_bytes, caption=caption, use_container_width=True)
+        except Exception:
+            st.warning("⚠️ Vista previa no disponible. Usa el botón de descarga para obtener la ficha HD.")
+
 # Importación segura de pandas con resguardo anti-fallos
 try:
     import pandas as pd
@@ -1574,7 +1594,7 @@ if liga_elegida_val == "SOCIAL_CARD_MODE":
 
             col_prev_sc, col_act_sc = st.columns([1.4, 1])
             with col_prev_sc:
-                st.image(img_bytes_sc, caption=f"Ficha Oficial ({p_sc['local']} vs {p_sc['visita']})", use_container_width=True)
+                render_image_preview(img_bytes_sc, caption=f"Ficha Oficial ({p_sc['local']} vs {p_sc['visita']})")
             with col_act_sc:
                 st.markdown("#### 💎 Ficha Lista para Redes")
                 st.markdown(f"**⚽ Encuentro:** {p_sc['local']} vs {p_sc['visita']}")
@@ -1617,7 +1637,7 @@ if liga_elegida_val == "SOCIAL_CARD_MODE":
 
             col_prev_par, col_act_par = st.columns([1.4, 1])
             with col_prev_par:
-                st.image(img_parlay_bytes, caption="Boleto Parlay HD para Redes Sociales", use_container_width=True)
+                render_image_preview(img_parlay_bytes, caption="Boleto Parlay HD para Redes Sociales")
             with col_act_par:
                 st.markdown("#### 🎫 Boleto Parlay Combinado")
                 st.markdown(f"**🎯 Total Partidos:** {len(parlay_raw_data.get('picks', []))}")
@@ -2369,7 +2389,7 @@ else:
 
                 col_prv_r, col_act_r = st.columns([1.5, 1])
                 with col_prv_r:
-                    st.image(img_bytes_res, caption="Vista Previa Ficha HD", use_container_width=True)
+                    render_image_preview(img_bytes_res, caption="Vista Previa Ficha HD")
                 with col_act_r:
                     st.download_button(
                         label="📥 DESCARGAR FICHA HD (.PNG)",
@@ -2449,7 +2469,7 @@ else:
 
             col_preview, col_down = st.columns([1.5, 1])
             with col_preview:
-                st.image(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})", use_container_width=True)
+                render_image_preview(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})")
             with col_down:
                 st.markdown("#### 📥 Opciones de Exportación")
                 st.info("💡 **Consejo:** La imagen incluye escudos oficiales, xG, probabilidad matemática y la marca oficial de Smart Pick Pro VIP lista para captar clientes en redes.")
