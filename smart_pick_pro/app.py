@@ -1583,32 +1583,37 @@ if liga_elegida_val == "SOCIAL_CARD_MODE":
                 "p_over_25": f"{sp_sc['p_over_25']}%"
             }
 
+            img_bytes_sc = None
             with st.spinner("Generando Ficha HD..."):
-                img_bytes_sc = social_card_generator.generar_ficha_partido_hd(
-                    partido_data=partido_dict_sc,
-                    pick_data=pick_dict_sc,
-                    stats_data=stats_dict_sc,
-                    formato=fmt_val,
-                    estilo=est_val
-                )
+                try:
+                    img_bytes_sc = social_card_generator.generar_ficha_partido_hd(
+                        partido_data=partido_dict_sc,
+                        pick_data=pick_dict_sc,
+                        stats_data=stats_dict_sc,
+                        formato=fmt_val,
+                        estilo=est_val
+                    )
+                except Exception as err_sc:
+                    st.warning(f"⚠️ No se pudo generar la imagen HD: {err_sc}")
 
-            col_prev_sc, col_act_sc = st.columns([1.4, 1])
-            with col_prev_sc:
-                render_image_preview(img_bytes_sc, caption=f"Ficha Oficial ({p_sc['local']} vs {p_sc['visita']})")
-            with col_act_sc:
-                st.markdown("#### 💎 Ficha Lista para Redes")
-                st.markdown(f"**⚽ Encuentro:** {p_sc['local']} vs {p_sc['visita']}")
-                st.markdown(f"**🎯 Pick Principal:** {pick_dict_sc['pick']} (@{pick_dict_sc['cuota']:.2f})")
-                st.markdown(f"**📐 Resolución:** {'1080 x 1920 px (HD Story)' if fmt_val == '9:16' else '1080 x 1080 px (HD Square)'}")
-                st.markdown("---")
-                st.download_button(
-                    label="📥 DESCARGAR FICHA HD (.PNG)",
-                    data=img_bytes_sc,
-                    file_name=f"ficha_{p_sc['local'].lower().replace(' ', '_')}_vs_{p_sc['visita'].lower().replace(' ', '_')}_{fmt_val.replace(':', 'x')}.png",
-                    mime="image/png",
-                    use_container_width=True,
-                    key="btn_dl_sc_mode_p"
-                )
+            if img_bytes_sc:
+                col_prev_sc, col_act_sc = st.columns([1.4, 1])
+                with col_prev_sc:
+                    render_image_preview(img_bytes_sc, caption=f"Ficha Oficial ({p_sc['local']} vs {p_sc['visita']})")
+                with col_act_sc:
+                    st.markdown("#### 💎 Ficha Lista para Redes")
+                    st.markdown(f"**⚽ Encuentro:** {p_sc['local']} vs {p_sc['visita']}")
+                    st.markdown(f"**🎯 Pick Principal:** {pick_dict_sc['pick']} (@{pick_dict_sc['cuota']:.2f})")
+                    st.markdown(f"**📐 Resolución:** {'1080 x 1920 px (HD Story)' if fmt_val == '9:16' else '1080 x 1080 px (HD Square)'}")
+                    st.markdown("---")
+                    st.download_button(
+                        label="📥 DESCARGAR FICHA HD (.PNG)",
+                        data=img_bytes_sc,
+                        file_name=f"ficha_{p_sc['local'].lower().replace(' ', '_')}_vs_{p_sc['visita'].lower().replace(' ', '_')}_{fmt_val.replace(':', 'x')}.png",
+                        mime="image/png",
+                        use_container_width=True,
+                        key="btn_dl_sc_mode_p"
+                    )
 
         with subtab_card_parlay:
             col_par1, col_par2 = st.columns(2)
@@ -1627,30 +1632,35 @@ if liga_elegida_val == "SOCIAL_CARD_MODE":
                 )
                 est_p_val = "festival_fuego" if "Festival" in est_par else ("neon_pro" if "Neón" in est_par else "oro_vip")
 
+            img_parlay_bytes = None
             with st.spinner("Procesando Parlay Maestro y calculando cuota combinada..."):
-                parlay_raw_data = analytics.generar_parlay_top_altas(top_n=4 if fmt_p_val == "1:1" else 5)
-                img_parlay_bytes = social_card_generator.generar_ficha_parlay_hd(
-                    parlay_data=parlay_raw_data,
-                    formato=fmt_p_val,
-                    estilo=est_p_val
-                )
+                try:
+                    parlay_raw_data = analytics.generar_parlay_top_altas(top_n=4 if fmt_p_val == "1:1" else 5)
+                    img_parlay_bytes = social_card_generator.generar_ficha_parlay_hd(
+                        parlay_data=parlay_raw_data,
+                        formato=fmt_p_val,
+                        estilo=est_p_val
+                    )
+                except Exception as err_par:
+                    st.warning(f"⚠️ No se pudo generar el boleto parlay: {err_par}")
 
-            col_prev_par, col_act_par = st.columns([1.4, 1])
-            with col_prev_par:
-                render_image_preview(img_parlay_bytes, caption="Boleto Parlay HD para Redes Sociales")
-            with col_act_par:
-                st.markdown("#### 🎫 Boleto Parlay Combinado")
-                st.markdown(f"**🎯 Total Partidos:** {len(parlay_raw_data.get('picks', []))}")
-                st.markdown(f"**💰 Cuota Multiplicadora:** x{parlay_raw_data.get('cuota_acumulada', 2.85):,.2f}")
-                st.markdown("---")
-                st.download_button(
-                    label="📥 DESCARGAR BOLETO PARLAY HD (.PNG)",
-                    data=img_parlay_bytes,
-                    file_name=f"parlay_maestro_{fmt_p_val.replace(':', 'x')}.png",
-                    mime="image/png",
-                    use_container_width=True,
-                    key="btn_dl_sc_mode_par"
-                )
+            if img_parlay_bytes:
+                col_prev_par, col_act_par = st.columns([1.4, 1])
+                with col_prev_par:
+                    render_image_preview(img_parlay_bytes, caption="Boleto Parlay HD para Redes Sociales")
+                with col_act_par:
+                    st.markdown("#### 🎫 Boleto Parlay Combinado")
+                    st.markdown(f"**🎯 Total Partidos:** {len(parlay_raw_data.get('picks', []))}")
+                    st.markdown(f"**💰 Cuota Multiplicadora:** x{parlay_raw_data.get('cuota_acumulada', 2.85):,.2f}")
+                    st.markdown("---")
+                    st.download_button(
+                        label="📥 DESCARGAR BOLETO PARLAY HD (.PNG)",
+                        data=img_parlay_bytes,
+                        file_name=f"parlay_maestro_{fmt_p_val.replace(':', 'x')}.png",
+                        mime="image/png",
+                        use_container_width=True,
+                        key="btn_dl_sc_mode_par"
+                    )
 
         st.stop()
 
@@ -2378,27 +2388,32 @@ else:
                     "p_over_25": f"{stats_poisson['p_over_25']}%"
                 }
 
+                img_bytes_res = None
                 with st.spinner("📸 Renderizando Ficha HD con Pillow..."):
-                    img_bytes_res = social_card_generator.generar_ficha_partido_hd(
-                        partido_data=partido_export_res,
-                        pick_data=pick_export_res,
-                        stats_data=stats_export_res,
-                        formato=fmt_c_res,
-                        estilo=est_c_res
-                    )
+                    try:
+                        img_bytes_res = social_card_generator.generar_ficha_partido_hd(
+                            partido_data=partido_export_res,
+                            pick_data=pick_export_res,
+                            stats_data=stats_export_res,
+                            formato=fmt_c_res,
+                            estilo=est_c_res
+                        )
+                    except Exception as err_r:
+                        st.warning(f"⚠️ No se pudo generar la ficha: {err_r}")
 
-                col_prv_r, col_act_r = st.columns([1.5, 1])
-                with col_prv_r:
-                    render_image_preview(img_bytes_res, caption="Vista Previa Ficha HD")
-                with col_act_r:
-                    st.download_button(
-                        label="📥 DESCARGAR FICHA HD (.PNG)",
-                        data=img_bytes_res,
-                        file_name=f"ficha_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_c_res.replace(':', 'x')}.png",
-                        mime="image/png",
-                        use_container_width=True,
-                        key=f"btn_dl_res_{fixture_id}"
-                    )
+                if img_bytes_res:
+                    col_prv_r, col_act_r = st.columns([1.5, 1])
+                    with col_prv_r:
+                        render_image_preview(img_bytes_res, caption="Vista Previa Ficha HD")
+                    with col_act_r:
+                        st.download_button(
+                            label="📥 DESCARGAR FICHA HD (.PNG)",
+                            data=img_bytes_res,
+                            file_name=f"ficha_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_c_res.replace(':', 'x')}.png",
+                            mime="image/png",
+                            use_container_width=True,
+                            key=f"btn_dl_res_{fixture_id}"
+                        )
                 st.markdown("---")
 
             st.markdown("<br>", unsafe_allow_html=True)
@@ -2458,31 +2473,36 @@ else:
                 "p_over_25": f"{stats_poisson['p_over_25']}%"
             }
 
+            img_png_bytes = None
             with st.spinner("📸 Renderizando Ficha HD con Pillow Graphics Engine..."):
-                img_png_bytes = social_card_generator.generar_ficha_partido_hd(
-                    partido_data=partido_export_data,
-                    pick_data=pick_export_data,
-                    stats_data=stats_export_data,
-                    formato=fmt_code,
-                    estilo=est_code
-                )
+                try:
+                    img_png_bytes = social_card_generator.generar_ficha_partido_hd(
+                        partido_data=partido_export_data,
+                        pick_data=pick_export_data,
+                        stats_data=stats_export_data,
+                        formato=fmt_code,
+                        estilo=est_code
+                    )
+                except Exception as err_png:
+                    st.warning(f"⚠️ No se pudo renderizar la ficha: {err_png}")
 
-            col_preview, col_down = st.columns([1.5, 1])
-            with col_preview:
-                render_image_preview(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})")
-            with col_down:
-                st.markdown("#### 📥 Opciones de Exportación")
-                st.info("💡 **Consejo:** La imagen incluye escudos oficiales, xG, probabilidad matemática y la marca oficial de Smart Pick Pro VIP lista para captar clientes en redes.")
-                
-                file_name_clean = f"smartpick_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_code.replace(':', 'x')}.png"
-                st.download_button(
-                    label="📥 DESCARGAR FICHA HD (.PNG)",
-                    data=img_png_bytes,
-                    file_name=file_name_clean,
-                    mime="image/png",
-                    use_container_width=True,
-                    key=f"btn_dl_img_{fixture_id}"
-                )
+            if img_png_bytes:
+                col_preview, col_down = st.columns([1.5, 1])
+                with col_preview:
+                    render_image_preview(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})")
+                with col_down:
+                    st.markdown("#### 📥 Opciones de Exportación")
+                    st.info("💡 **Consejo:** La imagen incluye escudos oficiales, xG, probabilidad matemática y la marca oficial de Smart Pick Pro VIP lista para captar clientes en redes.")
+                    
+                    file_name_clean = f"smartpick_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_code.replace(':', 'x')}.png"
+                    st.download_button(
+                        label="📥 DESCARGAR FICHA HD (.PNG)",
+                        data=img_png_bytes,
+                        file_name=file_name_clean,
+                        mime="image/png",
+                        use_container_width=True,
+                        key=f"btn_dl_img_{fixture_id}"
+                    )
 
             html_bet_builder = pitch_renderer.render_ticket_bet_builder(picks_builder, equipo_local_real, equipo_visita_real)
             render_html(html_bet_builder)
