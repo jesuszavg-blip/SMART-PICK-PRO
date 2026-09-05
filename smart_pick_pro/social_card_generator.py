@@ -40,40 +40,50 @@ def _obtener_fuente(size: int, bold: bool = False):
 
 
 def _obtener_imagen_logo(url_o_path: str, size: tuple = (140, 140)) -> Image.Image:
-    """Descarga o carga localmente un escudo de equipo en RGBA con fondo transparente."""
-    if not url_o_path:
+    """Descarga, decodifica base64 o carga localmente un escudo de equipo en RGBA con fondo transparente."""
+    if not url_o_path or not isinstance(url_o_path, str):
         return _crear_escudo_placeholder(size)
     
     if url_o_path in _LOGO_CACHE:
-        return _LOGO_CACHE[url_o_path].copy().resize(size, Image.Resampling.LANCZOS)
+        try:
+            return _LOGO_CACHE[url_o_path].copy().resize(size, Image.Resampling.LANCZOS)
+        except Exception:
+            pass
     
     img = None
-    if os.path.exists(url_o_path):
-        try:
-            img = Image.open(url_o_path).convert("RGBA")
-        except Exception:
-            pass
-    elif url_o_path.startswith("http://") or url_o_path.startswith("https://"):
-        try:
-            resp = requests.get(url_o_path, timeout=5)
+    try:
+        if url_o_path.startswith("data:image"):
+            import base64
+            b64_data = url_o_path.split(",", 1)[1] if "," in url_o_path else url_o_path
+            img_raw = base64.b64decode(b64_data)
+            img = Image.open(io.BytesIO(img_raw)).convert("RGBA")
+        elif url_o_path.startswith("http://") or url_o_path.startswith("https://"):
+            resp = requests.get(url_o_path, timeout=2.5)
             if resp.status_code == 200:
                 img = Image.open(io.BytesIO(resp.content)).convert("RGBA")
-        except Exception:
-            pass
+        elif len(url_o_path) < 250 and os.path.exists(url_o_path):
+            img = Image.open(url_o_path).convert("RGBA")
+    except Exception:
+        img = None
 
     if img is None:
         img = _crear_escudo_placeholder(size)
     else:
-        img.thumbnail(size, Image.Resampling.LANCZOS)
-        # Asegurar dimensiones fijas con fondo transparente
-        canvas_logo = Image.new("RGBA", size, (0, 0, 0, 0))
-        offset_x = (size[0] - img.width) // 2
-        offset_y = (size[1] - img.height) // 2
-        canvas_logo.paste(img, (offset_x, offset_y), img)
-        img = canvas_logo
+        try:
+            img.thumbnail(size, Image.Resampling.LANCZOS)
+            canvas_logo = Image.new("RGBA", size, (0, 0, 0, 0))
+            offset_x = (size[0] - img.width) // 2
+            offset_y = (size[1] - img.height) // 2
+            canvas_logo.paste(img, (offset_x, offset_y), img)
+            img = canvas_logo
+        except Exception:
+            img = _crear_escudo_placeholder(size)
 
     _LOGO_CACHE[url_o_path] = img.copy()
-    return img.resize(size, Image.Resampling.LANCZOS)
+    try:
+        return img.resize(size, Image.Resampling.LANCZOS)
+    except Exception:
+        return _crear_escudo_placeholder(size)
 
 
 def _crear_escudo_placeholder(size: tuple = (140, 140)) -> Image.Image:
