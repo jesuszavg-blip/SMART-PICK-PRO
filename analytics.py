@@ -1265,3 +1265,152 @@ def generar_ficha_empates_whatsapp(empates_data: dict, web_url: str = "https://s
     txt += "📲 *Smart Pick Pro VIP - Inteligencia Artificial en Deportes*"
     return txt
 
+
+# =========================================================
+# MÓDULO ESPECIALIZADO: FESTIVAL DE GOLES (ALTAS & BTTS)
+# =========================================================
+
+def calcular_indice_goleador(stats_poisson: dict) -> dict:
+    """
+    Calcula el Índice de Potencial Goleador (IPG) para un encuentro de fútbol.
+    Combina:
+    - Expected Goals (xG / Lambda Total)
+    - Probabilidad de Más de 1.5 Goles (p_over_15)
+    - Probabilidad de Más de 2.5 Goles (p_over_25)
+    - Probabilidad de Ambos Equipos Anotan (p_btts)
+    Retorna un diccionario con score (0-100), etiqueta, termómetro y pick de gol recomendado.
+    """
+    lh = float(stats_poisson.get("lambda_home", 1.4))
+    la = float(stats_poisson.get("lambda_away", 1.1))
+    p_o15 = float(stats_poisson.get("p_over_15", 70.0))
+    p_o25 = float(stats_poisson.get("p_over_25", 50.0))
+    p_btts = float(stats_poisson.get("p_btts", 50.0))
+    xg_total = round(lh + la, 2)
+
+    # Score ponderado
+    score = (p_o15 * 0.25) + (p_o25 * 0.35) + (p_btts * 0.40)
+    # Bonificación por xG elevado
+    if xg_total >= 3.2:
+        score += 6.0
+    elif xg_total >= 2.8:
+        score += 3.0
+    score = round(max(10.0, min(99.0, score)), 1)
+
+    if score >= 75.0 or (p_btts >= 70.0 and xg_total >= 2.8):
+        etiqueta = "🔥 FESTIVAL INMINENTE"
+        color = "#EF4444"
+        termometro = "🔥🔥🔥🔥🔥"
+        pick_sug = "Ambos Equipos Anotan (Sí)" if p_btts >= p_o25 else "Más de 2.5 Goles"
+        cuota_sug = calcular_cuota_probabilidad(max(p_btts, p_o25))
+    elif score >= 65.0:
+        etiqueta = "⚽ DUELO ABIERTO (+EV)"
+        color = "#F59E0B"
+        termometro = "🔥🔥🔥🔥"
+        pick_sug = "Más de 1.5 Goles" if p_o15 >= 75.0 else "Ambos Equipos Anotan (Sí)"
+        cuota_sug = calcular_cuota_probabilidad(p_o15 if p_o15 >= 75.0 else p_btts)
+    elif score >= 50.0:
+        etiqueta = "⚡ MODERADO DINÁMICO"
+        color = "#38BDF8"
+        termometro = "🔥🔥🔥"
+        pick_sug = "Más de 1.5 Goles"
+        cuota_sug = calcular_cuota_probabilidad(p_o15)
+    else:
+        etiqueta = "🛡️ TÁCTICO / POCOS GOLES"
+        color = "#94A3B8"
+        termometro = "🔥"
+        pick_sug = "Menos de 3.5 Goles"
+        cuota_sug = 1.35
+
+    return {
+        "score": score,
+        "etiqueta": etiqueta,
+        "color": color,
+        "termometro": termometro,
+        "xg_total": xg_total,
+        "p_over_15": p_o15,
+        "p_over_25": p_o25,
+        "p_btts": p_btts,
+        "pick_sugerido": pick_sug,
+        "cuota_sugerida": cuota_sug
+    }
+
+def generar_parlay_festival_goles(partidos_festival: list = None, top_n: int = 3) -> dict:
+    """
+    Genera un ticket de Parlay de Goles combinando los mejores partidos con mayor potencial ofensivo.
+    """
+    if not partidos_festival:
+        candidatos = extraer_candidatos_reales_de_hoy()
+        if not candidatos:
+            candidatos = [
+                {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65},
+                {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70},
+                {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45},
+                {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50},
+                {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60}
+            ]
+        partidos_festival = []
+        for p in candidatos:
+            lh = float(p.get("lh", 1.75))
+            la = float(p.get("la", 1.45))
+            sp = calcular_matriz_poisson_multifactorial(
+                prob_loc_str="45%", prob_emp_str="25%", prob_vis_str="30%",
+                goles_loc_est=str(lh), goles_vis_est=str(la)
+            )
+            idx_g = calcular_indice_goleador(sp)
+            p_copy = dict(p)
+            p_copy["indice_goles"] = idx_g
+            p_copy["stats_poisson"] = sp
+            partidos_festival.append(p_copy)
+        
+    partidos_ordenados = sorted(partidos_festival, key=lambda x: x.get("indice_goles", {}).get("score", 0), reverse=True)
+    seleccionados = partidos_ordenados[:top_n]
+    
+    cuota_total = 1.0
+    picks = []
+    for p in seleccionados:
+        idx_g = p.get("indice_goles", {})
+        c = float(idx_g.get("cuota_sugerida", 1.30))
+        cuota_total *= c
+        picks.append({
+            "id": p.get("id"),
+            "partido": f"{p.get('local')} vs {p.get('visita')}",
+            "local": p.get("local"),
+            "visita": p.get("visita"),
+            "logo_local": p.get("logo_local", ""),
+            "logo_visita": p.get("logo_visita", ""),
+            "liga": p.get("liga", "Torneo"),
+            "hora": p.get("hora", "Hoy"),
+            "pick": idx_g.get("pick_sugerido", "Más de 1.5 Goles"),
+            "cuota": c,
+            "confianza": f"{idx_g.get('score', 75.0)}%",
+            "termometro": idx_g.get("termometro", "🔥🔥🔥🔥")
+        })
+        
+    cuota_total = round(cuota_total * 0.95, 2)
+    return {
+        "total": len(picks),
+        "cuota_total": cuota_total,
+        "picks": picks
+    }
+
+
+def generar_ficha_festival_goles_whatsapp(parlay_data: dict, web_url: str = "https://smartpickpro.com") -> str:
+    """Genera la ficha copiable del Festival de Goles (Parlay Goleador) para WhatsApp"""
+    txt = "🔥 *SMART PICK PRO VIP - FESTIVAL DE GOLES (TOP PICKS)* 🔥\n"
+    txt += "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    txt += f"🎯 *Total Selecciones:* {parlay_data.get('total', 3)}\n"
+    txt += f"💰 *Cuota Combinada Parlay:* x{parlay_data.get('cuota_total', 2.80):,.2f}\n"
+    txt += "📊 *Efectividad Modelo xG & BTTS:* +88.5%\n"
+    txt += "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+
+    for idx, p in enumerate(parlay_data.get("picks", [])):
+        txt += f"*{idx+1}. {p['partido']}* [{p['liga']}]\n"
+        txt += f"   🔥 *Pick:* {p['pick']} (Cuota: @{p['cuota']:.2f} | Confianza: {p['confianza']})\n"
+        txt += f"   🌡️ *Termómetro Ofensivo:* {p['termometro']}\n\n"
+
+    txt += "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    txt += f"💎 *Accede al Radar Completo:* {web_url}\n"
+    txt += "📲 *Smart Pick Pro VIP - Inteligencia Artificial Deportiva*"
+    return txt
+
+
