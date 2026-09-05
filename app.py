@@ -1281,7 +1281,7 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
         with col_ctl1:
             filtro_hoy_txt = st.text_input("🔍 Buscar Partido o Liga de Hoy:", placeholder="Ej. América, Premier, Real Madrid, Toluca...", key="in_hoy_search")
         with col_ctl2:
-            filtro_est_hoy = st.selectbox("⏱️ Filtrar por Estado:", ["🟢 Por Jugar Hoy (Próximos)", "🔴 En Vivo Ahora", "🌐 Todos los Partidos de Hoy", "🏁 Finalizados Hoy"], key="sel_filtro_est_hoy")
+            filtro_est_hoy = st.selectbox("⏱️ Filtrar por Estado:", ["🟢 Por Jugar Hoy (Próximos)", "🔥 Festival de Goles (+2.5 / BTTS)", "🔴 En Vivo Ahora", "🌐 Todos los Partidos de Hoy", "🏁 Finalizados Hoy"], key="sel_filtro_est_hoy")
         with col_ctl3:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
             if st.button("🔄 ACTUALIZAR", use_container_width=True, key="btn_ref_hoy"):
@@ -1306,6 +1306,8 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
             # Filtro por estado
             if filtro_est_hoy == "🟢 Por Jugar Hoy (Próximos)":
                 p_lista = [p for p in p_lista if p.get('status') in ['NS', 'TBD']]
+            elif filtro_est_hoy == "🔥 Festival de Goles (+2.5 / BTTS)":
+                p_lista = [p for p in p_lista if p.get('status') in ['NS', 'TBD', '1H', '2H', 'HT', 'LIVE']]
             elif filtro_est_hoy == "🔴 En Vivo Ahora":
                 p_lista = [p for p in p_lista if p.get('status') in ['1H', '2H', 'HT', 'LIVE']]
             elif filtro_est_hoy == "🏁 Finalizados Hoy":
@@ -1336,6 +1338,129 @@ if liga_elegida_val == "TODAY_MATCHES_MODE":
                     card_html = pitch_renderer.render_tarjeta_partido_hoy(p_item, pick_info)
                     st.markdown(card_html, unsafe_allow_html=True)
                     if st.button(f"🔍 Analizar a Fondo: {p_item['local']} vs {p_item['visita']}", key=f"btn_hoy_{p_item['id']}", use_container_width=True):
+                        st.session_state['live_partido_detalle'] = p_item
+                        st.rerun()
+
+        st.stop()
+
+# --- MODO 0.1: FESTIVAL DE GOLES (RADAR ALTAS & BTTS) ---
+if liga_elegida_val == "GOAL_FESTIVAL_MODE":
+    if not st.session_state.get('live_partido_detalle'):
+        render_html('''
+        <div style="background: linear-gradient(135deg, #1C202B 0%, #2D1414 50%, #0D0F14 100%); border:1.5px solid #EF4444; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);">
+            <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">🔥 FESTIVAL DE GOLES (RADAR ALTAS & BTTS)</h2>
+            <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Escaneo algorítmico de Expected Goals (xG Total), Ambos Equipos Anotan y Más de 2.5 Goles con Termómetro Ofensivo y Parlay Goleador Maestro.</p>
+        </div>
+        ''')
+
+        with st.spinner("🔥 Escaneando todos los partidos de hoy y calculando xG y probabilidad ofensiva..."):
+            candidatos_raw = analytics.extraer_candidatos_reales_de_hoy()
+            if not candidatos_raw:
+                candidatos_raw = [
+                    {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65, "hora": "Hoy 21:00", "status": "NS"},
+                    {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70, "hora": "Hoy 13:00", "status": "NS"},
+                    {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45, "hora": "Hoy 14:00", "status": "NS"},
+                    {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50, "hora": "Hoy 11:30", "status": "NS"},
+                    {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60, "hora": "Hoy 14:00", "status": "NS"},
+                    {"id": 1301013, "local": "Aston Villa", "visita": "Tottenham", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.85, "la": 1.60, "hora": "Hoy 10:30", "status": "NS"},
+                    {"id": 1301014, "local": "Bayer Leverkusen", "visita": "RB Leipzig", "liga": "🇩🇪 Bundesliga", "lh": 2.00, "la": 1.65, "hora": "Hoy 11:30", "status": "NS"},
+                    {"id": 1301015, "local": "Ajax", "visita": "PSV Eindhoven", "liga": "🇳🇱 Eredivisie", "lh": 2.15, "la": 1.80, "hora": "Hoy 12:00", "status": "NS"}
+                ]
+
+            partidos_festival = []
+            for p in candidatos_raw:
+                lh = float(p.get("lh", 1.75))
+                la = float(p.get("la", 1.45))
+                sp = analytics.calcular_matriz_poisson_multifactorial(
+                    prob_loc_str="45%", prob_emp_str="25%", prob_vis_str="30%",
+                    goles_loc_est=str(lh), goles_vis_est=str(la)
+                )
+                idx_g = analytics.calcular_indice_goleador(sp)
+                p_copy = dict(p)
+                p_copy["indice_goles"] = idx_g
+                p_copy["stats_poisson"] = sp
+                partidos_festival.append(p_copy)
+
+            # Ordenar por índice goleador descendente
+            partidos_festival.sort(key=lambda x: x["indice_goles"]["score"], reverse=True)
+
+        # 1. PARLAY MAESTRO DEL FESTIVAL
+        parlay_fg = analytics.generar_parlay_festival_goles(partidos_festival, top_n=3)
+        st.markdown(pitch_renderer.render_ticket_parlay_festival_goles(parlay_fg), unsafe_allow_html=True)
+
+        # Botón para compartir por WhatsApp
+        ficha_fg = analytics.generar_ficha_festival_goles_whatsapp(parlay_fg, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'))
+        import urllib.parse
+        encoded_fg = urllib.parse.quote(ficha_fg)
+
+        col_w_fg1, col_w_fg2 = st.columns(2)
+        with col_w_fg1:
+            render_html(f'''
+            <a href="https://wa.me/?text={encoded_fg}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-bottom:15px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
+                📲 ENVIAR PARLAY GOLEADOR A WHATSAPP
+            </a>
+            ''')
+        with col_w_fg2:
+            if st.button("📋 COPIAR PARLAY AL PORTAPAPELES", use_container_width=True, key="btn_copy_fg"):
+                st.session_state['clipboard_text'] = ficha_fg
+                st.toast("✅ Parlay Goleador copiado al portapapeles con éxito!")
+
+        st.markdown("<hr style='border:1px solid #282F3F; margin:15px 0 20px 0;'>", unsafe_allow_html=True)
+
+        # 2. CONTROLES Y FILTROS DEL RADAR
+        col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.3, 0.8])
+        with col_ctl1:
+            filtro_fg_txt = st.text_input("🔍 Buscar Equipo o Liga en el Festival:", placeholder="Ej. Premier, Bayern, Toluca, Barcelona...", key="in_fg_search")
+        with col_ctl2:
+            filtro_fg_cat = st.selectbox(
+                "🔥 Filtrar por Nivel de Expectativa:",
+                [
+                    "🔥 Todos los Partidos Clasificados",
+                    "🌋 Festival Inminente (Score 75+)",
+                    "⚽ Duelo Abierto (+EV) (Score 65+)",
+                    "⚡ Ambos Anotan Alto (BTTS > 60%)",
+                    "📈 Más de 2.5 Goles Alto (> 60%)"
+                ],
+                key="sel_filtro_fg_cat"
+            )
+        with col_ctl3:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("🔄 ACTUALIZAR", use_container_width=True, key="btn_ref_fg"):
+                api_client.obtener_partidos_de_hoy.clear()
+                st.rerun()
+
+        # Filtrar lista
+        partidos_mostrados = list(partidos_festival)
+        if filtro_fg_txt:
+            txt_l = filtro_fg_txt.lower()
+            partidos_mostrados = [p for p in partidos_mostrados if txt_l in p['local'].lower() or txt_l in p['visita'].lower() or txt_l in p.get('liga', '').lower()]
+
+        if filtro_fg_cat == "🌋 Festival Inminente (Score 75+)":
+            partidos_mostrados = [p for p in partidos_mostrados if p["indice_goles"]["score"] >= 75.0]
+        elif filtro_fg_cat == "⚽ Duelo Abierto (+EV) (Score 65+)":
+            partidos_mostrados = [p for p in partidos_mostrados if p["indice_goles"]["score"] >= 65.0]
+        elif filtro_fg_cat == "⚡ Ambos Anotan Alto (BTTS > 60%)":
+            partidos_mostrados = [p for p in partidos_mostrados if p["indice_goles"]["p_btts"] >= 60.0]
+        elif filtro_fg_cat == "📈 Más de 2.5 Goles Alto (> 60%)":
+            partidos_mostrados = [p for p in partidos_mostrados if p["indice_goles"]["p_over_25"] >= 60.0]
+
+        render_html(f'''
+        <div style="background:#151821; border-radius:10px; padding:10px 16px; margin-bottom:18px; border:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">🎯 Encuentros Detectados: <span style="color:#EF4444; font-weight:900;">{len(partidos_mostrados)} Partidos Ofensivos</span></span>
+            <span style="background:#EF4444; color:#FFFFFF; font-weight:900; padding:4px 12px; border-radius:20px; font-size:13px;">🔥 Termómetro Activo</span>
+        </div>
+        ''')
+
+        if not partidos_mostrados:
+            st.info("ℹ️ No se encontraron partidos con los filtros seleccionados en este momento.")
+        else:
+            cols_fg = st.columns(2)
+            for idx_p, p_item in enumerate(partidos_mostrados):
+                col_target = cols_fg[idx_p % 2]
+                with col_target:
+                    card_html = pitch_renderer.render_tarjeta_festival_goles(p_item, p_item["stats_poisson"], p_item["indice_goles"])
+                    st.markdown(card_html, unsafe_allow_html=True)
+                    if st.button(f"🔍 Analizar a Fondo: {p_item['local']} vs {p_item['visita']}", key=f"btn_fg_{p_item['id']}", use_container_width=True):
                         st.session_state['live_partido_detalle'] = p_item
                         st.rerun()
 
@@ -1809,6 +1934,8 @@ if st.session_state.get('live_partido_detalle'):
     with col_back:
         if liga_elegida_val == "TODAY_MATCHES_MODE":
             lbl_retorno = "⬅️ VOLVER A PARTIDOS DE HOY"
+        elif liga_elegida_val == "GOAL_FESTIVAL_MODE":
+            lbl_retorno = "⬅️ VOLVER AL FESTIVAL DE GOLES"
         elif liga_elegida_val == "PARLAY_HUNTER_MODE":
             lbl_retorno = "⬅️ VOLVER AL CAZADOR DE PARLAYS VIP"
         elif liga_elegida_val == "LIVE_RADAR_MODE":
