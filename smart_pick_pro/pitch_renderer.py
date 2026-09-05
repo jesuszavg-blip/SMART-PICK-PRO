@@ -519,3 +519,138 @@ def render_tarjeta_partido_hoy(p_item: dict, pick_info: dict = None) -> str:
     )
     return card_html
 
+
+def render_tarjeta_festival_goles(p_item: dict, stats_poisson: dict = None, idx_goles: dict = None) -> str:
+    """
+    Renderiza la tarjeta visual especializada para el Radar del Festival de Goles.
+    Incluye Termómetro Ofensivo, Probabilidades de Over 2.5 / BTTS, xG Total y Pick de Alta Certeza.
+    """
+    import html
+    loc = html.escape(str(p_item.get('local', 'Local')))
+    vis = html.escape(str(p_item.get('visita', 'Visita')))
+    logo_l = p_item.get('logo_local', 'https://media.api-sports.io/football/teams/2287.png')
+    logo_v = p_item.get('logo_visita', 'https://media.api-sports.io/football/teams/2291.png')
+    hora = html.escape(str(p_item.get('hora', 'Hoy')))
+    liga = html.escape(str(p_item.get('liga', 'Torneo')))
+    venue = html.escape(str(p_item.get('venue', 'Estadio')))
+
+    if not idx_goles and stats_poisson:
+        import analytics
+        idx_goles = analytics.calcular_indice_goleador(stats_poisson)
+    elif not idx_goles:
+        idx_goles = {
+            "score": 82.5, "etiqueta": "🔥 FESTIVAL INMINENTE", "color": "#EF4444",
+            "termometro": "🔥🔥🔥🔥🔥", "xg_total": 3.4, "p_over_15": 86.0,
+            "p_over_25": 68.0, "p_btts": 78.0, "pick_sugerido": "Ambos Equipos Anotan (Sí)",
+            "cuota_sugerida": 1.40
+        }
+
+    score_val = idx_goles.get("score", 75.0)
+    etiq = html.escape(str(idx_goles.get("etiqueta", "🔥 FESTIVAL DE GOLES")))
+    col_etiq = idx_goles.get("color", "#EF4444")
+    term = idx_goles.get("termometro", "🔥🔥🔥🔥🔥")
+    xg = idx_goles.get("xg_total", 3.0)
+    p_btts = idx_goles.get("p_btts", 70.0)
+    p_o25 = idx_goles.get("p_over_25", 65.0)
+    pick_sug = html.escape(str(idx_goles.get("pick_sugerido", "Ambos Equipos Anotan (Sí)")))
+    cuota_sug = idx_goles.get("cuota_sugerida", 1.40)
+
+    card_html = (
+        f'<div style="background:linear-gradient(135deg, #1C202B 0%, #2A1A1A 100%); border:1.5px solid {col_etiq}; border-radius:14px; padding:16px 18px; margin-bottom:14px; box-shadow:0 6px 20px rgba(239,68,68,0.2);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #332020; padding-bottom:8px;">'
+        f'<div style="color:#CBD5E1; font-size:12px; font-weight:bold;">🏆 {liga} • ⏰ {hora}</div>'
+        f'<span style="background:{col_etiq}; color:#FFFFFF; font-weight:900; font-size:11px; padding:3px 12px; border-radius:12px; letter-spacing:0.5px; box-shadow:0 2px 8px rgba(0,0,0,0.4);">{etiq}</span>'
+        f'</div>'
+        f'<div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; margin-bottom:12px;">'
+        f'<div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; text-align:right;">'
+        f'<span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{loc}</span>'
+        f'<img src="{logo_l}" style="width:38px; height:38px; object-fit:contain; flex-shrink:0;">'
+        f'</div>'
+        f'<div style="background:#0D0F14; border:1px solid #D4AF37; padding:4px 12px; border-radius:8px; font-size:12px; font-weight:900; color:#D4AF37; text-align:center;">'
+        f'xG: {xg}'
+        f'</div>'
+        f'<div style="display:flex; align-items:center; justify-content:flex-start; gap:10px; text-align:left;">'
+        f'<img src="{logo_v}" style="width:38px; height:38px; object-fit:contain; flex-shrink:0;">'
+        f'<span style="color:#FFFFFF; font-weight:900; font-size:15px; line-height:1.2;">{vis}</span>'
+        f'</div>'
+        f'</div>'
+        f'<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; background:#11141C; padding:10px; border-radius:10px; border:1px solid #282F3F; margin-bottom:10px; text-align:center;">'
+        f'<div>'
+        f'<div style="color:#aaa; font-size:10px; font-weight:bold;">🔥 POTENCIAL GOL</div>'
+        f'<div style="color:{col_etiq}; font-weight:900; font-size:14px;">{score_val}%</div>'
+        f'</div>'
+        f'<div>'
+        f'<div style="color:#aaa; font-size:10px; font-weight:bold;">⚽ AMBOS ANOTAN</div>'
+        f'<div style="color:#38BDF8; font-weight:900; font-size:14px;">{p_btts:.1f}%</div>'
+        f'</div>'
+        f'<div>'
+        f'<div style="color:#aaa; font-size:10px; font-weight:bold;">📈 MÁS DE 2.5</div>'
+        f'<div style="color:#F59E0B; font-weight:900; font-size:14px;">{p_o25:.1f}%</div>'
+        f'</div>'
+        f'</div>'
+        f'<div style="background:rgba(212,175,55,0.12); border:1px solid #D4AF37; border-radius:10px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">'
+        f'<div>'
+        f'<div style="color:#F3E5AB; font-size:10px; font-weight:bold; text-transform:uppercase;">Pick Recomendado del Festival</div>'
+        f'<div style="color:#FFFFFF; font-size:14px; font-weight:900;">🎯 {pick_sug}</div>'
+        f'</div>'
+        f'<div style="display:flex; align-items:center; gap:8px;">'
+        f'<span style="background:#11141C; color:#D4AF37; border:1px solid #D4AF37; font-weight:900; padding:4px 10px; border-radius:8px; font-size:13px;">@{cuota_sug:.2f}</span>'
+        f'<span style="font-size:14px;">{term}</span>'
+        f'</div>'
+        f'</div>'
+        f'</div>'
+    )
+    return card_html
+
+
+def render_ticket_parlay_festival_goles(parlay_data: dict) -> str:
+    """
+    Renderiza el ticket de Parlay del Festival de Goles (Combinada de Altas).
+    """
+    import html
+    picks = parlay_data.get("picks", [])
+    cuota_total = parlay_data.get("cuota_total", 2.80)
+    
+    html_items = ""
+    for p in picks:
+        partido = html.escape(str(p.get("partido", "")))
+        liga = html.escape(str(p.get("liga", "")))
+        pick_txt = html.escape(str(p.get("pick", "")))
+        cuota = p.get("cuota", 1.30)
+        conf = p.get("confianza", "75%")
+        term = p.get("termometro", "🔥🔥🔥🔥")
+        
+        html_items += (
+            f'<div style="display:flex; justify-content:space-between; align-items:center; background:#1A1E29; border:1px solid #282F3F; padding:10px 14px; border-radius:10px; margin-bottom:8px;">'
+            f'<div style="flex:1;">'
+            f'<div style="color:#94A3B8; font-size:11px; font-weight:bold;">{liga} • {term}</div>'
+            f'<div style="color:#FFFFFF; font-size:14px; font-weight:900; margin-top:2px;">⚽ {partido}</div>'
+            f'<div style="color:#F3E5AB; font-size:13px; font-weight:bold; margin-top:1px;">🎯 {pick_txt}</div>'
+            f'</div>'
+            f'<div style="display:flex; align-items:center; gap:8px; text-align:right;">'
+            f'<span style="background:#11141C; color:#F3E5AB; border:1px solid #D4AF37; font-weight:900; padding:4px 10px; border-radius:8px; font-size:13px;">@{cuota:.2f}</span>'
+            f'<span style="background:#EF4444; color:#FFFFFF; font-weight:900; padding:4px 10px; border-radius:10px; font-size:12px;">{conf}</span>'
+            f'</div>'
+            f'</div>'
+        )
+        
+    html_ticket = (
+        f'<div style="background:linear-gradient(135deg, #181E29 0%, #2D1414 100%); border:2px dashed #EF4444; border-radius:16px; padding:20px; color:white; margin-bottom:20px; box-shadow:0 8px 25px rgba(0,0,0,0.4);">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #3B2020; padding-bottom:12px; margin-bottom:14px; flex-wrap:wrap; gap:10px;">'
+        f'<div>'
+        f'<div style="font-size:20px; font-weight:900; color:#EF4444;">🔥 PARLAY MAESTRO DEL FESTIVAL DE GOLES</div>'
+        f'<div style="color:#CBD5E1; font-size:13px; margin-top:2px;">Top Partidos con Mayor Expectativa Ofensiva Combinados</div>'
+        f'</div>'
+        f'<div style="background:#11141C; border:1.5px solid #EF4444; padding:6px 16px; border-radius:10px; text-align:right;">'
+        f'<div style="font-size:11px; color:#FCA5A5; font-weight:bold; text-transform:uppercase;">Cuota Parlay Goles</div>'
+        f'<div style="font-size:22px; font-weight:900; color:#EF4444; letter-spacing:0.5px;">x{cuota_total:,.2f}</div>'
+        f'</div>'
+        f'</div>'
+        f'<div>{html_items}</div>'
+        f'<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:8px 12px; margin-top:10px; font-size:12px; color:#FCA5A5; display:flex; align-items:center; gap:6px;">'
+        f'<span>💡</span> <span><b>Recomendación VIP:</b> Puedes armar este ticket de altas en 1xBet o Mexplay para maximizar tus ganancias en duelos abiertos.</span>'
+        f'</div>'
+        f'</div>'
+    )
+    return html_ticket
+
