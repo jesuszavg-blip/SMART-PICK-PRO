@@ -72,6 +72,64 @@ def _draw_shadow_text(draw: ImageDraw.Draw, pos: tuple, text: str, font, fill=(2
     draw.text((x, y), text, font=font, fill=fill, anchor=anchor)
 
 
+def _dibujar_nombre_equipo(draw: ImageDraw.Draw, cx: int, cy: int, name: str, max_w: int = 400, base_size: int = 44):
+    """Renderiza el nombre del equipo completo ajustando dinámicamente el tamaño o en 2 líneas si es necesario."""
+    if not name:
+        return
+    name = str(name).strip()
+    for s in [base_size, base_size - 4, base_size - 8, base_size - 12]:
+        f = _obtener_fuente(s, bold=True)
+        bbox = f.getbbox(name)
+        if (bbox[2] - bbox[0]) <= max_w:
+            _draw_shadow_text(draw, (cx, cy), name, font=f, fill=(255, 255, 255), anchor="mt")
+            return
+            
+    words = name.split()
+    if len(words) >= 2:
+        mid = len(words) // 2
+        l1 = ' '.join(words[:mid])
+        l2 = ' '.join(words[mid:])
+        f = _obtener_fuente(base_size - 10, bold=True)
+        _draw_shadow_text(draw, (cx, cy - 10), l1, font=f, fill=(255, 255, 255), anchor="mt")
+        _draw_shadow_text(draw, (cx, cy + 28), l2, font=f, fill=(255, 255, 255), anchor="mt")
+    else:
+        f = _obtener_fuente(base_size - 14, bold=True)
+        _draw_shadow_text(draw, (cx, cy), name, font=f, fill=(255, 255, 255), anchor="mt")
+
+
+def _dibujar_pick_completo(draw: ImageDraw.Draw, left_x: int, top_y: int, text: str, max_w: int = 670, base_size: int = 46):
+    """Renderiza el pronóstico completo en 1 o 2 líneas con texto grande y sin truncamientos."""
+    if not text:
+        return
+    text = str(text).strip()
+    for s in [base_size, base_size - 4, base_size - 8]:
+        f = _obtener_fuente(s, bold=True)
+        bbox = f.getbbox(text)
+        if (bbox[2] - bbox[0]) <= max_w:
+            _draw_shadow_text(draw, (left_x, top_y), text, font=f, fill=(255, 255, 255))
+            return
+            
+    words = text.split()
+    lines = []
+    curr = ""
+    f = _obtener_fuente(base_size - 6, bold=True)
+    for w in words:
+        test = (curr + " " + w).strip()
+        bbox = f.getbbox(test)
+        if (bbox[2] - bbox[0]) > max_w and curr:
+            lines.append(curr)
+            curr = w
+        else:
+            curr = test
+    if curr:
+        lines.append(curr)
+        
+    curr_y = top_y - 6
+    for l in lines[:2]:
+        _draw_shadow_text(draw, (left_x, curr_y), l, font=f, fill=(255, 255, 255))
+        curr_y += 44
+
+
 def _obtener_imagen_logo(url_o_path: str, size: tuple = (160, 160)) -> Image.Image:
     """Descarga, decodifica base64 o carga localmente un escudo de equipo en RGBA con fondo transparente."""
     if not url_o_path or not isinstance(url_o_path, str):
@@ -326,12 +384,9 @@ def generar_ficha_partido_hd(
             draw.ellipse([(vs_cx - 38, t_box_y + 58), (vs_cx + 38, t_box_y + 134)], fill=(13, 15, 20, 245), outline=col_accent + (220,), width=3)
             draw.text((vs_cx, t_box_y + 93), "VS", fill=col_accent_soft, font=_obtener_fuente(34, bold=True), anchor="mm")
 
-            # Nombres de Equipos Grandes (44px)
-            f_team = _obtener_fuente(44, bold=True)
-            loc_lbl = local_name if len(local_name) <= 16 else local_name[:15] + ".."
-            vis_lbl = visita_name if len(visita_name) <= 16 else visita_name[:15] + ".."
-            _draw_shadow_text(draw, (loc_cx, t_box_y + 185), loc_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
-            _draw_shadow_text(draw, (vis_cx, t_box_y + 185), vis_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
+            # Nombres de Equipos Grandes y Completos (Sin cortes)
+            _dibujar_nombre_equipo(draw, loc_cx, t_box_y + 185, local_name, max_w=int(box_w * 0.44), base_size=44)
+            _dibujar_nombre_equipo(draw, vis_cx, t_box_y + 185, visita_name, max_w=int(box_w * 0.44), base_size=44)
 
             # Tag inferior de Jornada
             f_tag = _obtener_fuente(20, bold=True)
@@ -348,17 +403,6 @@ def generar_ficha_partido_hd(
             # Título de Sección Pick
             _draw_shadow_text(draw, (box_x + 32, p_box_y + 22), "PRONÓSTICO OFICIAL RECOMENDADO (+EV):", font=_obtener_fuente(24, bold=True), fill=col_accent_soft)
 
-            # Texto del Pick Enorme (46px) con ajuste de texto
-            f_pick = _obtener_fuente(46, bold=True)
-            pick_disp = pick_text if len(pick_text) <= 26 else pick_text[:25] + "..."
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 66), pick_disp, font=f_pick, fill=(255, 255, 255))
-
-            # Fila de Probabilidad y Stake
-            f_metric_lbl = _obtener_fuente(24, bold=True)
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 138), f"• Probabilidad Estimada: {prob_val}", font=f_metric_lbl, fill=(56, 189, 248))
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 174), f"• Gestión de Capital: Stake Sugerido {stake_val}", font=f_metric_lbl, fill=(250, 204, 21))
-            _draw_shadow_text(draw, (box_x + 32, p_box_y + 212), "• Simulación Poisson & Dixon-Coles Validada", font=_obtener_fuente(20, bold=False), fill=(148, 163, 184))
-
             # Cuadro de Cuota Gigante a la Derecha (y: 455 a 675)
             c_box_w, c_box_h = 240, 200
             c_box_x = box_x + box_w - c_box_w - 22
@@ -373,6 +417,16 @@ def generar_ficha_partido_hd(
             draw.text((c_box_x + c_box_w // 2, c_box_y + 20), "CUOTA OFICIAL", fill=(148, 163, 184), font=_obtener_fuente(22, bold=True), anchor="mt")
             _draw_shadow_text(draw, (c_box_x + c_box_w // 2, c_box_y + 60), f"@{cuota_val:.2f}", font=_obtener_fuente(66, bold=True), fill=col_accent, anchor="mt")
             draw.text((c_box_x + c_box_w // 2, c_box_y + 148), "VALOR POSITIVO", fill=(56, 189, 248), font=_obtener_fuente(18, bold=True), anchor="mt")
+
+            # Texto del Pick Completo (En 1 o 2 líneas sin cortes)
+            max_pick_w = box_w - c_box_w - 65
+            _dibujar_pick_completo(draw, box_x + 32, p_box_y + 66, pick_text, max_w=max_pick_w, base_size=42)
+
+            # Fila de Probabilidad y Stake
+            f_metric_lbl = _obtener_fuente(24, bold=True)
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 144), f"• Probabilidad Estimada: {prob_val}", font=f_metric_lbl, fill=(56, 189, 248))
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 178), f"• Gestión de Capital: Stake Sugerido {stake_val}", font=f_metric_lbl, fill=(250, 204, 21))
+            _draw_shadow_text(draw, (box_x + 32, p_box_y + 214), "• Simulación Poisson & Dixon-Coles Validada", font=_obtener_fuente(20, bold=False), fill=(148, 163, 184))
 
             # 4. TRÍO DE MÉTRICAS AVANZADAS (y: 710 a 890, h=180px)
             s_box_y = 710
@@ -449,11 +503,9 @@ def generar_ficha_partido_hd(
             draw.ellipse([(vs_cx - 45, t_box_y + 75), (vs_cx + 45, t_box_y + 165)], fill=(13, 15, 20, 250), outline=col_accent + (220,), width=4)
             draw.text((vs_cx, t_box_y + 118), "VS", fill=col_accent_soft, font=_obtener_fuente(40, bold=True), anchor="mm")
 
-            f_team = _obtener_fuente(50, bold=True)
-            loc_lbl = local_name if len(local_name) <= 15 else local_name[:14] + ".."
-            vis_lbl = visita_name if len(visita_name) <= 15 else visita_name[:14] + ".."
-            _draw_shadow_text(draw, (loc_cx, t_box_y + 230), loc_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
-            _draw_shadow_text(draw, (vis_cx, t_box_y + 230), vis_lbl, font=f_team, fill=(255, 255, 255), anchor="mt")
+            # Nombres de Equipos Grandes y Completos (Sin cortes)
+            _dibujar_nombre_equipo(draw, loc_cx, t_box_y + 230, local_name, max_w=int(box_w * 0.44), base_size=50)
+            _dibujar_nombre_equipo(draw, vis_cx, t_box_y + 230, visita_name, max_w=int(box_w * 0.44), base_size=50)
 
             _draw_shadow_text(draw, (vs_cx, t_box_y + 315), "ENCUENTRO ANALIZADO CON MODELOS MATEMÁTICOS", font=_obtener_fuente(24, bold=True), fill=col_accent_soft, anchor="mt")
 
@@ -466,15 +518,6 @@ def generar_ficha_partido_hd(
             canvas.paste(panel_p, (box_x, p_box_y), panel_p)
 
             _draw_shadow_text(draw, (box_x + 35, p_box_y + 28), "PRONÓSTICO OFICIAL CON VALOR (+EV):", font=_obtener_fuente(28, bold=True), fill=col_accent_soft)
-
-            f_pick = _obtener_fuente(52, bold=True)
-            pick_disp = pick_text if len(pick_text) <= 24 else pick_text[:23] + "..."
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 80), pick_disp, font=f_pick, fill=(255, 255, 255))
-
-            f_info = _obtener_fuente(28, bold=True)
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 165), f"• Confianza Matemática: {prob_val}", font=f_info, fill=(56, 189, 248))
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 215), f"• Gestión Bankroll: Stake {stake_val}", font=f_info, fill=(250, 204, 21))
-            _draw_shadow_text(draw, (box_x + 35, p_box_y + 265), "• Algoritmo Poisson + Dixon-Coles Validado", font=_obtener_fuente(24, bold=False), fill=(148, 163, 184))
 
             # Cuadro de Cuota Gigante a la Derecha
             c_box_w, c_box_h = 260, 240
@@ -490,6 +533,15 @@ def generar_ficha_partido_hd(
             draw.text((c_box_x + c_box_w // 2, c_box_y + 22), "CUOTA OFICIAL", fill=(148, 163, 184), font=_obtener_fuente(24, bold=True), anchor="mt")
             _draw_shadow_text(draw, (c_box_x + c_box_w // 2, c_box_y + 70), f"@{cuota_val:.2f}", font=_obtener_fuente(74, bold=True), fill=col_accent, anchor="mt")
             draw.text((c_box_x + c_box_w // 2, c_box_y + 175), "VALOR (+EV)", fill=(56, 189, 248), font=_obtener_fuente(22, bold=True), anchor="mt")
+
+            # Texto del Pick Completo (En 1 o 2 líneas sin cortes)
+            max_pick_w = box_w - c_box_w - 70
+            _dibujar_pick_completo(draw, box_x + 35, p_box_y + 80, pick_text, max_w=max_pick_w, base_size=48)
+
+            f_info = _obtener_fuente(28, bold=True)
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 170), f"• Confianza Matemática: {prob_val}", font=f_info, fill=(56, 189, 248))
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 220), f"• Gestión Bankroll: Stake {stake_val}", font=f_info, fill=(250, 204, 21))
+            _draw_shadow_text(draw, (box_x + 35, p_box_y + 270), "• Algoritmo Poisson + Dixon-Coles Validado", font=_obtener_fuente(24, bold=False), fill=(148, 163, 184))
 
             # 4. TRÍO DE MÉTRICAS AVANZADAS (y: 975 a 1225, h=250px)
             s_box_y = 975
