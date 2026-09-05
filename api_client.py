@@ -338,6 +338,7 @@ def obtener_ligas_mundo():
         ligas_top = {
             "📅 [HOY] Partidos de Hoy (Resuelven Hoy Mismo)": "TODAY_MATCHES_MODE",
             "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)": "GOAL_FESTIVAL_MODE",
+            "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)": "SOCIAL_CARD_MODE",
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
             "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
             "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
@@ -376,6 +377,7 @@ def obtener_ligas_mundo():
     return {
         "📅 [HOY] Partidos de Hoy (Resuelven Hoy Mismo)": "TODAY_MATCHES_MODE",
         "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)": "GOAL_FESTIVAL_MODE",
+        "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)": "SOCIAL_CARD_MODE",
         "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
         "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
         "🎯 [ESPECIAL] Simulador Progol": "PROGOL_MODE",
@@ -870,7 +872,7 @@ def obtener_partidos_jornada(league_id: str):
     Obtiene los partidos de la jornada anterior (Finalizados) y de la jornada actual (Próximos)
     con sus escudos exactos e infalibles para cada equipo en su posición (Local y Visita).
     """
-    if league_id in ["TODAY_MATCHES_MODE", "GOAL_FESTIVAL_MODE", "LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE", "AFFILIATE_PROGRAM_MODE"]:
+    if league_id in ["TODAY_MATCHES_MODE", "GOAL_FESTIVAL_MODE", "SOCIAL_CARD_MODE", "LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE", "AFFILIATE_PROGRAM_MODE"]:
         return {"🎯 Módulo Especial Activo": {"id": None}}
     
     url = f"{config.API_FOOTBALL_URL}/fixtures"
