@@ -159,9 +159,9 @@ fondo_estadio_data = obtener_fondo_estadio_url()
 # Inyección del Fondo de Estadio Nocturno Glassmorphism VIP
 render_html(f"""
 <style>
-    /* Fondo Inmersivo de Estadio Nocturno VIP */
+    /* Fondo Inmersivo de Estadio Nocturno VIP Puro */
     .stApp {{
-        background: linear-gradient(180deg, rgba(10, 13, 20, 0.86) 0%, rgba(13, 17, 24, 0.93) 100%),
+        background: linear-gradient(180deg, rgba(10, 13, 20, 0.65) 0%, rgba(13, 17, 24, 0.76) 100%),
                     url('{fondo_estadio_data}') no-repeat center center fixed !important;
         background-size: cover !important;
         color: #FFFFFF !important;
