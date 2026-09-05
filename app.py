@@ -778,8 +778,27 @@ with st.sidebar.expander("📲 INSTALAR APP EN TU CELULAR", expanded=False):
 sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%);padding:12px;border-radius:12px;border:1px solid #282F3F;margin-top:10px;margin-bottom:14px;text-align:center;"><div style="color:#D4AF37;font-weight:900;font-size:11px;margin-bottom:8px;letter-spacing:0.5px;">💎 CASAS RECOMENDADAS (+EV)</div><div style="display:flex;gap:6px;justify-content:center;"><a href="{ban_1xbet}" target="_blank" style="background:#00B4D8;color:#0A192F;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🔵 1xBet</a><a href="{ban_mexplay}" target="_blank" style="background:#FF8500;color:#FFFFFF;font-weight:bold;font-size:11px;padding:6px 10px;border-radius:12px;text-decoration:none;flex:1;">🟡 Mexplay</a></div></div>'
 st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
 
+# Botones de Acceso Rápido VIP en la Barra Lateral
+col_sb_sc1, col_sb_sc2 = st.sidebar.columns(2)
+with col_sb_sc1:
+    if st.button("🔥 GOLES", use_container_width=True, help="Abrir Radar Festival de Goles"):
+        st.session_state['liga_selector_override'] = "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)"
+        st.session_state['live_partido_detalle'] = None
+        st.rerun()
+with col_sb_sc2:
+    if st.button("📸 REDES HD", use_container_width=True, help="Abrir Generador de Fichas para Redes Sociales"):
+        st.session_state['liga_selector_override'] = "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)"
+        st.session_state['live_partido_detalle'] = None
+        st.rerun()
+
 dict_ligas_globales = api_client.obtener_ligas_mundo()
-liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", list(dict_ligas_globales.keys()))
+lista_ligas_keys = list(dict_ligas_globales.keys())
+idx_default_liga = 0
+if st.session_state.get('liga_selector_override') in lista_ligas_keys:
+    idx_default_liga = lista_ligas_keys.index(st.session_state['liga_selector_override'])
+    st.session_state['liga_selector_override'] = None
+
+liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", lista_ligas_keys, index=idx_default_liga)
 liga_elegida_val = dict_ligas_globales[liga_elegida]
 
 # Reset reactivo: si el usuario cambia de liga o módulo en el menú lateral,
@@ -2198,14 +2217,14 @@ else:
         ''')
 
         # --- ESTRUCTURA EN PESTAÑAS (ST.TABS) ---
-        tab_vivo, tab_resumen, tab_modelos, tab_h2h, tab_cancha, tab_cuotas, tab_redes = st.tabs([
-            "🔴 1. Minuto a Minuto En Vivo",
-            "📊 2. Resumen & Picks VIP",
-            "🧠 3. Modelos & Simulación",
-            "⚔️ 4. Estadísticas & H2H",
-            "🏟️ 5. Cancha, Clima & Árbitro",
-            "💰 6. Cuotas & Bankroll",
-            "📸 7. Ficha HD Redes"
+        tab_vivo, tab_resumen, tab_redes, tab_modelos, tab_h2h, tab_cancha, tab_cuotas = st.tabs([
+            "🔴 En Vivo",
+            "📊 Picks VIP",
+            "📸 Ficha Redes HD",
+            "🧠 IA & Modelos",
+            "⚔️ Estadísticas",
+            "🏟️ Cancha",
+            "💰 Cuotas"
         ])
 
         # =========================================================
@@ -2275,6 +2294,11 @@ else:
                 if st.button("⚖️ TOP 5 EMPATES (VALOR)", use_container_width=True, key=f"btn_top_emp_{fixture_id}"):
                     st.session_state['ver_top_empates_match'] = not st.session_state.get('ver_top_empates_match', False)
 
+            # Botón destacado Ficha Redes HD
+            st.markdown("<div style='height:4px;'></div>", unsafe_allow_html=True)
+            if st.button("📸 GENERAR Y DESCARGAR FICHA HD PARA REDES SOCIALES (INSTAGRAM / WHATSAPP / TWITTER)", use_container_width=True, key=f"btn_open_sc_resumen_{fixture_id}"):
+                st.session_state['ver_ficha_redes_match'] = not st.session_state.get('ver_ficha_redes_match', False)
+
             pick_seguro_obj = picks_builder.get("pick_seguro", picks_builder['picks'][0] if picks_builder.get('picks') else {})
             p_seg_desc = pick_seguro_obj.get("descripcion", f"{equipo_local_real} o Empate (1X)")
             p_seg_prob = pick_seguro_obj.get("prob", "75.0%")
@@ -2303,7 +2327,142 @@ else:
                 p_empates_box = analytics.generar_top_empates_oro(top_n=5)
                 render_html(pitch_renderer.render_ticket_empates_oro(p_empates_box))
 
+            if st.session_state.get('ver_ficha_redes_match'):
+                st.markdown("---")
+                st.markdown("### 📸 Generador Rápido de Ficha HD para Redes")
+                col_r_cfg1, col_r_cfg2 = st.columns(2)
+                with col_r_cfg1:
+                    fmt_res = st.selectbox("📐 Formato:", ["🟦 Cuadrado (Post 1:1 - 1080x1080)", "📱 Historia / Estado (Story 9:16 - 1080x1920)"], key=f"sel_fmt_res_{fixture_id}")
+                    fmt_c_res = "9:16" if "9:16" in fmt_res else "1:1"
+                with col_r_cfg2:
+                    est_res = st.selectbox("🎨 Estilo Visual:", ["🏆 Oro VIP & Obsidiana", "🔥 Festival de Fuego", "⚡ Neón Cyber Pro"], key=f"sel_est_res_{fixture_id}")
+                    est_c_res = "festival_fuego" if "Festival" in est_res else ("neon_pro" if "Neón" in est_res else "oro_vip")
+
+                pick_export_res = {
+                    "pick": pick_seguro_obj.get("descripcion", f"{equipo_local_real} o Empate (1X)"),
+                    "cuota": p_seg_cuota,
+                    "probabilidad": p_seg_prob,
+                    "stake": "3/10 (3.5%)"
+                }
+                partido_export_res = {
+                    "local": equipo_local_real,
+                    "visita": equipo_visita_real,
+                    "logo_local": logo_local_render,
+                    "logo_visita": logo_visita_render,
+                    "liga": liga_elegida if liga_elegida else "Liga Profesional",
+                    "hora": datos_partido.get("hora", "Hoy")
+                }
+                stats_export_res = {
+                    "xg_total": round(stats_poisson['lambda_home'] + stats_poisson['lambda_away'], 2),
+                    "p_btts": f"{stats_poisson['p_btts']}%",
+                    "p_over_25": f"{stats_poisson['p_over_25']}%"
+                }
+
+                with st.spinner("📸 Renderizando Ficha HD con Pillow..."):
+                    img_bytes_res = social_card_generator.generar_ficha_partido_hd(
+                        partido_data=partido_export_res,
+                        pick_data=pick_export_res,
+                        stats_data=stats_export_res,
+                        formato=fmt_c_res,
+                        estilo=est_c_res
+                    )
+
+                col_prv_r, col_act_r = st.columns([1.5, 1])
+                with col_prv_r:
+                    st.image(img_bytes_res, caption="Vista Previa Ficha HD", use_container_width=True)
+                with col_act_r:
+                    st.download_button(
+                        label="📥 DESCARGAR FICHA HD (.PNG)",
+                        data=img_bytes_res,
+                        file_name=f"ficha_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_c_res.replace(':', 'x')}.png",
+                        mime="image/png",
+                        use_container_width=True,
+                        key=f"btn_dl_res_{fixture_id}"
+                    )
+                st.markdown("---")
+
             st.markdown("<br>", unsafe_allow_html=True)
+
+            html_bet_builder = pitch_renderer.render_ticket_bet_builder(picks_builder, equipo_local_real, equipo_visita_real)
+            render_html(html_bet_builder)
+
+        # =========================================================
+        # PESTAÑA 3: GENERADOR DE FICHA HD PARA REDES SOCIALES
+        # =========================================================
+        with tab_redes:
+            render_html('''
+            <div style="background:linear-gradient(135deg, #1C202B 0%, #152238 50%, #0D0F14 100%); border:1.5px solid #D4AF37; padding:18px; border-radius:12px; margin-bottom:18px; text-align:center;">
+                <h3 style="color:#FFFFFF; margin:0; font-weight:900;">📸 GENERADOR DE FICHAS HD PARA REDES SOCIALES</h3>
+                <p style="color:#E2E8F0; margin:4px 0 0 0; font-size:14px;">Descarga la imagen oficial de este pronóstico lista para publicar en Instagram, WhatsApp, Twitter y Telegram.</p>
+            </div>
+            ''')
+
+            col_cfg1, col_cfg2, col_cfg3 = st.columns([1.2, 1.2, 1])
+            with col_cfg1:
+                formato_redes = st.selectbox(
+                    "📐 Formato de Imagen:",
+                    ["🟦 Cuadrado (Post 1:1 - 1080x1080)", "📱 Historia / Estado (Story 9:16 - 1080x1920)"],
+                    key=f"sel_fmt_redes_{fixture_id}"
+                )
+                fmt_code = "9:16" if "9:16" in formato_redes else "1:1"
+            with col_cfg2:
+                estilo_redes = st.selectbox(
+                    "🎨 Estilo Visual:",
+                    ["🏆 Oro VIP & Obsidiana", "🔥 Festival de Fuego", "⚡ Neón Cyber Pro"],
+                    key=f"sel_est_redes_{fixture_id}"
+                )
+                est_code = "festival_fuego" if "Festival" in estilo_redes else ("neon_pro" if "Neón" in estilo_redes else "oro_vip")
+            with col_cfg3:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                regenerar_img = st.button("🔄 REGENERAR IMAGEN", key=f"btn_regen_img_{fixture_id}", use_container_width=True)
+
+            # Preparar datos del pick para la ficha
+            pick_obj_export = picks_builder.get("pick_seguro", picks_builder['picks'][0] if picks_builder.get('picks') else {})
+            pick_export_data = {
+                "pick": pick_obj_export.get("descripcion", f"{equipo_local_real} o Empate (1X)"),
+                "cuota": float(pick_obj_export.get("cuota", 1.45)),
+                "probabilidad": pick_obj_export.get("prob", "76.5%"),
+                "stake": "3/10 (3.5%)"
+            }
+            partido_export_data = {
+                "local": equipo_local_real,
+                "visita": equipo_visita_real,
+                "logo_local": logo_local_render,
+                "logo_visita": logo_visita_render,
+                "liga": liga_elegida if liga_elegida else "Liga Profesional",
+                "hora": datos_partido.get("hora", "Hoy")
+            }
+            stats_export_data = {
+                "xg_total": round(stats_poisson['lambda_home'] + stats_poisson['lambda_away'], 2),
+                "p_btts": f"{stats_poisson['p_btts']}%",
+                "p_over_25": f"{stats_poisson['p_over_25']}%"
+            }
+
+            with st.spinner("📸 Renderizando Ficha HD con Pillow Graphics Engine..."):
+                img_png_bytes = social_card_generator.generar_ficha_partido_hd(
+                    partido_data=partido_export_data,
+                    pick_data=pick_export_data,
+                    stats_data=stats_export_data,
+                    formato=fmt_code,
+                    estilo=est_code
+                )
+
+            col_preview, col_down = st.columns([1.5, 1])
+            with col_preview:
+                st.image(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})", use_container_width=True)
+            with col_down:
+                st.markdown("#### 📥 Opciones de Exportación")
+                st.info("💡 **Consejo:** La imagen incluye escudos oficiales, xG, probabilidad matemática y la marca oficial de Smart Pick Pro VIP lista para captar clientes en redes.")
+                
+                file_name_clean = f"smartpick_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_code.replace(':', 'x')}.png"
+                st.download_button(
+                    label="📥 DESCARGAR FICHA HD (.PNG)",
+                    data=img_png_bytes,
+                    file_name=file_name_clean,
+                    mime="image/png",
+                    use_container_width=True,
+                    key=f"btn_dl_img_{fixture_id}"
+                )
 
             html_bet_builder = pitch_renderer.render_ticket_bet_builder(picks_builder, equipo_local_real, equipo_visita_real)
             render_html(html_bet_builder)
@@ -2752,81 +2911,3 @@ else:
                     <div style="background:rgba(239,68,68,0.12); padding:8px; border-radius:6px; border:1px solid rgba(239,68,68,0.2);">
                         <p style="color:#e0e0e0; margin:0; font-size:12px;">📌 {txt_nec_v}</p>
                     </div></div>''')
-
-        # =========================================================
-        # PESTAÑA 7: GENERADOR DE FICHA HD PARA REDES SOCIALES
-        # =========================================================
-        with tab_redes:
-            render_html('''
-            <div style="background:linear-gradient(135deg, #1C202B 0%, #152238 50%, #0D0F14 100%); border:1.5px solid #D4AF37; padding:18px; border-radius:12px; margin-bottom:18px; text-align:center;">
-                <h3 style="color:#FFFFFF; margin:0; font-weight:900;">📸 GENERADOR DE FICHAS HD PARA REDES SOCIALES</h3>
-                <p style="color:#E2E8F0; margin:4px 0 0 0; font-size:14px;">Descarga la imagen oficial de este pronóstico lista para publicar en Instagram, WhatsApp, Twitter y Telegram.</p>
-            </div>
-            ''')
-
-            col_cfg1, col_cfg2, col_cfg3 = st.columns([1.2, 1.2, 1])
-            with col_cfg1:
-                formato_redes = st.selectbox(
-                    "📐 Formato de Imagen:",
-                    ["🟦 Cuadrado (Post 1:1 - 1080x1080)", "📱 Historia / Estado (Story 9:16 - 1080x1920)"],
-                    key=f"sel_fmt_redes_{fixture_id}"
-                )
-                fmt_code = "9:16" if "9:16" in formato_redes else "1:1"
-            with col_cfg2:
-                estilo_redes = st.selectbox(
-                    "🎨 Estilo Visual:",
-                    ["🏆 Oro VIP & Obsidiana", "🔥 Festival de Fuego", "⚡ Neón Cyber Pro"],
-                    key=f"sel_est_redes_{fixture_id}"
-                )
-                est_code = "festival_fuego" if "Festival" in estilo_redes else ("neon_pro" if "Neón" in estilo_redes else "oro_vip")
-            with col_cfg3:
-                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-                regenerar_img = st.button("🔄 REGENERAR IMAGEN", key=f"btn_regen_img_{fixture_id}", use_container_width=True)
-
-            # Preparar datos del pick para la ficha
-            pick_obj_export = picks_builder.get("pick_seguro", picks_builder['picks'][0] if picks_builder.get('picks') else {})
-            pick_export_data = {
-                "pick": pick_obj_export.get("descripcion", f"{equipo_local_real} o Empate (1X)"),
-                "cuota": float(pick_obj_export.get("cuota", 1.45)),
-                "probabilidad": pick_obj_export.get("prob", "76.5%"),
-                "stake": "3/10 (3.5%)"
-            }
-            partido_export_data = {
-                "local": equipo_local_real,
-                "visita": equipo_visita_real,
-                "logo_local": logo_local_render,
-                "logo_visita": logo_visita_render,
-                "liga": liga_elegida if liga_elegida else "Liga Profesional",
-                "hora": datos_partido.get("hora", "Hoy")
-            }
-            stats_export_data = {
-                "xg_total": round(stats_poisson['lambda_home'] + stats_poisson['lambda_away'], 2),
-                "p_btts": f"{stats_poisson['p_btts']}%",
-                "p_over_25": f"{stats_poisson['p_over_25']}%"
-            }
-
-            with st.spinner("📸 Renderizando Ficha HD con Pillow Graphics Engine..."):
-                img_png_bytes = social_card_generator.generar_ficha_partido_hd(
-                    partido_data=partido_export_data,
-                    pick_data=pick_export_data,
-                    stats_data=stats_export_data,
-                    formato=fmt_code,
-                    estilo=est_code
-                )
-
-            col_preview, col_down = st.columns([1.5, 1])
-            with col_preview:
-                st.image(img_png_bytes, caption=f"Vista Previa HD ({formato_redes.split('(')[0].strip()})", use_container_width=True)
-            with col_down:
-                st.markdown("#### 📥 Opciones de Exportación")
-                st.info("💡 **Consejo:** La imagen incluye escudos oficiales, xG, probabilidad matemática y la marca oficial de Smart Pick Pro VIP lista para captar clientes en redes.")
-                
-                file_name_clean = f"smartpick_{equipo_local_real.lower().replace(' ', '_')}_vs_{equipo_visita_real.lower().replace(' ', '_')}_{fmt_code.replace(':', 'x')}.png"
-                st.download_button(
-                    label="📥 DESCARGAR FICHA HD (.PNG)",
-                    data=img_png_bytes,
-                    file_name=file_name_clean,
-                    mime="image/png",
-                    use_container_width=True,
-                    key=f"btn_dl_img_{fixture_id}"
-                )
