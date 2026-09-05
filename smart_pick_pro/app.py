@@ -17,17 +17,17 @@ def render_html(html_str: str):
     if html_str:
         st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
-def render_image_preview(img_bytes: bytes, caption: str = "", max_width: str = "600px"):
+def render_image_preview(img_bytes: bytes, caption: str = "", max_width: str = "100%"):
     """Renderiza vista previa de imagen en base64 HTML nativo, 100% inmune a errores de Pillow/st.image."""
     if not img_bytes:
         return
     import base64
     try:
         b64_str = base64.b64encode(img_bytes).decode('utf-8')
-        cap_html = f'<div style="text-align:center; color:#94A3B8; font-size:13px; font-weight:600; margin-top:8px;">{html.escape(caption)}</div>' if caption else ''
+        cap_html = f'<div style="text-align:center; color:#CBD5E1; font-size:14px; font-weight:700; margin-top:8px;">{html.escape(caption)}</div>' if caption else ''
         render_html(f'''
-        <div style="text-align:center; margin: 8px 0 14px 0;">
-            <img src="data:image/png;base64,{b64_str}" style="width:100%; max-width:{max_width}; border-radius:12px; border:1.5px solid #282F3F; box-shadow:0 8px 30px rgba(0,0,0,0.6); display:inline-block;" />
+        <div style="text-align:center; margin: 10px 0 16px 0;">
+            <img src="data:image/png;base64,{b64_str}" style="width:100%; max-width:720px; max-height:85vh; object-fit:contain; border-radius:14px; border:2px solid #D4AF37; box-shadow:0 10px 35px rgba(0,0,0,0.7); display:inline-block;" />
             {cap_html}
         </div>
         ''')
