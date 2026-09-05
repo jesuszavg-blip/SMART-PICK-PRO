@@ -64,6 +64,19 @@ def _obtener_fuente(size: int, bold: bool = False):
     except Exception:
         return ImageFont.load_default()
 
+import re
+
+def _limpiar_texto_emojis(texto: str) -> str:
+    """Elimina emojis y caracteres especiales fuera del rango tipográfico de Arial."""
+    if not texto:
+        return ""
+    emoji_pattern = re.compile(
+        "[\U00010000-\U0010ffff\u2600-\u27ff\u2300-\u23ff\u2b50-\u2b55\u200d\ufe0f\u2000-\u206f]",
+        flags=re.UNICODE
+    )
+    clean = emoji_pattern.sub("", str(texto))
+    return re.sub(r"\s+", " ", clean).strip()
+
 
 def _draw_shadow_text(draw: ImageDraw.Draw, pos: tuple, text: str, font, fill=(255, 255, 255), shadow_fill=(0, 0, 0, 240), offset=(2, 2), anchor=None):
     """Dibuja texto con sombra de alto contraste para máxima legibilidad."""
@@ -321,15 +334,14 @@ def generar_ficha_partido_hd(
 
         _dibujar_marco_exterior(draw, width, height, color_primario=col_accent)
 
-        local_name = partido_data.get("local", "Equipo Local")
-        visita_name = partido_data.get("visita", "Equipo Visita")
+        local_name = _limpiar_texto_emojis(partido_data.get("local", "Equipo Local"))
+        visita_name = _limpiar_texto_emojis(partido_data.get("visita", "Equipo Visita"))
         logo_loc_url = partido_data.get("logo_local", "")
         logo_vis_url = partido_data.get("logo_visita", "")
         
         # Limpieza de liga y horario (quitar emojis que causen cuadros vacíos)
-        raw_liga = str(partido_data.get("liga", "Liga Profesional")).upper()
-        clean_liga = raw_liga.replace("🇲🇽", "").replace("🇪🇸", "").replace("🏴󠁧󠁢󠁥󠁮󠁧󠁿", "").replace("🏆", "").strip()
-        raw_hora = str(partido_data.get("hora", "Hoy")).upper().replace("⏰", "").strip()
+        clean_liga = _limpiar_texto_emojis(partido_data.get("liga", "Liga Profesional")).upper()
+        raw_hora = _limpiar_texto_emojis(partido_data.get("hora", "Hoy")).upper()
 
         if not pick_data:
             pick_data = {
