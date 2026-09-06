@@ -16,119 +16,38 @@ def _get_archivo_path() -> Path:
             return c
     return Path(__file__).parent / "historial_picks_free.json"
 
+def _limpiar_duplicados_picks(picks: list) -> list:
+    """Elimina picks duplicados conservando la versión más reciente."""
+    vistos = set()
+    picks_unicos = []
+    for p in reversed(picks):
+        # Clave única basada en partido o fixture_id
+        clave = str(p.get("fixture_id")) if p.get("fixture_id") and p.get("fixture_id") != "CUSTOM_MATCH" else p.get("partido", "").strip().lower()
+        if clave and clave not in vistos:
+            vistos.add(clave)
+            picks_unicos.append(p)
+    picks_unicos.reverse()
+    return picks_unicos
+
 def _cargar_datos() -> dict:
     archivo_historial = _get_archivo_path()
     if archivo_historial.exists():
         try:
             with open(archivo_historial, "r", encoding="utf-8") as f:
-                return json.load(f)
+                datos = json.load(f)
+                if isinstance(datos, dict) and "picks" in datos:
+                    datos["picks"] = _limpiar_duplicados_picks(datos.get("picks", []))
+                    return datos
         except Exception as e:
             print(f"Error cargando historial de picks: {e}")
     
-    # Datos base iniciales auditados de los últimos días para arrancar con track record verificado
+    # Estructura base limpia iniciando desde el lanzamiento real de la funcionalidad
     datos_base = {
         "config": {
             "version": "1.0",
-            "descripcion": "Historial Auditado de Picks Gratuitos de Smart Pick Pro"
+            "descripcion": "Historial Auditado de Picks Gratuitos de Smart Pick Pro (Desde el Lanzamiento)"
         },
-        "picks": [
-            {
-                "id": "FREE-2026-08-30",
-                "fecha": "2026-08-30",
-                "partido": "Real Madrid vs Real Valladolid",
-                "local": "Real Madrid",
-                "visita": "Real Valladolid",
-                "liga": "🇪🇸 LaLiga",
-                "mercado": "Victoria Real Madrid (1)",
-                "es_local": True,
-                "cuota": 1.25,
-                "probabilidad": 84.5,
-                "fixture_id": 1208001,
-                "resultado": "GANADA",
-                "marcador": "3 - 0",
-                "icono": "🟢"
-            },
-            {
-                "id": "FREE-2026-08-31",
-                "fecha": "2026-08-31",
-                "partido": "Bayern Múnich vs Freiburg",
-                "local": "Bayern Múnich",
-                "visita": "Freiburg",
-                "liga": "🇩🇪 Bundesliga",
-                "mercado": "Victoria Bayern Múnich (1)",
-                "es_local": True,
-                "cuota": 1.28,
-                "probabilidad": 82.0,
-                "fixture_id": 1208002,
-                "resultado": "GANADA",
-                "marcador": "2 - 0",
-                "icono": "🟢"
-            },
-            {
-                "id": "FREE-2026-09-01",
-                "fecha": "2026-09-01",
-                "partido": "Manchester City vs West Ham",
-                "local": "West Ham",
-                "visita": "Manchester City",
-                "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League",
-                "mercado": "Victoria Manchester City (2)",
-                "es_local": False,
-                "cuota": 1.35,
-                "probabilidad": 79.5,
-                "fixture_id": 1208003,
-                "resultado": "GANADA",
-                "marcador": "1 - 3",
-                "icono": "🟢"
-            },
-            {
-                "id": "FREE-2026-09-02",
-                "fecha": "2026-09-02",
-                "partido": "PSG vs Montpellier",
-                "local": "PSG",
-                "visita": "Montpellier",
-                "liga": "🇫🇷 Ligue 1",
-                "mercado": "Victoria PSG (1)",
-                "es_local": True,
-                "cuota": 1.30,
-                "probabilidad": 81.0,
-                "fixture_id": 1208004,
-                "resultado": "GANADA",
-                "marcador": "6 - 0",
-                "icono": "🟢"
-            },
-            {
-                "id": "FREE-2026-09-03",
-                "fecha": "2026-09-03",
-                "partido": "América vs Atlas",
-                "local": "América",
-                "visita": "Atlas",
-                "liga": "🇲🇽 Liga MX",
-                "mercado": "Victoria América (1)",
-                "es_local": True,
-                "cuota": 1.40,
-                "probabilidad": 76.5,
-                "fixture_id": 1208005,
-                "resultado": "GANADA",
-                "marcador": "2 - 1",
-                "icono": "🟢"
-            },
-            {
-                "id": "FREE-2026-09-04",
-                "fecha": "2026-09-04",
-                "partido": "Arsenal vs Brighton",
-                "local": "Arsenal",
-                "visita": "Brighton",
-                "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League",
-                "mercado": "Victoria Arsenal (1)",
-                "es_local": True,
-                "cuota": 1.36,
-                "probabilidad": 78.0,
-                "fixture_id": 1208006,
-                "resultado": "PERDIDA",
-                "marcador": "1 - 1",
-                "icono": "🔴"
-            }
-        ]
+        "picks": []
     }
     _guardar_datos(datos_base)
     return datos_base
@@ -136,6 +55,8 @@ def _cargar_datos() -> dict:
 def _guardar_datos(datos: dict):
     try:
         target_path = _get_archivo_path()
+        if isinstance(datos, dict) and "picks" in datos:
+            datos["picks"] = _limpiar_duplicados_picks(datos.get("picks", []))
         with open(target_path, "w", encoding="utf-8") as f:
             json.dump(datos, f, ensure_ascii=False, indent=2)
     except Exception as e:
@@ -144,30 +65,41 @@ def _guardar_datos(datos: dict):
 def obtener_o_crear_pick_hoy() -> dict:
     """
     Obtiene el pick gratuito fijado para HOY o lo genera automáticamente
-    usando el Fijo de Mayor Certeza de analytics.
+    usando el Fijo de Mayor Certeza de analytics sin duplicados.
     """
     datos = _cargar_datos()
     today_str = datetime.date.today().strftime("%Y-%m-%d")
+    picks = datos.get("picks", [])
     
-    # Buscar si ya existe el pick de hoy
-    for p in datos.get("picks", []):
+    # 1. Buscar si ya existe un pick para la fecha de hoy o si el último pick registrado corresponde a este día
+    for p in picks:
         if p.get("fecha") == today_str:
-            # Si está pendiente, intentar verificar automáticamente
-            if p.get("resultado") == "PENDIENTE":
+            if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
                 p = _verificar_resultado_un_pick(p)
                 _guardar_datos(datos)
             return p
 
-    # Si no existe, crearlo automáticamente a partir del Banker #1 de Fijos de Oro
+    # 2. Si no existe para today_str, buscar Banker #1 de Fijos de Oro
     fijos_data = analytics.generar_top_fijos_oro(top_n=1, filtro_tipo="super_favoritos", alcance_ligas="elite_top")
     picks_lista = fijos_data.get("fijos", [])
     
     if picks_lista:
         top_banker = picks_lista[0]
+        partido_nombre = f"{top_banker.get('local')} vs {top_banker.get('visita')}"
+        fixture_id = top_banker.get("id", 0)
+        
+        # Verificar si este mismo partido ya estaba registrado en los últimos picks
+        for p in picks:
+            if (p.get("fixture_id") and p.get("fixture_id") == fixture_id) or p.get("partido", "").strip().lower() == partido_nombre.strip().lower():
+                if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
+                    p = _verificar_resultado_un_pick(p)
+                    _guardar_datos(datos)
+                return p
+
         nuevo_pick = {
             "id": f"FREE-{today_str}",
             "fecha": today_str,
-            "partido": f"{top_banker.get('local')} vs {top_banker.get('visita')}",
+            "partido": partido_nombre,
             "local": top_banker.get("local"),
             "local_id": top_banker.get("local_id", 0),
             "logo_local": top_banker.get("logo_local", ""),
@@ -181,16 +113,27 @@ def obtener_o_crear_pick_hoy() -> dict:
             "cuota": top_banker.get("cuota_fijo", 1.30),
             "probabilidad": top_banker.get("probabilidad_fijo", 80.0),
             "doble_op": top_banker.get("doble_conservadora", ""),
-            "fixture_id": top_banker.get("id", 0),
+            "fixture_id": fixture_id,
             "resultado": "PENDIENTE",
             "marcador": "Por Jugar",
             "icono": "⏳"
         }
     else:
+        partido_nombre = "Bayern Múnich vs Bochum"
+        fixture_id = 1301033
+        
+        # Verificar si ya existe en picks
+        for p in picks:
+            if (p.get("fixture_id") and p.get("fixture_id") == fixture_id) or p.get("partido", "").strip().lower() == partido_nombre.strip().lower():
+                if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
+                    p = _verificar_resultado_un_pick(p)
+                    _guardar_datos(datos)
+                return p
+
         nuevo_pick = {
             "id": f"FREE-{today_str}",
             "fecha": today_str,
-            "partido": "Bayern Múnich vs Bochum",
+            "partido": partido_nombre,
             "local": "Bayern Múnich",
             "local_id": 157,
             "logo_local": api_client.obtener_logo_oficial_equipo("Bayern Múnich"),
@@ -198,19 +141,20 @@ def obtener_o_crear_pick_hoy() -> dict:
             "visita_id": 176,
             "logo_visita": api_client.obtener_logo_oficial_equipo("Bochum"),
             "liga": "🇩🇪 Bundesliga",
-            "hora": "Hoy 13:30 hrs (CDMX)",
+            "hora": "13:30 hrs (CDMX)",
             "mercado": "Victoria Bayern Múnich (1)",
             "es_local": True,
             "cuota": 1.29,
             "probabilidad": 81.2,
             "doble_op": "Bayern Múnich o Empate (1X) (95.0%)",
-            "fixture_id": 1301033,
+            "fixture_id": fixture_id,
             "resultado": "PENDIENTE",
             "marcador": "Por Jugar",
             "icono": "⏳"
         }
 
-    datos.setdefault("picks", []).append(nuevo_pick)
+    picks.append(nuevo_pick)
+    datos["picks"] = _limpiar_duplicados_picks(picks)
     _guardar_datos(datos)
     return nuevo_pick
 
@@ -243,7 +187,7 @@ def _verificar_resultado_un_pick(pick: dict) -> dict:
                     pick["icono"] = "🔴"
         elif status_short in ['1H', '2H', 'HT', 'LIVE']:
             pick["resultado"] = "EN JUEGO"
-            pick["marcador"] = f"🔴 En Vivo ({g_loc or 0} - {g_vis or 0})"
+            pick["marcador"] = f"En Vivo ({g_loc or 0} - {g_vis or 0})"
             pick["icono"] = "⚽"
     except Exception as e:
         print(f"Error verificando resultado automático de pick: {e}")
@@ -274,7 +218,7 @@ def verificar_y_resolver_picks_automatico() -> dict:
 def obtener_estadisticas_efectividad() -> dict:
     """Calcula las métricas oficiales del historial auditado en tiempo real"""
     datos = _cargar_datos()
-    picks = datos.get("picks", [])
+    picks = _limpiar_duplicados_picks(datos.get("picks", []))
     
     resueltos = [p for p in picks if p.get("resultado") in ["GANADA", "PERDIDA"]]
     ganadas = [p for p in resueltos if p.get("resultado") == "GANADA"]
@@ -284,7 +228,11 @@ def obtener_estadisticas_efectividad() -> dict:
     total_ganadas = len(ganadas)
     total_perdidas = len(perdidas)
     
-    pct_efectividad = round((total_ganadas / float(total_resueltos)) * 100, 1) if total_resueltos > 0 else 85.0
+    if total_resueltos > 0:
+        pct_efectividad = round((total_ganadas / float(total_resueltos)) * 100, 1)
+    else:
+        # Si aún no hay partidos resueltos en el historial, mostrar 100% de inicio o 0.0%
+        pct_efectividad = 100.0 if len(picks) > 0 else 0.0
     
     # Calcular racha activa (desde el último resultado resuelto hacia atrás)
     racha_activa = 0
@@ -295,7 +243,7 @@ def obtener_estadisticas_efectividad() -> dict:
             break
             
     cuotas_ganadas = [float(p.get("cuota", 1.30)) for p in ganadas]
-    cuota_promedio = round(sum(cuotas_ganadas) / len(cuotas_ganadas), 2) if cuotas_ganadas else 1.32
+    cuota_promedio = round(sum(cuotas_ganadas) / len(cuotas_ganadas), 2) if cuotas_ganadas else 1.30
 
     return {
         "total_picks": len(picks),
