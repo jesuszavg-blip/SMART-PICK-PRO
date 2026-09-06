@@ -1987,11 +1987,17 @@ elif liga_elegida_val == "PROGOL_MODE":
         
         for item in boleta:
             p_match = jornada_oficial[item['casilla'] - 1]
+            probas_txt = item.get('analisis', {}).get('resumen_probas', '')
             render_html(f'''
-            <div style="background:#151821; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
-                <b style="color:white; font-size:15px;">Casilla {item['casilla']}:</b> 
-                <span style="color:#FFFFFF; font-weight:bold;">{p_match['local']} vs {p_match['visita']}</span> -> 
-                <span style="color:{item['color_borde']}; font-weight:900; font-size:16px;">{item['sugerencia']}</span>
+            <div style="background:#151821; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="color:white; font-size:15px;">Casilla {item['casilla']}:</b> 
+                    <span style="color:#FFFFFF; font-weight:bold;">{p_match['local']} vs {p_match['visita']}</span>
+                    <div style="color:#94A3B8; font-size:12px; margin-top:3px;">📊 Probabilidades IA: {probas_txt}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span style="color:{item['color_borde']}; font-weight:900; font-size:16px;">{item['sugerencia']}</span>
+                </div>
             </div>
             ''')
             
@@ -2022,31 +2028,22 @@ elif liga_elegida_val == "REDUCCIONES_MODE":
                 st.rerun()
 
     estrat_elegida = st.selectbox("🎯 Selecciona una Estrategia de Reducción Integrada:", list(progol.REDUCCIONES_PREDEFINIDAS.keys()))
-    cfg_estrat = progol.REDUCCIONES_PREDEFINIDAS[estrat_elegida]
-    set_triples = set(cfg_estrat["triples"])
-    set_dobles = set(cfg_estrat["dobles"])
     
     col_red1, col_red2 = st.columns([1.3, 0.7])
     with col_red1:
         st.write(f"### 📋 Estructura de Combinaciones ({estrat_elegida})")
-        for idx in range(1, 15):
-            p_info = jornada_oficial[idx - 1]
-            match_title = f"{p_info['local']} vs {p_info['visita']}"
-            
-            if idx in set_triples:
-                tipo_txt = "Triple (1/X/2)"
-                color_borde = "#D4AF37"
-            elif idx in set_dobles:
-                tipo_txt = "Doble Local/Empate (1X)" if idx % 2 != 0 else "Doble Empate/Visita (X2)"
-                color_borde = "#38BDF8"
-            else:
-                tipo_txt = "Fijo Local (1)" if idx % 2 != 0 else "Fijo Visita (2)"
-                color_borde = "#F3E5AB"
-
+        casilleros_red = progol.obtener_reduccion_predefinida(estrat_elegida, jornada_oficial)
+        for item in casilleros_red:
+            probas_txt = item.get('analisis', {}).get('resumen_probas', '')
             render_html(f'''
-            <div style="background:#151821; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {color_borde}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F;">
-                <b style="color:white;">Casilla {idx}:</b> <span style="color:#FFFFFF; font-weight:bold;">{match_title} -> </span>
-                <span style="color:{color_borde}; font-weight:900; font-size:15px;">{tipo_txt}</span>
+            <div style="background:#151821; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="color:white;">Casilla {item['casilla']}:</b> <span style="color:#FFFFFF; font-weight:bold;">{item['partido']}</span>
+                    <div style="color:#94A3B8; font-size:11px; margin-top:2px;">📊 IA: {probas_txt}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span style="color:{item['color_borde']}; font-weight:900; font-size:15px;">{item['tipo_txt']}</span>
+                </div>
             </div>
             ''')
 
