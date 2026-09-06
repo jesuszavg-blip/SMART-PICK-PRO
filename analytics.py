@@ -961,12 +961,53 @@ def evaluar_predictor_ia_ensemble(equipo_local: str, equipo_visita: str, stats_p
     }
 
 
-def extraer_candidatos_reales_de_hoy() -> list:
+LIGAS_TOP_KEYWORDS = [
+    # México
+    "liga mx", "liga bbva", "femenil", "expansion mx", "expansión mx",
+    # Inglaterra
+    "premier league", "championship", "fa cup", "efl cup", "league cup",
+    # España
+    "laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "copa del rey",
+    # Italia
+    "serie a", "coppa italia",
+    # Alemania
+    "bundesliga", "dfb pokal",
+    # Francia
+    "ligue 1", "coupe de france",
+    # UEFA / Internacional
+    "champions league", "europa league", "conference league", "uefa nations league", "nations league",
+    # Conmebol / Concacaf / FIFA
+    "copa libertadores", "copa sudamericana", "concacaf", "leagues cup", "world cup", "copa del mundo", "copa america", "copa américa", "euro", "eliminatorias", "friendly", "amistosos",
+    # Ligas Top Reconocidas
+    "eredivisie", "primeira liga", "mls", "major league soccer", "saudi pro league", "pro league", "super league", "süper lig", "premiership", "liga profesional", "brasileirao", "brasileirão"
+]
+
+LIGAS_EXCLUIDAS_KEYWORDS = [
+    "u19", "u20", "u21", "u23", "u-19", "u-20", "u-21", "u-23", "sub-19", "sub-20", "sub-21", "sub-23", "sub 19", "sub 20", "sub 21", "sub 23",
+    "júniores", "juniores", "primavera", "youth", "juvenil", "femenino u", "women u",
+    "tercera", "rfef", "3. lig", "3. division", "division 2", "division 3", "división 2", "división 3",
+    "regional", "torneo federal", "serie c", "serie d", "oberliga", "national 2", "national 3", "nacional b", "amateur", "reserve", "reserves", "preferente", "autonómica", "a lyga", "liga premier", "serie b1", "serie b2"
+]
+
+def es_liga_top_profesional(liga_nom: str, pais_nom: str = "") -> bool:
+    """Verifica si un torneo pertenece estrictamente a las ligas profesionales de primer nivel."""
+    texto = f"{pais_nom} {liga_nom}".lower().strip()
+    # 1. Comprobar si tiene palabras excluidas (juveniles, 3ra division, regionales)
+    for exc in LIGAS_EXCLUIDAS_KEYWORDS:
+        if exc in texto:
+            return False
+    # 2. Comprobar si pertenece a las ligas top
+    for top in LIGAS_TOP_KEYWORDS:
+        if top in texto:
+            return True
+    return False
+
+
+def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
     """
     Obtiene ÚNICAMENTE los partidos PRÓXIMOS A DISPUTARSE (NS, TBD) o EN VIVO (1H, 2H, HT, LIVE)
-    desde api_client y calcula estimaciones dinámicas de Poisson y Dixon-Coles.
-    EXCLUYE RIGUROSAMENTE cualquier partido ya FINALIZADO (FT, AET, PEN) para que los
-    apostadores reciban únicamente boletos con resolución en vivo o próxima.
+    desde api_client de las LIGAS TOP PROFESIONALES y calcula estimaciones de Poisson.
+    EXCLUYE RIGUROSAMENTE divisiones menores, ligas juveniles y partidos finalizados.
     """
     try:
         import api_client
@@ -978,6 +1019,10 @@ def extraer_candidatos_reales_de_hoy() -> list:
                 liga_nom = l_data.get("nombre", "Liga")
                 pais_nom = l_data.get("pais", "Mundo")
                 l_tag = f"{pais_nom} - {liga_nom}"
+
+                # Filtro estricto de ligas top profesionales
+                if solo_top and not es_liga_top_profesional(liga_nom, pais_nom):
+                    continue
 
                 for p in p_lista:
                     loc = p.get("local", "")
@@ -1227,34 +1272,41 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
     }
 
 
-def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_tipo: str = "todos") -> dict:
+def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_tipo: str = "todos", solo_top_ligas: bool = True) -> dict:
     """
     Escanea y selecciona los partidos con MAYOR PROBABILIDAD MATEMÁTICA DE VICTORIA FIJA (1 o 2)
-    de las Ligas Top y partidos programados (Banker Picks / Fijos de Oro),
+    estrictamente de las LIGAS TOP PROFESIONALES (Premier, LaLiga, Serie A, Bundesliga, Liga MX, Champions...),
     evaluados con el modelo Poisson Multifactorial, ventaja de localía y ratings de poder ELO.
     """
     if not lista_partidos:
-        partidos_dia = extraer_candidatos_reales_de_hoy()
-        if partidos_dia and len(partidos_dia) >= 4:
-            lista_partidos = list(partidos_dia)
-        else:
-            lista_partidos = [
-                {"id": 1301031, "local": "Real Madrid", "visita": "Leganés", "liga": "🇪🇸 LaLiga", "lh": 2.65, "la": 0.55, "power_l": 94, "power_v": 72},
-                {"id": 1301032, "local": "Manchester City", "visita": "Southampton", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.80, "la": 0.60, "power_l": 95, "power_v": 71},
-                {"id": 1301033, "local": "Bayern Múnich", "visita": "Bochum", "liga": "🇩🇪 Bundesliga", "lh": 3.10, "la": 0.65, "power_l": 93, "power_v": 70},
-                {"id": 1301034, "local": "Barcelona", "visita": "Las Palmas", "liga": "🇪🇸 LaLiga", "lh": 2.70, "la": 0.60, "power_l": 93, "power_v": 73},
-                {"id": 1301035, "local": "Arsenal", "visita": "Ipswich Town", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.50, "la": 0.50, "power_l": 92, "power_v": 70},
-                {"id": 1301036, "local": "Inter Milan", "visita": "Monza", "liga": "🇮🇹 Serie A", "lh": 2.40, "la": 0.55, "power_l": 91, "power_v": 73},
-                {"id": 1301037, "local": "América", "visita": "Puebla", "liga": "🇲🇽 Liga MX", "lh": 2.35, "la": 0.65, "power_l": 88, "power_v": 71},
-                {"id": 1301038, "local": "PSG", "visita": "Angers", "liga": "🇫🇷 Ligue 1", "lh": 2.75, "la": 0.60, "power_l": 91, "power_v": 71},
-                {"id": 1301039, "local": "Liverpool", "visita": "Leicester City", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.60, "la": 0.70, "power_l": 93, "power_v": 74},
-                {"id": 1301040, "local": "Bayer Leverkusen", "visita": "St. Pauli", "liga": "🇩🇪 Bundesliga", "lh": 2.45, "la": 0.60, "power_l": 90, "power_v": 72},
-                {"id": 1301041, "local": "Juventus", "visita": "Venezia", "liga": "🇮🇹 Serie A", "lh": 2.25, "la": 0.50, "power_l": 89, "power_v": 71},
-                {"id": 1301042, "local": "Monterrey", "visita": "Mazatlán", "liga": "🇲🇽 Liga MX", "lh": 2.20, "la": 0.60, "power_l": 86, "power_v": 71},
-                {"id": 1301043, "local": "Cruz Azul", "visita": "FC Juárez", "liga": "🇲🇽 Liga MX", "lh": 2.15, "la": 0.60, "power_l": 86, "power_v": 72},
-                {"id": 1301044, "local": "Sporting CP", "visita": "Moreirense", "liga": "🇵🇹 Primeira Liga", "lh": 2.50, "la": 0.55, "power_l": 89, "power_v": 73},
-                {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71}
-            ]
+        partidos_dia = extraer_candidatos_reales_de_hoy(solo_top=solo_top_ligas)
+        top_curados = [
+            {"id": 1301031, "local": "Real Madrid", "visita": "Leganés", "liga": "🇪🇸 LaLiga", "lh": 2.65, "la": 0.55, "power_l": 94, "power_v": 72},
+            {"id": 1301032, "local": "Manchester City", "visita": "Southampton", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.80, "la": 0.60, "power_l": 95, "power_v": 71},
+            {"id": 1301033, "local": "Bayern Múnich", "visita": "Bochum", "liga": "🇩🇪 Bundesliga", "lh": 3.10, "la": 0.65, "power_l": 93, "power_v": 70},
+            {"id": 1301034, "local": "Barcelona", "visita": "Las Palmas", "liga": "🇪🇸 LaLiga", "lh": 2.70, "la": 0.60, "power_l": 93, "power_v": 73},
+            {"id": 1301035, "local": "Arsenal", "visita": "Ipswich Town", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.50, "la": 0.50, "power_l": 92, "power_v": 70},
+            {"id": 1301036, "local": "Inter Milan", "visita": "Monza", "liga": "🇮🇹 Serie A", "lh": 2.40, "la": 0.55, "power_l": 91, "power_v": 73},
+            {"id": 1301037, "local": "América", "visita": "Puebla", "liga": "🇲🇽 Liga MX", "lh": 2.35, "la": 0.65, "power_l": 88, "power_v": 71},
+            {"id": 1301038, "local": "PSG", "visita": "Angers", "liga": "🇫🇷 Ligue 1", "lh": 2.75, "la": 0.60, "power_l": 91, "power_v": 71},
+            {"id": 1301039, "local": "Liverpool", "visita": "Leicester City", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.60, "la": 0.70, "power_l": 93, "power_v": 74},
+            {"id": 1301040, "local": "Bayer Leverkusen", "visita": "St. Pauli", "liga": "🇩🇪 Bundesliga", "lh": 2.45, "la": 0.60, "power_l": 90, "power_v": 72},
+            {"id": 1301041, "local": "Juventus", "visita": "Venezia", "liga": "🇮🇹 Serie A", "lh": 2.25, "la": 0.50, "power_l": 89, "power_v": 71},
+            {"id": 1301042, "local": "Monterrey", "visita": "Mazatlán", "liga": "🇲🇽 Liga MX", "lh": 2.20, "la": 0.60, "power_l": 86, "power_v": 71},
+            {"id": 1301043, "local": "Cruz Azul", "visita": "FC Juárez", "liga": "🇲🇽 Liga MX", "lh": 2.15, "la": 0.60, "power_l": 86, "power_v": 72},
+            {"id": 1301044, "local": "Sporting CP", "visita": "Moreirense", "liga": "🇵🇹 Primeira Liga", "lh": 2.50, "la": 0.55, "power_l": 89, "power_v": 73},
+            {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71}
+        ]
+
+        lista_partidos = []
+        if partidos_dia:
+            lista_partidos.extend(partidos_dia)
+
+        if len(lista_partidos) < top_n:
+            ids_existentes = set([p.get("id") for p in lista_partidos])
+            for tc in top_curados:
+                if tc.get("id") not in ids_existentes:
+                    lista_partidos.append(tc)
 
     candidatos = []
     for idx, p in enumerate(lista_partidos):
