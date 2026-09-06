@@ -5,12 +5,22 @@ from pathlib import Path
 import analytics
 import api_client
 
-ARCHIVO_HISTORIAL = Path("historial_picks_free.json")
+def _get_archivo_path() -> Path:
+    candidates = [
+        Path(__file__).parent / "historial_picks_free.json",
+        Path("historial_picks_free.json"),
+        Path("smart_pick_pro/historial_picks_free.json")
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return Path(__file__).parent / "historial_picks_free.json"
 
 def _cargar_datos() -> dict:
-    if ARCHIVO_HISTORIAL.exists():
+    archivo_historial = _get_archivo_path()
+    if archivo_historial.exists():
         try:
-            with open(ARCHIVO_HISTORIAL, "r", encoding="utf-8") as f:
+            with open(archivo_historial, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error cargando historial de picks: {e}")
@@ -125,7 +135,8 @@ def _cargar_datos() -> dict:
 
 def _guardar_datos(datos: dict):
     try:
-        with open(ARCHIVO_HISTORIAL, "w", encoding="utf-8") as f:
+        target_path = _get_archivo_path()
+        with open(target_path, "w", encoding="utf-8") as f:
             json.dump(datos, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"Error guardando historial de picks: {e}")
