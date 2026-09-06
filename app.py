@@ -64,6 +64,8 @@ import pitch_renderer
 importlib.reload(pitch_renderer)
 import social_card_generator
 importlib.reload(social_card_generator)
+import free_picks_manager
+importlib.reload(free_picks_manager)
 try:
     import assets_data
     importlib.reload(assets_data)
@@ -616,118 +618,304 @@ if not st.session_state['autenticado']:
         </div>
         ''')
     
-    col_log1, col_log2, col_log3 = st.columns([1, 2.8, 1])
-    with col_log2:
-        tab_login, tab_register = st.tabs(["🔒 Iniciar Sesión", "✨ Crear Cuenta Nueva / Registro"])
+    # 3 Pestañas Principales en la Pantalla Pública
+    tab_freepick, tab_historial, tab_login_acc = st.tabs([
+        "🎁 1. Pick de Oro Gratuito (Banker del Día)",
+        "📊 2. Historial Auditado (% de Efectividad)",
+        "🔒 3. Iniciar Sesión / Registro VIP & Pagos"
+    ])
+
+    # 1. PESTAÑA PICK DE ORO GRATUITO DEL DÍA
+    with tab_freepick:
+        pick_del_dia = free_picks_manager.obtener_o_crear_pick_hoy()
+        stats_ef = free_picks_manager.obtener_estadisticas_efectividad()
         
-        with tab_login:
-            render_html('''
-            <div style="background: #151821; padding: 20px 20px 10px 20px; border-radius: 14px 14px 0 0; border: 1px solid #282F3F; border-bottom: none;">
-                <h4 style="color: white; margin: 0 0 10px 0; font-weight: 800; text-align: center;">Acceso a tu Cuenta VIP</h4>
+        loc_f = pick_del_dia.get("local", "Local")
+        vis_f = pick_del_dia.get("visita", "Visita")
+        logo_l = pick_del_dia.get("logo_local") or api_client.obtener_logo_oficial_equipo(loc_f)
+        logo_v = pick_del_dia.get("logo_visita") or api_client.obtener_logo_oficial_equipo(vis_f)
+        liga_f = pick_del_dia.get("liga", "Ligas Élite")
+        hora_f = pick_del_dia.get("hora", "Hoy")
+        merc_f = pick_del_dia.get("mercado", "Victoria")
+        cuota_f = float(pick_del_dia.get("cuota", 1.30))
+        prob_f = float(pick_del_dia.get("probabilidad", 80.0))
+        res_f = pick_del_dia.get("resultado", "PENDIENTE")
+        marcador_f = pick_del_dia.get("marcador", "Por Jugar")
+        doble_f = pick_del_dia.get("doble_op", "")
+        fecha_f = pick_del_dia.get("fecha", datetime.date.today().strftime("%Y-%m-%d"))
+
+        if res_f == "GANADA":
+            badge_status = f'<span style="background:#065F46; color:#34D399; border:1.5px solid #10B981; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px; box-shadow:0 0 12px rgba(16,185,129,0.3);">🟢 ¡PICK ACERTADO! ({marcador_f})</span>'
+        elif res_f == "PERDIDA":
+            badge_status = f'<span style="background:#7F1D1D; color:#FCA5A5; border:1.5px solid #EF4444; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px;">🔴 FINALIZADO ({marcador_f})</span>'
+        elif res_f == "EN JUEGO":
+            badge_status = f'<span style="background:#854D0E; color:#FDE047; border:1.5px solid #EAB308; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px;">⚽ EN JUEGO ({marcador_f})</span>'
+        else:
+            badge_status = f'<span style="background:rgba(56,189,248,0.15); color:#38BDF8; border:1.5px solid #38BDF8; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px;">⏳ PENDIENTE • {hora_f}</span>'
+
+        col_fp1, col_fp2, col_fp3 = st.columns([1, 2.8, 1])
+        with col_fp2:
+            render_html(f'''
+            <div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 50%, #11141C 100%); border: 2px solid #D4AF37; border-radius: 18px; padding: 24px 20px; text-align: center; box-shadow: 0 10px 30px rgba(212,175,55,0.25); margin-bottom: 16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #282F3F; padding-bottom:12px;">
+                    <div style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; padding:4px 12px; border-radius:12px; font-weight:900; font-size:12px; letter-spacing:0.5px;">
+                        🎁 PICK DE ORO GRATUITO DEL DÍA
+                    </div>
+                    <div>{badge_status}</div>
+                </div>
+                
+                <div style="color:#aaa; font-size:12px; font-weight:bold; margin-bottom:14px;">🏆 {liga_f} • 📅 {fecha_f} • ⏰ {hora_f}</div>
+                
+                <div style="display:flex; justify-content:space-around; align-items:center; margin: 16px 0;">
+                    <div style="text-align:center; flex:1;">
+                        <img src="{logo_l}" style="width:65px; height:65px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.5));" />
+                        <div style="color:#FFFFFF; font-weight:900; font-size:15px; margin-top:6px;">{loc_f}</div>
+                    </div>
+                    <div style="color:#D4AF37; font-weight:900; font-size:22px; padding:0 10px;">VS</div>
+                    <div style="text-align:center; flex:1;">
+                        <img src="{logo_v}" style="width:65px; height:65px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.5));" />
+                        <div style="color:#FFFFFF; font-weight:900; font-size:15px; margin-top:6px;">{vis_f}</div>
+                    </div>
+                </div>
+                
+                <div style="background:#0D0F14; border:1.5px solid #D4AF37; border-radius:12px; padding:14px; margin:16px 0;">
+                    <div style="color:#F3E5AB; font-size:12px; font-weight:bold; text-transform:uppercase;">Pronóstico de Máxima Certeza Matemática</div>
+                    <div style="color:#FFFFFF; font-weight:900; font-size:20px; margin:6px 0;">👑 {merc_f}</div>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:8px;">
+                        <span style="background:#151821; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; font-size:14px; padding:4px 12px; border-radius:8px;">Cuota @{cuota_f:.2f}</span>
+                        <span style="background:#151821; border:1px solid #38BDF8; color:#38BDF8; font-weight:900; font-size:14px; padding:4px 12px; border-radius:8px;">Certeza {prob_f}%</span>
+                    </div>
+                    <div style="color:#aaa; font-size:12px; margin-top:8px;">🛡️ <i>Opción Conservadora: {doble_f}</i></div>
+                </div>
+
+                <div style="background:rgba(16,185,129,0.1); border:1px solid #10B981; border-radius:10px; padding:10px; color:#A7F3D0; font-size:13px; font-weight:bold;">
+                    📊 Efectividad Global Auditada: <span style="color:#34D399; font-size:15px;">{stats_ef['efectividad_pct']}%</span> ({stats_ef['ganadas']} Acertadas / {stats_ef['perdidas']} Falladas)
+                </div>
             </div>
             ''')
-            user_input = st.text_input("Usuario:", key="login_user")
-            pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
             
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True, key="btn_login_submit"):
-                exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
-                if exito:
-                    st.session_state['autenticado'] = True
-                    st.session_state['usuario'] = user_input.strip().lower()
-                    st.session_state['rol'] = mensaje_o_rol
-                    st.rerun()
-                else:
-                    st.error(f"❌ {mensaje_o_rol}")
+            import urllib.parse
+            msg_wa = f"🎁 *SMART PICK PRO VIP - PICK DE ORO GRATUITO DEL DÍA* 🎁\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚽ *{loc_f} vs {vis_f}*\n🏆 {liga_f} | ⏰ {hora_f}\n👑 *Pick Recomendado:* {merc_f}\n💰 *Cuota:* @{cuota_f:.2f} | 🎯 *Certeza:* {prob_f}%\n📊 *Efectividad Auditada:* {stats_ef['efectividad_pct']}%\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📲 Accede al Escáner VIP y Fijos de Oro en: https://smartpickprojz.com.mx"
+            enc_wa = urllib.parse.quote(msg_wa)
+            
+            render_html(f'''
+            <a href="https://wa.me/?text={enc_wa}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-bottom:14px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
+                💬 COMPARTIR ESTE PICK EN WHATSAPP (1 CLIC)
+            </a>
+            ''')
+            
+            render_html('''
+            <div style="background:linear-gradient(135deg, #2D1B00 0%, #151821 100%); border:1.5px solid #D4AF37; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(212,175,55,0.2);">
+                <div style="color:#F3E5AB; font-weight:900; font-size:15px; margin-bottom:4px;">👑 ¿QUIERES LOS 10 FIJOS DE ORO & PARLAYS VIP DE HOY?</div>
+                <p style="color:#ccc; font-size:12px; margin:0 0 10px 0;">Accede al radar de fijos completo con cuotas combinadas +x50.00, festival de goles y Progol.</p>
+                <div style="color:#D4AF37; font-weight:bold; font-size:13px;">👉 Ve a la pestaña <b>"🔒 3. Iniciar Sesión / Registro VIP & Pagos"</b> para activar tu cuenta por solo $149 MXN.</div>
+            </div>
+            ''')
 
-        with tab_register:
-            if codigo_referido_url:
+    # 2. PESTAÑA HISTORIAL AUDITADO (% EFECTIVIDAD)
+    with tab_historial:
+        stats_ef = free_picks_manager.obtener_estadisticas_efectividad()
+        picks_historial = stats_ef.get("picks", [])
+        
+        col_h1, col_h2, col_h3 = st.columns([1, 2.8, 1])
+        with col_h2:
+            render_html('''
+            <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1px solid #282F3F; border-radius:14px; padding:18px; text-align:center; margin-bottom:16px;">
+                <h3 style="color:white; margin:0 0 6px 0; font-weight:900;">📊 HISTORIAL AUDITADO DE PICKS DIARIOS</h3>
+                <p style="color:#94A3B8; font-size:13px; margin:0;">Registro y verificación automática con marcadores oficiales de API-Football.</p>
+            </div>
+            ''')
+            
+            col_k1, col_k2, col_k3, col_k4 = st.columns(4)
+            with col_k1:
                 render_html(f'''
-                <div style="background: rgba(212, 175, 55, 0.15); border: 1.5px solid #D4AF37; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; text-align: center;">
-                    <span style="color: #F3E5AB; font-size: 13px; font-weight: bold;">🎁 ¡Invitación VIP Detectada! Código: <b style="color:#D4AF37; font-size:14px;">{codigo_referido_url.upper()}</b></span>
+                <div style="background:#11141C; border:1.5px solid #10B981; border-radius:10px; padding:10px; text-align:center;">
+                    <div style="color:#aaa; font-size:11px; font-weight:bold;">EFECTIVIDAD</div>
+                    <div style="color:#34D399; font-size:22px; font-weight:900;">{stats_ef['efectividad_pct']}%</div>
+                </div>
+                ''')
+            with col_k2:
+                render_html(f'''
+                <div style="background:#11141C; border:1.5px solid #10B981; border-radius:10px; padding:10px; text-align:center;">
+                    <div style="color:#aaa; font-size:11px; font-weight:bold;">VERDES</div>
+                    <div style="color:#34D399; font-size:22px; font-weight:900;">🟢 {stats_ef['ganadas']}</div>
+                </div>
+                ''')
+            with col_k3:
+                render_html(f'''
+                <div style="background:#11141C; border:1.5px solid #EF4444; border-radius:10px; padding:10px; text-align:center;">
+                    <div style="color:#aaa; font-size:11px; font-weight:bold;">ROJOS</div>
+                    <div style="color:#FCA5A5; font-size:22px; font-weight:900;">🔴 {stats_ef['perdidas']}</div>
+                </div>
+                ''')
+            with col_k4:
+                render_html(f'''
+                <div style="background:#11141C; border:1.5px solid #D4AF37; border-radius:10px; padding:10px; text-align:center;">
+                    <div style="color:#aaa; font-size:11px; font-weight:bold;">CUOTA PROM.</div>
+                    <div style="color:#D4AF37; font-size:22px; font-weight:900;">@{stats_ef['cuota_promedio']:.2f}</div>
                 </div>
                 ''')
 
-            reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
-            reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
-            reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
-            reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
-            reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
-
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("✨ CREAR MI CUENTA", use_container_width=True, key="btn_reg_submit"):
-                if not reg_user or not reg_pass1 or not reg_email:
-                    st.error("❌ Por favor completa el usuario, correo electrónico y contraseña.")
-                elif "@" not in reg_email or "." not in reg_email:
-                    st.error("❌ Por favor ingresa un correo electrónico válido.")
-                elif reg_pass1 != reg_pass2:
-                    st.error("❌ Las contraseñas no coinciden.")
-                elif len(reg_pass1) < 4:
-                    st.error("❌ La contraseña debe tener al menos 4 caracteres.")
+
+            for p_item in picks_historial:
+                f_res = p_item.get("resultado", "PENDIENTE")
+                f_marc = p_item.get("marcador", "")
+                f_cuota = p_item.get("cuota", 1.30)
+                f_fecha = p_item.get("fecha", "")
+                f_liga = p_item.get("liga", "")
+                f_partido = p_item.get("partido", "")
+                f_pick = p_item.get("mercado", "")
+                
+                if f_res == "GANADA":
+                    borde_res = "#10B981"
+                    bg_badge = "#065F46"
+                    txt_badge = f"🟢 ACERTADA ({f_marc})"
+                    color_txt = "#34D399"
+                elif f_res == "PERDIDA":
+                    borde_res = "#EF4444"
+                    bg_badge = "#7F1D1D"
+                    txt_badge = f"🔴 FALLADA ({f_marc})"
+                    color_txt = "#FCA5A5"
                 else:
-                    ok_reg, msg_reg = auth.registrar_usuario(
-                        username=reg_user,
-                        password=reg_pass1,
-                        role="VIP",
-                        codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None,
-                        email=reg_email.strip().lower()
-                    )
-                    if ok_reg:
-                        st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
+                    borde_res = "#38BDF8"
+                    bg_badge = "rgba(56,189,248,0.15)"
+                    txt_badge = f"⏳ EN JUEGO / PENDIENTE"
+                    color_txt = "#38BDF8"
+
+                render_html(f'''
+                <div style="background:#11141C; border-left:4px solid {borde_res}; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; border-radius:8px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="color:#aaa; font-size:11px; font-weight:bold;">📅 {f_fecha} • {f_liga}</div>
+                        <div style="color:white; font-weight:900; font-size:14px; margin-top:2px;">{f_partido}</div>
+                        <div style="color:#F3E5AB; font-size:12px; margin-top:2px;">👑 Pick: <b>{f_pick}</b> <span style="color:#D4AF37; font-weight:bold; margin-left:6px;">@{f_cuota:.2f}</span></div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="background:{bg_badge}; color:{color_txt}; border:1px solid {borde_res}; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:900;">{txt_badge}</span>
+                    </div>
+                </div>
+                ''')
+                
+            render_html('''
+            <div style="text-align:center; color:#888; font-size:11px; margin-top:12px;">
+                🔒 Auditoría 100% Automática: Marcadores oficiales de API-Football verificados al concluir cada encuentro.
+            </div>
+            ''')
+
+    # 3. PESTAÑA INICIAR SESIÓN / REGISTRO & PAGOS
+    with tab_login_acc:
+        col_log1, col_log2, col_log3 = st.columns([1, 2.8, 1])
+        with col_log2:
+            tab_login, tab_register = st.tabs(["🔒 Iniciar Sesión", "✨ Crear Cuenta Nueva / Registro"])
+            
+            with tab_login:
+                render_html('''
+                <div style="background: #151821; padding: 20px 20px 10px 20px; border-radius: 14px 14px 0 0; border: 1px solid #282F3F; border-bottom: none;">
+                    <h4 style="color: white; margin: 0 0 10px 0; font-weight: 800; text-align: center;">Acceso a tu Cuenta VIP</h4>
+                </div>
+                ''')
+                user_input = st.text_input("Usuario:", key="login_user")
+                pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True, key="btn_login_submit"):
+                    exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
+                    if exito:
                         st.session_state['autenticado'] = True
-                        st.session_state['usuario'] = reg_user.strip().lower()
-                        st.session_state['rol'] = "VIP"
+                        st.session_state['usuario'] = user_input.strip().lower()
+                        st.session_state['rol'] = mensaje_o_rol
                         st.rerun()
                     else:
-                        st.error(f"❌ {msg_reg}")
-        
-        # --- CAJA DE MÉTODOS DE PAGO INTEGRADOS ---
-        bancoppel_card = getattr(config, 'BANCOPPEL_TARJETA', '4169 1608 7646 1600')
-        bancoppel_holder = getattr(config, 'BANCOPPEL_TITULAR', 'Jesús')
-        mercadopago_url = getattr(config, 'MERCADOPAGO_LINK', 'https://mpago.la/1ZefYpR')
-        paypal_url = getattr(config, 'PAYPAL_LINK', 'https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2')
-        bitso_trc20 = getattr(config, 'BITSO_USDT_TRC20', 'TUyvrvPjGyh9v5SDYHW7GZ1g4MomKSFkh2')
+                        st.error(f"❌ {mensaje_o_rol}")
 
-        html_pago = '<div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); padding: 22px; border-radius: 14px; border: 2px dashed #D4AF37; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
-        html_pago += '<div style="background: linear-gradient(90deg, #FF512F 0%, #DD2476 100%); color: white; font-weight: 900; font-size: 13px; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(221,36,118,0.4);">🔥 ¡SÚPER OFERTA POR TIEMPO LIMITADO (50% OFF)!</div>'
-        html_pago += '<h3 style="color: #D4AF37; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #F3E5AB; font-size: 32px;">$149 MXN</span> / MES</h3>'
-        html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Realiza tu pago con el método que prefieras y envía tu comprobante por WhatsApp para activación instantánea 24/7:</p>'
-        
-        # 1. Mercado Pago
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #00B4D8; margin-bottom: 12px; text-align: left;">'
-        html_pago += f'<div style="color: #00B4D8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟢 1. MERCADO PAGO ($149 MXN)</div>'
-        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Acepta Tarjetas de Débito, Crédito, SPEI y Depósito en OXXO / 7-Eleven.</div>'
-        html_pago += f'<a href="{mercadopago_url}" target="_blank" style="background:#00B4D8; color:#0A192F; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,180,216,0.3);">💳 PAGAR $149 EN MERCADO PAGO</a>'
-        html_pago += f'</div>'
+            with tab_register:
+                if codigo_referido_url:
+                    render_html(f'''
+                    <div style="background: rgba(212, 175, 55, 0.15); border: 1.5px solid #D4AF37; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; text-align: center;">
+                        <span style="color: #F3E5AB; font-size: 13px; font-weight: bold;">🎁 ¡Invitación VIP Detectada! Código: <b style="color:#D4AF37; font-size:14px;">{codigo_referido_url.upper()}</b></span>
+                    </div>
+                    ''')
 
-        # 2. PayPal
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #38BDF8; margin-bottom: 12px; text-align: left;">'
-        html_pago += f'<div style="color: #38BDF8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🔵 2. PAYPAL ($149 MXN)</div>'
-        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Pago seguro internacional con cualquier tarjeta o saldo de PayPal.</div>'
-        html_pago += f'<a href="{paypal_url}" target="_blank" style="background:#0079C1; color:white; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,121,193,0.3);">🌐 PAGAR POR PAYPAL</a>'
-        html_pago += f'</div>'
+                reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
+                reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
+                reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
+                reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
+                reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
 
-        # 3. SPEI / BanCoppel
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 12px; text-align: left;">'
-        html_pago += f'<div style="color: #F3E5AB; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 3. TRANSFERENCIA SPEI / BANCOPPEL ($149 MXN)</div>'
-        html_pago += f'<div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div>'
-        html_pago += f'<div style="color: white; font-size: 13px;"><b>No. Tarjeta / SPEI:</b> <span style="color:#D4AF37; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div>'
-        html_pago += f'<div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div>'
-        html_pago += f'</div>'
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("✨ CREAR MI CUENTA", use_container_width=True, key="btn_reg_submit"):
+                    if not reg_user or not reg_pass1 or not reg_email:
+                        st.error("❌ Por favor completa el usuario, correo electrónico y contraseña.")
+                    elif "@" not in reg_email or "." not in reg_email:
+                        st.error("❌ Por favor ingresa un correo electrónico válido.")
+                    elif reg_pass1 != reg_pass2:
+                        st.error("❌ Las contraseñas no coinciden.")
+                    elif len(reg_pass1) < 4:
+                        st.error("❌ La contraseña debe tener al menos 4 caracteres.")
+                    else:
+                        ok_reg, msg_reg = auth.registrar_usuario(
+                            username=reg_user,
+                            password=reg_pass1,
+                            role="VIP",
+                            codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None,
+                            email=reg_email.strip().lower()
+                        )
+                        if ok_reg:
+                            st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
+                            st.session_state['autenticado'] = True
+                            st.session_state['usuario'] = reg_user.strip().lower()
+                            st.session_state['rol'] = "VIP"
+                            st.rerun()
+                        else:
+                            st.error(f"❌ {msg_reg}")
+            
+            # --- CAJA DE MÉTODOS DE PAGO INTEGRADOS ---
+            bancoppel_card = getattr(config, 'BANCOPPEL_TARJETA', '4169 1608 7646 1600')
+            bancoppel_holder = getattr(config, 'BANCOPPEL_TITULAR', 'Jesús')
+            mercadopago_url = getattr(config, 'MERCADOPAGO_LINK', 'https://mpago.la/1ZefYpR')
+            paypal_url = getattr(config, 'PAYPAL_LINK', 'https://www.paypal.com/ncp/payment/HSSHUFTYF8FG2')
+            bitso_trc20 = getattr(config, 'BITSO_USDT_TRC20', 'TUyvrvPjGyh9v5SDYHW7GZ1g4MomKSFkh2')
 
-        # 4. Bitso Crypto USDT TRC-20
-        html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #A855F7; margin-bottom: 15px; text-align: left;">'
-        html_pago += f'<div style="color: #C084FC; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟣 4. BITSO CRYPTO (USDT - RED TRON TRC-20)</div>'
-        html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 6px;">Monto: <b>8 USDT</b> (Equivalente a $149 MXN).</div>'
-        html_pago += f'<div style="color: white; font-size: 12px; word-break: break-all; background:#0D0F14; padding:8px; border-radius:6px; font-family:monospace; border:1px solid #333;"><span style="color:#A855F7; font-weight:bold;">Wallet:</span> {bitso_trc20}</div>'
-        html_pago += f'<div style="color: #aaa; font-size: 11px; margin-top:4px;">* Importante: Enviar únicamente por la Red <b>Tron (TRC-20)</b>.</div>'
-        html_pago += f'</div>'
+            html_pago = '<div style="background: linear-gradient(135deg, #151821 0%, #1A1E29 100%); padding: 22px; border-radius: 14px; border: 2px dashed #D4AF37; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center;">'
+            html_pago += '<div style="background: linear-gradient(90deg, #FF512F 0%, #DD2476 100%); color: white; font-weight: 900; font-size: 13px; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(221,36,118,0.4);">🔥 ¡SÚPER OFERTA POR TIEMPO LIMITADO (50% OFF)!</div>'
+            html_pago += '<h3 style="color: #D4AF37; margin: 4px 0 10px 0; font-weight: 900; text-align: center;">💎 ACCESO VIP: <span style="text-decoration: line-through; color: #888; font-size: 20px;">$299</span> <span style="color: #F3E5AB; font-size: 32px;">$149 MXN</span> / MES</h3>'
+            html_pago += '<p style="color: #E0E0E0; font-size: 13px; text-align: center; margin-bottom: 15px;">Realiza tu pago con el método que prefieras y envía tu comprobante por WhatsApp para activación instantánea 24/7:</p>'
+            
+            # 1. Mercado Pago
+            html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #00B4D8; margin-bottom: 12px; text-align: left;">'
+            html_pago += f'<div style="color: #00B4D8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟢 1. MERCADO PAGO ($149 MXN)</div>'
+            html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Acepta Tarjetas de Débito, Crédito, SPEI y Depósito en OXXO / 7-Eleven.</div>'
+            html_pago += f'<a href="{mercadopago_url}" target="_blank" style="background:#00B4D8; color:#0A192F; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,180,216,0.3);">💳 PAGAR $149 EN MERCADO PAGO</a>'
+            html_pago += f'</div>'
 
-        # Botón WhatsApp
-        html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20acabo%20de%20hacer%20el%20pago%20de%20%24149%20MXN%20para%20activar%20mi%20membresia%20VIP%20en%20Smart%20Pick%20Pro.%20Adjunto%20comprobante:" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE POR WHATSAPP (ACTIVACIÓN INMEDIATA)</a></div>'
-        html_pago += '</div>'
+            # 2. PayPal
+            html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #38BDF8; margin-bottom: 12px; text-align: left;">'
+            html_pago += f'<div style="color: #38BDF8; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🔵 2. PAYPAL ($149 MXN)</div>'
+            html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 8px;">Pago seguro internacional con cualquier tarjeta o saldo de PayPal.</div>'
+            html_pago += f'<a href="{paypal_url}" target="_blank" style="background:#0079C1; color:white; font-weight:900; font-size:13px; padding:8px 18px; border-radius:20px; text-decoration:none; display:inline-block; box-shadow:0 3px 10px rgba(0,121,193,0.3);">🌐 PAGAR POR PAYPAL</a>'
+            html_pago += f'</div>'
 
-        st.markdown(html_pago, unsafe_allow_html=True)
+            # 3. SPEI / BanCoppel
+            html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1px solid #282F3F; margin-bottom: 12px; text-align: left;">'
+            html_pago += f'<div style="color: #F3E5AB; font-weight: 900; font-size: 14px; margin-bottom: 6px;">🟡 3. TRANSFERENCIA SPEI / BANCOPPEL ($149 MXN)</div>'
+            html_pago += f'<div style="color: white; font-size: 13px;"><b>Banco:</b> BanCoppel</div>'
+            html_pago += f'<div style="color: white; font-size: 13px;"><b>No. Tarjeta / SPEI:</b> <span style="color:#D4AF37; font-weight:bold; font-family:monospace;">{bancoppel_card}</span></div>'
+            html_pago += f'<div style="color: white; font-size: 13px;"><b>Titular:</b> {bancoppel_holder}</div>'
+            html_pago += f'</div>'
+
+            # 4. Bitso Crypto USDT TRC-20
+            html_pago += f'<div style="background: #11141C; border-radius: 10px; padding: 14px; border: 1.5px solid #A855F7; margin-bottom: 15px; text-align: left;">'
+            html_pago += f'<div style="color: #C084FC; font-weight: 900; font-size: 14px; margin-bottom: 4px;">🟣 4. BITSO CRYPTO (USDT - RED TRON TRC-20)</div>'
+            html_pago += f'<div style="color: #ccc; font-size: 12px; margin-bottom: 6px;">Monto: <b>8 USDT</b> (Equivalente a $149 MXN).</div>'
+            html_pago += f'<div style="color: white; font-size: 12px; word-break: break-all; background:#0D0F14; padding:8px; border-radius:6px; font-family:monospace; border:1px solid #333;"><span style="color:#A855F7; font-weight:bold;">Wallet:</span> {bitso_trc20}</div>'
+            html_pago += f'<div style="color: #aaa; font-size: 11px; margin-top:4px;">* Importante: Enviar únicamente por la Red <b>Tron (TRC-20)</b>.</div>'
+            html_pago += f'</div>'
+
+            # Botón WhatsApp
+            html_pago += '<div style="text-align: center;"><a href="https://wa.me/526676947014?text=Hola%20Jesus,%20acabo%20de%20hacer%20el%20pago%20de%20%24149%20MXN%20para%20activar%20mi%20membresia%20VIP%20en%20Smart%20Pick%20Pro.%20Adjunto%20comprobante:" target="_blank" class="whatsapp-btn" style="display:inline-block; width:100%; box-sizing:border-box; font-size:15px; padding:12px;">💬 ENVIAR COMPROBANTE POR WHATSAPP (ACTIVACIÓN INMEDIATA)</a></div>'
+            html_pago += '</div>'
+
+            st.markdown(html_pago, unsafe_allow_html=True)
         
     st.stop()
 
@@ -1023,6 +1211,17 @@ if st.session_state['rol'] == 'ADMIN':
                     if st.button("🗑️", key=f"del_u_{u_id}", help="Eliminar usuario"):
                         auth.eliminar_usuario(u_id)
                         st.rerun()
+
+        st.markdown("---")
+        # 8. Auditoría y Control de Picks Gratuitos
+        st.write("#### 🎁 Gestión del Pick Gratuito Diario")
+        st_free = free_picks_manager.obtener_estadisticas_efectividad()
+        st.caption(f"Efectividad: `{st_free['efectividad_pct']}%` | Ganadas: `{st_free['ganadas']}` | Perdidas: `{st_free['perdidas']}`")
+        
+        if st.button("🔄 Forzar Verificación Automática con API", use_container_width=True):
+            res_upd = free_picks_manager.verificar_y_resolver_picks_automatico()
+            st.success(f"✅ Auditoría completada. Efectividad actual: {res_upd['efectividad_pct']}%")
+            st.rerun()
 
 def render_tarjeta_live_segura(p_item):
     if hasattr(pitch_renderer, 'render_tarjeta_partido_live_radar'):
