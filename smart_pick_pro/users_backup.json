@@ -1,14 +1,14 @@
 [
   {
     "username": "admin",
-    "password": "$2b$12$nNGFM.dDkaMgRVNUid.UUuCKWttwaXGmE0gKUdautir1DHSolsLWi",
+    "password": "$2b$12$QLO1po.G3fqBocDC0sfpj.wnl8OtLk7zkaT.e9iQJKUQqbYJroh1G",
     "role": "ADMIN",
     "is_active": 1,
-    "referral_code": "SP-ADMISIX9",
+    "referral_code": "SP-ADMIN01",
     "referred_by": null,
     "balance_disponible": 0.0,
     "total_ganado": 0.0,
-    "email": ""
+    "email": "admin@smartpickprojz.com"
   },
   {
     "username": "alexyjade",
@@ -27,17 +27,6 @@
     "role": "VIP",
     "is_active": 1,
     "referral_code": "SP-RADASO71",
-    "referred_by": null,
-    "balance_disponible": 0.0,
-    "total_ganado": 0.0,
-    "email": ""
-  },
-  {
-    "username": "test_vip_user",
-    "password": "$2b$12$2UkGXehlsqnr5yC9a3v3V.4zIjoBY0GiRaFT6JqQg/HFEI7Clus/.",
-    "role": "VIP",
-    "is_active": 1,
-    "referral_code": "SP-TEST9UEQ",
     "referred_by": null,
     "balance_disponible": 0.0,
     "total_ganado": 0.0,
