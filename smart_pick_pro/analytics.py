@@ -961,45 +961,99 @@ def evaluar_predictor_ia_ensemble(equipo_local: str, equipo_visita: str, stats_p
     }
 
 
-LIGAS_TOP_KEYWORDS = [
-    # México
-    "liga mx", "liga bbva", "femenil", "expansion mx", "expansión mx",
-    # Inglaterra
-    "premier league", "championship", "fa cup", "efl cup", "league cup",
-    # España
-    "laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "copa del rey",
-    # Italia
-    "serie a", "coppa italia",
-    # Alemania
-    "bundesliga", "dfb pokal",
-    # Francia
-    "ligue 1", "coupe de france",
-    # UEFA / Internacional
-    "champions league", "europa league", "conference league", "uefa nations league", "nations league",
-    # Conmebol / Concacaf / FIFA
-    "copa libertadores", "copa sudamericana", "concacaf", "leagues cup", "world cup", "copa del mundo", "copa america", "copa américa", "euro", "eliminatorias", "friendly", "amistosos",
-    # Ligas Top Reconocidas
-    "eredivisie", "primeira liga", "mls", "major league soccer", "saudi pro league", "pro league", "super league", "süper lig", "premiership", "liga profesional", "brasileirao", "brasileirão"
-]
+# LISTA BLANCA ESTRICTA DE PAÍSES Y TORNEOS ÉLITE
+LIGAS_ELITE_WHITELIST = {
+    # 1. México (Liga MX & Expansión)
+    "mexico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion mx", "liga de expansión mx", "copa mx", "campeon de campeones"],
+    "méxico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion mx", "liga de expansión mx", "copa mx", "campeon de campeones"],
+    
+    # 2. Inglaterra (Premier League & Championship & Copas)
+    "england": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield"],
+    "inglaterra": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield"],
+    
+    # 3. España (LaLiga & LaLiga 2 & Copa del Rey)
+    "spain": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa"],
+    "españa": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa"],
+    
+    # 4. Italia (Serie A & Coppa Italia)
+    "italy": ["serie a", "coppa italia", "supercoppa italiana"],
+    "italia": ["serie a", "coppa italia", "supercoppa italiana"],
+    
+    # 5. Alemania (Bundesliga & DFB Pokal)
+    "germany": ["bundesliga", "dfb pokal", "supercup"],
+    "alemania": ["bundesliga", "dfb pokal", "supercup"],
+    
+    # 6. Francia (Ligue 1 & Coupe de France)
+    "france": ["ligue 1", "coupe de france", "trophee des champions"],
+    "francia": ["ligue 1", "coupe de france", "trophee des champions"],
+    
+    # 7. Países Bajos (Eredivisie)
+    "netherlands": ["eredivisie", "knvb beker"],
+    "países bajos": ["eredivisie", "knvb beker"],
+    "paises bajos": ["eredivisie", "knvb beker"],
+    "holanda": ["eredivisie", "knvb beker"],
+    
+    # 8. Portugal (Primeira Liga)
+    "portugal": ["primeira liga", "taca de portugal", "taça de portugal"],
+    
+    # 9. Estados Unidos (MLS)
+    "usa": ["major league soccer", "mls", "us open cup", "leagues cup"],
+    "estados unidos": ["major league soccer", "mls", "us open cup", "leagues cup"],
+    
+    # 10. Arabia Saudita (Saudi Pro League)
+    "saudi-arabia": ["saudi pro league", "king's cup", "super cup"],
+    "saudi arabia": ["saudi pro league", "king's cup", "super cup"],
+    "arabia saudita": ["saudi pro league", "king's cup", "super cup"],
+    
+    # 11. Argentina (Liga Profesional de Fútbol)
+    "argentina": ["liga profesional", "copa de la liga", "copa argentina", "trofeo de campeones"],
+    
+    # 12. Brasil (Brasileirão Serie A)
+    "brazil": ["serie a", "brasileirao", "brasileirão", "copa do brasil"],
+    "brasil": ["serie a", "brasileirao", "brasileirão", "copa do brasil"],
+    
+    # 13. Torneos Internacionales de Clubes y Selecciones
+    "world": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying"],
+    "mundo": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying"],
+    "europe": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa"],
+    "europa": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa"],
+    "south-america": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"],
+    "sudamerica": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"],
+    "sudamérica": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"]
+}
 
 LIGAS_EXCLUIDAS_KEYWORDS = [
     "u19", "u20", "u21", "u23", "u-19", "u-20", "u-21", "u-23", "sub-19", "sub-20", "sub-21", "sub-23", "sub 19", "sub 20", "sub 21", "sub 23",
-    "júniores", "juniores", "primavera", "youth", "juvenil", "femenino u", "women u",
+    "júniores", "juniores", "primavera", "youth", "juvenil",
     "tercera", "rfef", "3. lig", "3. division", "division 2", "division 3", "división 2", "división 3",
-    "regional", "torneo federal", "serie c", "serie d", "oberliga", "national 2", "national 3", "nacional b", "amateur", "reserve", "reserves", "preferente", "autonómica", "a lyga", "liga premier", "serie b1", "serie b2"
+    "frauen", "women", "feminin",
+    "regional", "torneo federal", "serie c", "serie d", "oberliga", "national 2", "national 3", "nacional b", "amateur", "reserve", "reserves", "preferente", "autonómica", "a lyga", "liga premier", "serie b1", "serie b2", "challenger"
 ]
 
 def es_liga_top_profesional(liga_nom: str, pais_nom: str = "") -> bool:
-    """Verifica si un torneo pertenece estrictamente a las ligas profesionales de primer nivel."""
-    texto = f"{pais_nom} {liga_nom}".lower().strip()
-    # 1. Comprobar si tiene palabras excluidas (juveniles, 3ra division, regionales)
+    """
+    Verifica con precisión absoluta si un partido pertenece a una liga o torneo de ÉLITE mundial.
+    Aplica lista blanca estricta de país + nombre de torneo y descarta torneos secundarios o juveniles.
+    """
+    pais_clean = str(pais_nom).lower().strip().replace(" ", "-")
+    pais_raw = str(pais_nom).lower().strip()
+    liga_clean = str(liga_nom).lower().strip()
+    
+    # 1. Descartar de inmediato si contiene palabras excluidas (juveniles, 3ra division, regional, etc.)
     for exc in LIGAS_EXCLUIDAS_KEYWORDS:
-        if exc in texto:
+        if exc in liga_clean or exc in pais_clean:
             return False
-    # 2. Comprobar si pertenece a las ligas top
-    for top in LIGAS_TOP_KEYWORDS:
-        if top in texto:
+
+    # 2. Buscar si el país está en la lista blanca
+    torneos_permitidos = LIGAS_ELITE_WHITELIST.get(pais_clean) or LIGAS_ELITE_WHITELIST.get(pais_raw)
+    if not torneos_permitidos:
+        return False
+        
+    # 3. Comprobar que el nombre de la liga coincida con un torneo permitido de ese país
+    for t_val in torneos_permitidos:
+        if t_val in liga_clean:
             return True
+            
     return False
 
 
@@ -1272,7 +1326,7 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
     }
 
 
-def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_tipo: str = "todos", solo_top_ligas: bool = True) -> dict:
+def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_tipo: str = "todos", solo_top_ligas: bool = True, alcance_ligas: str = "elite_top") -> dict:
     """
     Escanea y selecciona los partidos con MAYOR PROBABILIDAD MATEMÁTICA DE VICTORIA FIJA (1 o 2)
     estrictamente de las LIGAS TOP PROFESIONALES (Premier, LaLiga, Serie A, Bundesliga, Liga MX, Champions...),
@@ -1300,7 +1354,12 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
 
         lista_partidos = []
         if partidos_dia:
-            lista_partidos.extend(partidos_dia)
+            if alcance_ligas == "elite_top":
+                ligas_super_top = ["premier league", "laliga", "la liga", "serie a", "bundesliga", "ligue 1", "champions", "liga mx"]
+                partidos_filtrados = [p for p in partidos_dia if any(st in p.get("liga", "").lower() for st in ligas_super_top)]
+                lista_partidos.extend(partidos_filtrados)
+            else:
+                lista_partidos.extend(partidos_dia)
 
         if len(lista_partidos) < top_n:
             ids_existentes = set([p.get("id") for p in lista_partidos])
