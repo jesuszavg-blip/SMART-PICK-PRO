@@ -42,5 +42,16 @@
     "balance_disponible": 0.0,
     "total_ganado": 0.0,
     "email": ""
+  },
+  {
+    "username": "2nelson2",
+    "password": "$2b$12$juDBip0x0vs8XjLVrk10bu6Y1pcyDX53qpU3UFscUk6nwmmYlKGHi",
+    "role": "VIP",
+    "is_active": 1,
+    "referral_code": "SP-2NELFN9E",
+    "referred_by": null,
+    "balance_disponible": 0.0,
+    "total_ganado": 0.0,
+    "email": ""
   }
 ]
