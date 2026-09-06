@@ -1785,19 +1785,24 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
         ])
 
         with subtab_fijos:
-            col_pf1, col_pf2, col_pf3 = st.columns([1.2, 1.2, 0.8])
+            col_pf1, col_pf2, col_pf3, col_pf4 = st.columns([1.0, 1.2, 1.2, 0.7])
             with col_pf1:
-                top_n_fijos = st.slider("Cantidad de Partidos en el Parlay de Fijos:", 3, 15, 10, key="slider_fijos_n")
+                top_n_fijos = st.slider("Cantidad de Fijos:", 3, 15, 10, key="slider_fijos_n")
             with col_pf2:
-                filtro_fijos_cat = st.selectbox("🎯 Filtrar por Tipo de Fijo:", [
+                filtro_alcance_ligas = st.selectbox("🏆 Torneos a Escanear:", [
+                    "⭐ Ligas Élite Principales (Premier, LaLiga, Serie A, Liga MX, Champions)",
+                    "🌎 Todas las Ligas Top (Incluye Brasil, Argentina, Expansión, MLS)"
+                ], key="sel_alcance_ligas")
+            with col_pf3:
+                filtro_fijos_cat = st.selectbox("🎯 Tipo de Fijo:", [
                     "👑 Todos los Fijos de Oro",
                     "🏠 Solo Fijos Locales (1)",
                     "✈️ Solo Fijos Visitantes (2)",
                     "💎 Super Favoritos (+70% Certeza)"
                 ], key="sel_filtro_fijos_cat")
-            with col_pf3:
+            with col_pf4:
                 st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-                if st.button("🚀 RECALCULAR FIJOS", use_container_width=True):
+                if st.button("🚀 RECALCULAR", use_container_width=True):
                     api_client.obtener_partidos_de_hoy.clear()
                     st.rerun()
 
@@ -1809,8 +1814,10 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
             elif "Super" in filtro_fijos_cat:
                 f_code = "super_favoritos"
 
+            alcance_code = "elite_top" if "Élite" in filtro_alcance_ligas else "todas_top"
+
             with st.spinner("Procesando probabilidades de victoria contundente y ratings ELO en ligas top..."):
-                fijos_data = analytics.generar_top_fijos_oro(top_n=top_n_fijos, filtro_tipo=f_code)
+                fijos_data = analytics.generar_top_fijos_oro(top_n=top_n_fijos, filtro_tipo=f_code, alcance_ligas=alcance_code)
 
             picks_fijos = fijos_data.get("fijos", [])
             cuota_tot_fijos = fijos_data.get("cuota_parlay_fijos", 1.0)
