@@ -337,10 +337,11 @@ def obtener_ligas_mundo():
         
         ligas_top = {
             "📅 [HOY] Partidos de Hoy (Resuelven Hoy Mismo)": "TODAY_MATCHES_MODE",
+            "👑 [VIP] Radar de Fijos de Oro (Banker Picks - Top Ligas)": "BANKER_PICKS_MODE",
             "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)": "GOAL_FESTIVAL_MODE",
             "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)": "SOCIAL_CARD_MODE",
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
-            "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
+            "💎 [ESPECIAL] Cazador de Parlays VIP (Fijos, Altas & Empates)": "PARLAY_HUNTER_MODE",
             "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
             "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
@@ -376,10 +377,11 @@ def obtener_ligas_mundo():
 
     return {
         "📅 [HOY] Partidos de Hoy (Resuelven Hoy Mismo)": "TODAY_MATCHES_MODE",
+        "👑 [VIP] Radar de Fijos de Oro (Banker Picks - Top Ligas)": "BANKER_PICKS_MODE",
         "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)": "GOAL_FESTIVAL_MODE",
         "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)": "SOCIAL_CARD_MODE",
         "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
-        "💎 [ESPECIAL] Cazador de Parlays VIP (Top 15 Altas & Top 5 Empates)": "PARLAY_HUNTER_MODE",
+        "💎 [ESPECIAL] Cazador de Parlays VIP (Fijos, Altas & Empates)": "PARLAY_HUNTER_MODE",
         "🎯 [ESPECIAL] Simulador Progol": "PROGOL_MODE",
         "⚙️ [ESPECIAL] Optimizador de Reducciones": "REDUCCIONES_MODE",
         "🇲🇽 Mexico - Liga MX": "262",
