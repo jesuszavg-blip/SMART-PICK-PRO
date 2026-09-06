@@ -799,14 +799,19 @@ sidebar_casinos_html = f'<div style="background:linear-gradient(135deg, #151821 
 st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
 
 # Botones de Acceso Rápido VIP en la Barra Lateral
-col_sb_sc1, col_sb_sc2 = st.sidebar.columns(2)
+col_sb_sc1, col_sb_sc2, col_sb_sc3 = st.sidebar.columns(3)
 with col_sb_sc1:
+    if st.button("👑 FIJOS", use_container_width=True, help="Abrir Radar de Fijos de Oro (Banker Picks - Top Ligas)"):
+        st.session_state['liga_selector_override'] = "👑 [VIP] Radar de Fijos de Oro (Banker Picks - Top Ligas)"
+        st.session_state['live_partido_detalle'] = None
+        st.rerun()
+with col_sb_sc2:
     if st.button("🔥 GOLES", use_container_width=True, help="Abrir Radar Festival de Goles"):
         st.session_state['liga_selector_override'] = "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)"
         st.session_state['live_partido_detalle'] = None
         st.rerun()
-with col_sb_sc2:
-    if st.button("📸 REDES HD", use_container_width=True, help="Abrir Generador de Fichas para Redes Sociales"):
+with col_sb_sc3:
+    if st.button("📸 REDES", use_container_width=True, help="Abrir Generador de Fichas para Redes Sociales"):
         st.session_state['liga_selector_override'] = "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)"
         st.session_state['live_partido_detalle'] = None
         st.rerun()
@@ -1763,20 +1768,124 @@ if liga_elegida_val == "LIVE_RADAR_MODE":
 
         st.stop()
 
-# --- MODO 0.5: CAZADOR DE PARLAYS VIP (TOP 15 ALTAS & TOP 5 EMPATES) ---
-elif liga_elegida_val == "PARLAY_HUNTER_MODE":
+# --- MODO 0.5: CAZADOR DE PARLAYS VIP (FIJOS DE ORO, ALTAS & EMPATES) ---
+elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
     if not st.session_state.get('live_partido_detalle'):
         render_html('''
         <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);">
-            <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">💎 CAZADOR DE PARLAYS VIP (+ALTAS & EMPATES DE ORO)</h2>
-            <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Partidos de Hoy con Cuotas de Valor y Cobro Inmediato.</p>
+            <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">💎 CAZADOR DE PARLAYS VIP (FIJOS DE ORO, ALTAS & EMPATES)</h2>
+            <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Algoritmos de Simulación Poisson & Dixon-Coles optimizados para Partidos de Hoy y Ligas Top con Cuotas de Valor y Cobro Inmediato.</p>
         </div>
         ''')
         
-        subtab_altas, subtab_empates = st.tabs([
-            "🔥 1. Parlay Maestro de Altas (Top 15 Partidos)",
-            "⚖️ 2. Radar de Empates de Oro (Top 5 Partidos)"
+        subtab_fijos, subtab_altas, subtab_empates = st.tabs([
+            "👑 1. Radar de Fijos de Oro (Banker Picks)",
+            "🔥 2. Parlay Maestro de Altas (Top Altas)",
+            "⚖️ 3. Radar de Empates de Oro (Top Empates)"
         ])
+
+        with subtab_fijos:
+            col_pf1, col_pf2, col_pf3 = st.columns([1.2, 1.2, 0.8])
+            with col_pf1:
+                top_n_fijos = st.slider("Cantidad de Partidos en el Parlay de Fijos:", 3, 15, 10, key="slider_fijos_n")
+            with col_pf2:
+                filtro_fijos_cat = st.selectbox("🎯 Filtrar por Tipo de Fijo:", [
+                    "👑 Todos los Fijos de Oro",
+                    "🏠 Solo Fijos Locales (1)",
+                    "✈️ Solo Fijos Visitantes (2)",
+                    "💎 Super Favoritos (+70% Certeza)"
+                ], key="sel_filtro_fijos_cat")
+            with col_pf3:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                if st.button("🚀 RECALCULAR FIJOS", use_container_width=True):
+                    api_client.obtener_partidos_de_hoy.clear()
+                    st.rerun()
+
+            f_code = "todos"
+            if "Locales" in filtro_fijos_cat:
+                f_code = "locales"
+            elif "Visitantes" in filtro_fijos_cat:
+                f_code = "visitas"
+            elif "Super" in filtro_fijos_cat:
+                f_code = "super_favoritos"
+
+            with st.spinner("Procesando probabilidades de victoria contundente y ratings ELO en ligas top..."):
+                fijos_data = analytics.generar_top_fijos_oro(top_n=top_n_fijos, filtro_tipo=f_code)
+
+            picks_fijos = fijos_data.get("fijos", [])
+            cuota_tot_fijos = fijos_data.get("cuota_parlay_fijos", 1.0)
+
+            # Boleto con botones integrados en cada fila
+            render_html(f'''
+            <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:16px; padding:20px 20px 14px 20px; color:white; margin-bottom:12px; box-shadow:0 8px 25px rgba(212,175,55,0.2);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #282F3F; padding-bottom:14px; margin-bottom:6px;">
+                    <div>
+                        <div style="font-size:20px; font-weight:900; color:#D4AF37;">👑 BOLETO PARLAY MAESTRO DE FIJOS (BANKER PICKS)</div>
+                        <div style="color:#aaa; font-size:13px;">Selección de los {len(picks_fijos)} partidos con mayor certeza matemática • <i>Toca el botón con la lupa 🔍 en cualquier fila para ver su análisis</i></div>
+                    </div>
+                    <div style="text-align:right; background:#11141C; border:1.5px solid #D4AF37; padding:8px 18px; border-radius:10px;">
+                        <div style="font-size:11px; color:#F3E5AB; font-weight:bold; text-transform:uppercase;">Cuota Parlay Combinada</div>
+                        <div style="font-size:24px; font-weight:900; color:#D4AF37; letter-spacing:1px;">x{cuota_tot_fijos:,.2f}</div>
+                    </div>
+                </div>
+            </div>
+            ''')
+
+            for idx_f, f_item in enumerate(picks_fijos):
+                loc = f_item.get("local", "")
+                vis = f_item.get("visita", "")
+                liga = f_item.get("liga", "")
+                hora = f_item.get("hora", "Hoy")
+                mercado = f_item.get("mercado", "Victoria")
+                prob = f_item.get("probabilidad_fijo", 70.0)
+                cuota = f_item.get("cuota_fijo", 1.35)
+                tipo_tag = f_item.get("tipo_tag", "FIJO")
+                icono_t = f_item.get("icono_tipo", "👑")
+                borde_col = "#D4AF37" if f_item.get("es_local_fijo") else "#38BDF8"
+
+                col_frow1, col_frow2, col_frow3 = st.columns([2.6, 1.4, 0.9])
+                with col_frow1:
+                    render_html(f'''
+                    <div style="background:#11141C; border-left:4px solid {borde_col}; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:8px 12px; border-radius:8px 0 0 8px; min-height:52px; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="color:#aaa; font-size:11px; font-weight:bold;">{idx_f+1}. {liga} <span style="color:#38BDF8; font-size:10px; margin-left:4px;">⏰ {hora}</span> <span style="background:rgba(212,175,55,0.15); color:#D4AF37; border:1px solid #D4AF37; border-radius:4px; font-size:9px; padding:1px 5px; margin-left:4px;">{icono_t} {tipo_tag}</span></div>
+                        <div style="color:#FFFFFF; font-weight:900; font-size:14px; margin-top:2px;">{loc} vs {vis}</div>
+                    </div>
+                    ''')
+                with col_frow2:
+                    st.markdown("<div style='height:3px;'></div>", unsafe_allow_html=True)
+                    if st.button(f"👑 {mercado} 🔍", key=f"btn_row_fij_{idx_f}_{f_item.get('id', idx_f)}", use_container_width=True, help=f"Abrir análisis completo de {loc} vs {vis}"):
+                        st.session_state['live_partido_detalle'] = f_item
+                        st.rerun()
+                with col_frow3:
+                    render_html(f'''
+                    <div style="background:#11141C; border-top:1px solid #282F3F; border-bottom:1px solid #282F3F; border-right:1px solid #282F3F; padding:8px 6px; border-radius:0 8px 8px 0; min-height:52px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <div style="background:#151821; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 7px; border-radius:6px; font-size:12px;">@{cuota:.2f}</div>
+                        <div style="background:#0D0F14; color:#FFFFFF; font-weight:bold; font-size:10px; padding:4px 5px; border-radius:4px; border:1px solid #282F3F;">{prob}%</div>
+                    </div>
+                    ''')
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Opciones de Difusión y Compartir Fijos de Oro
+            ficha_fijos = analytics.generar_ficha_fijos_oro_whatsapp(fijos_data, web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx'))
+            import urllib.parse
+            encoded_fijos = urllib.parse.quote(ficha_fijos)
+
+            col_wf1, col_wf2 = st.columns(2)
+            with col_wf1:
+                render_html(f'''
+                <a href="https://wa.me/?text={encoded_fijos}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
+                    💬 COMPARTIR PARLAY DE FIJOS EN WHATSAPP (1 CLIC)
+                </a>
+                ''')
+            with col_wf2:
+                st.download_button(
+                    label="📥 Descargar Ficha de Fijos (.txt)",
+                    data=ficha_fijos,
+                    file_name="parlay_maestro_fijos_top10.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
         
         with subtab_altas:
             col_pa1, col_pa2 = st.columns([1, 1])
@@ -2133,8 +2242,8 @@ if st.session_state.get('live_partido_detalle'):
             lbl_retorno = "⬅️ VOLVER AL FESTIVAL DE GOLES"
         elif liga_elegida_val == "SOCIAL_CARD_MODE":
             lbl_retorno = "⬅️ VOLVER AL GENERADOR DE FICHAS"
-        elif liga_elegida_val == "PARLAY_HUNTER_MODE":
-            lbl_retorno = "⬅️ VOLVER AL CAZADOR DE PARLAYS VIP"
+        elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
+            lbl_retorno = "⬅️ VOLVER AL RADAR DE FIJOS / PARLAYS VIP"
         elif liga_elegida_val == "LIVE_RADAR_MODE":
             lbl_retorno = "⬅️ VOLVER AL RADAR DE TODAS LAS LIGAS EN VIVO"
         else:
