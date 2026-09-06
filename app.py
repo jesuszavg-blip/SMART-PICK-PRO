@@ -25,8 +25,12 @@ import textwrap
 
 def render_html(html_str: str):
     """Renderiza HTML limpio y sin sangrías evitando falsos bloques de código en Markdown."""
-    if html_str:
-        st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+    if not html_str:
+        return
+    # Quitar cualquier espacio o sangría al inicio de cada línea para que CommonMark NUNCA lo interprete como bloque <pre><code>
+    clean_lines = [line.lstrip() for line in html_str.strip().splitlines() if line.strip()]
+    clean_html = "\n".join(clean_lines)
+    st.markdown(clean_html, unsafe_allow_html=True)
 
 def render_image_preview(img_bytes: bytes, caption: str = "", max_width: str = "100%"):
     """Renderiza vista previa de imagen en base64 HTML nativo, 100% inmune a errores de Pillow/st.image."""
