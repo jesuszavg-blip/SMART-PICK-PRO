@@ -1,4 +1,12 @@
 import os
+import sys
+
+# Asegurar directorios de ejecución en sys.path para compatibilidad con Streamlit Cloud
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_PARENT_DIR = os.path.dirname(_BASE_DIR)
+for _p in [_BASE_DIR, _PARENT_DIR, os.getcwd()]:
+    if _p and _p not in sys.path:
+        sys.path.insert(0, _p)
 
 # Configuración de variables de entorno de compatibilidad CPU
 os.environ["NPY_DISABLE_CPU_FEATURES"] = "X86_V2 AVX2 FMA3 AVX512F"
@@ -45,32 +53,89 @@ except Exception:
     pd = None
     HAS_PANDAS = False
 
-# Módulos del Sistema
+# Módulos del Sistema con importación resiliente
 import importlib
-import config
-importlib.reload(config)
-import auth
-importlib.reload(auth)
-import api_client
-importlib.reload(api_client)
-import analytics
-importlib.reload(analytics)
-import progol
-importlib.reload(progol)
-import jornada_manager
-importlib.reload(jornada_manager)
-import squads_data
-import pitch_renderer
-importlib.reload(pitch_renderer)
-import social_card_generator
-importlib.reload(social_card_generator)
-import free_picks_manager
-importlib.reload(free_picks_manager)
+
+try:
+    import config
+    importlib.reload(config)
+except ImportError:
+    from smart_pick_pro import config
+    importlib.reload(config)
+
+try:
+    import auth
+    importlib.reload(auth)
+except ImportError:
+    from smart_pick_pro import auth
+    importlib.reload(auth)
+
+try:
+    import api_client
+    importlib.reload(api_client)
+except ImportError:
+    from smart_pick_pro import api_client
+    importlib.reload(api_client)
+
+try:
+    import analytics
+    importlib.reload(analytics)
+except ImportError:
+    from smart_pick_pro import analytics
+    importlib.reload(analytics)
+
+try:
+    import progol
+    importlib.reload(progol)
+except ImportError:
+    from smart_pick_pro import progol
+    importlib.reload(progol)
+
+try:
+    import jornada_manager
+    importlib.reload(jornada_manager)
+except ImportError:
+    from smart_pick_pro import jornada_manager
+    importlib.reload(jornada_manager)
+
+try:
+    import squads_data
+except ImportError:
+    try:
+        from smart_pick_pro import squads_data
+    except ImportError:
+        squads_data = None
+
+try:
+    import pitch_renderer
+    importlib.reload(pitch_renderer)
+except ImportError:
+    from smart_pick_pro import pitch_renderer
+    importlib.reload(pitch_renderer)
+
+try:
+    import social_card_generator
+    importlib.reload(social_card_generator)
+except ImportError:
+    from smart_pick_pro import social_card_generator
+    importlib.reload(social_card_generator)
+
+try:
+    import free_picks_manager
+    importlib.reload(free_picks_manager)
+except ImportError:
+    from smart_pick_pro import free_picks_manager
+    importlib.reload(free_picks_manager)
+
 try:
     import assets_data
     importlib.reload(assets_data)
 except ImportError:
-    assets_data = None
+    try:
+        from smart_pick_pro import assets_data
+        importlib.reload(assets_data)
+    except ImportError:
+        assets_data = None
 
 # Configuración de Página
 st.set_page_config(
