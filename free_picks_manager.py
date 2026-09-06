@@ -76,7 +76,9 @@ def obtener_o_crear_pick_hoy() -> dict:
         if p.get("fecha") == today_str:
             if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
                 p = _verificar_resultado_un_pick(p)
-                _guardar_datos(datos)
+            p["logo_local"] = api_client.obtener_logo_oficial_equipo(p.get("local", ""))
+            p["logo_visita"] = api_client.obtener_logo_oficial_equipo(p.get("visita", ""))
+            _guardar_datos(datos)
             return p
 
     # 2. Si no existe para today_str, buscar Banker #1 de Fijos de Oro
@@ -93,7 +95,9 @@ def obtener_o_crear_pick_hoy() -> dict:
             if (p.get("fixture_id") and p.get("fixture_id") == fixture_id) or p.get("partido", "").strip().lower() == partido_nombre.strip().lower():
                 if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
                     p = _verificar_resultado_un_pick(p)
-                    _guardar_datos(datos)
+                p["logo_local"] = api_client.obtener_logo_oficial_equipo(p.get("local", ""))
+                p["logo_visita"] = api_client.obtener_logo_oficial_equipo(p.get("visita", ""))
+                _guardar_datos(datos)
                 return p
 
         nuevo_pick = {
@@ -102,10 +106,10 @@ def obtener_o_crear_pick_hoy() -> dict:
             "partido": partido_nombre,
             "local": top_banker.get("local"),
             "local_id": top_banker.get("local_id", 0),
-            "logo_local": top_banker.get("logo_local", ""),
+            "logo_local": api_client.obtener_logo_oficial_equipo(top_banker.get("local", "")),
             "visita": top_banker.get("visita"),
             "visita_id": top_banker.get("visita_id", 0),
-            "logo_visita": top_banker.get("logo_visita", ""),
+            "logo_visita": api_client.obtener_logo_oficial_equipo(top_banker.get("visita", "")),
             "liga": top_banker.get("liga", "Ligas Élite"),
             "hora": top_banker.get("hora", "Hoy"),
             "mercado": top_banker.get("mercado", "Victoria Local (1)"),
@@ -127,7 +131,9 @@ def obtener_o_crear_pick_hoy() -> dict:
             if (p.get("fixture_id") and p.get("fixture_id") == fixture_id) or p.get("partido", "").strip().lower() == partido_nombre.strip().lower():
                 if p.get("resultado") in ["PENDIENTE", "EN JUEGO"]:
                     p = _verificar_resultado_un_pick(p)
-                    _guardar_datos(datos)
+                p["logo_local"] = api_client.obtener_logo_oficial_equipo(p.get("local", ""))
+                p["logo_visita"] = api_client.obtener_logo_oficial_equipo(p.get("visita", ""))
+                _guardar_datos(datos)
                 return p
 
         nuevo_pick = {
