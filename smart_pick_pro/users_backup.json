@@ -31,5 +31,16 @@
     "balance_disponible": 0.0,
     "total_ganado": 0.0,
     "email": ""
+  },
+  {
+    "username": "jcga",
+    "password": "$2b$12$oevFK2tWtVgsFeaGBQYGReZdRU2LlhXWE1P1MLrWizom/wO10x7Wu",
+    "role": "VIP",
+    "is_active": 1,
+    "referral_code": "SP-JCGAUCAD",
+    "referred_by": null,
+    "balance_disponible": 0.0,
+    "total_ganado": 0.0,
+    "email": ""
   }
 ]
