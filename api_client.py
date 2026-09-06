@@ -874,7 +874,7 @@ def obtener_partidos_jornada(league_id: str):
     Obtiene los partidos de la jornada anterior (Finalizados) y de la jornada actual (Próximos)
     con sus escudos exactos e infalibles para cada equipo en su posición (Local y Visita).
     """
-    if league_id in ["TODAY_MATCHES_MODE", "GOAL_FESTIVAL_MODE", "SOCIAL_CARD_MODE", "LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE", "AFFILIATE_PROGRAM_MODE"]:
+    if league_id in ["TODAY_MATCHES_MODE", "BANKER_PICKS_MODE", "GOAL_FESTIVAL_MODE", "SOCIAL_CARD_MODE", "LIVE_RADAR_MODE", "PARLAY_HUNTER_MODE", "PROGOL_MODE", "REDUCCIONES_MODE", "AFFILIATE_PROGRAM_MODE"]:
         return {"🎯 Módulo Especial Activo": {"id": None}}
     
     url = f"{config.API_FOOTBALL_URL}/fixtures"
