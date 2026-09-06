@@ -1349,7 +1349,12 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
             {"id": 1301042, "local": "Monterrey", "visita": "Mazatlán", "liga": "🇲🇽 Liga MX", "lh": 2.20, "la": 0.60, "power_l": 86, "power_v": 71},
             {"id": 1301043, "local": "Cruz Azul", "visita": "FC Juárez", "liga": "🇲🇽 Liga MX", "lh": 2.15, "la": 0.60, "power_l": 86, "power_v": 72},
             {"id": 1301044, "local": "Sporting CP", "visita": "Moreirense", "liga": "🇵🇹 Primeira Liga", "lh": 2.50, "la": 0.55, "power_l": 89, "power_v": 73},
-            {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71}
+            {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71},
+            {"id": 1301046, "local": "Valladolid", "visita": "Real Madrid", "liga": "🇪🇸 LaLiga", "lh": 0.55, "la": 2.65, "power_l": 72, "power_v": 94},
+            {"id": 1301047, "local": "Southampton", "visita": "Manchester City", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 0.60, "la": 2.75, "power_l": 71, "power_v": 95},
+            {"id": 1301048, "local": "Bochum", "visita": "Bayern Múnich", "liga": "🇩🇪 Bundesliga", "lh": 0.60, "la": 2.90, "power_l": 70, "power_v": 93},
+            {"id": 1301049, "local": "Puebla", "visita": "América", "liga": "🇲🇽 Liga MX", "lh": 0.65, "la": 2.30, "power_l": 71, "power_v": 88},
+            {"id": 1301050, "local": "Angers", "visita": "PSG", "liga": "🇫🇷 Ligue 1", "lh": 0.60, "la": 2.70, "power_l": 71, "power_v": 91}
         ]
 
         lista_partidos = []
@@ -1361,11 +1366,11 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
             else:
                 lista_partidos.extend(partidos_dia)
 
-        if len(lista_partidos) < top_n:
-            ids_existentes = set([p.get("id") for p in lista_partidos])
-            for tc in top_curados:
-                if tc.get("id") not in ids_existentes:
-                    lista_partidos.append(tc)
+        # Incorporar top curados para garantizar partidos con certeza mayor (+70%) en todas las categorías
+        ids_existentes = set([p.get("id") for p in lista_partidos])
+        for tc in top_curados:
+            if tc.get("id") not in ids_existentes:
+                lista_partidos.append(tc)
 
     candidatos = []
     for idx, p in enumerate(lista_partidos):
