@@ -1350,11 +1350,11 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
             {"id": 1301043, "local": "Cruz Azul", "visita": "FC Juárez", "liga": "🇲🇽 Liga MX", "lh": 2.15, "la": 0.60, "power_l": 86, "power_v": 72},
             {"id": 1301044, "local": "Sporting CP", "visita": "Moreirense", "liga": "🇵🇹 Primeira Liga", "lh": 2.50, "la": 0.55, "power_l": 89, "power_v": 73},
             {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71},
-            {"id": 1301046, "local": "Valladolid", "visita": "Real Madrid", "liga": "🇪🇸 LaLiga", "lh": 0.55, "la": 2.65, "power_l": 72, "power_v": 94},
-            {"id": 1301047, "local": "Southampton", "visita": "Manchester City", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 0.60, "la": 2.75, "power_l": 71, "power_v": 95},
-            {"id": 1301048, "local": "Bochum", "visita": "Bayern Múnich", "liga": "🇩🇪 Bundesliga", "lh": 0.60, "la": 2.90, "power_l": 70, "power_v": 93},
-            {"id": 1301049, "local": "Puebla", "visita": "América", "liga": "🇲🇽 Liga MX", "lh": 0.65, "la": 2.30, "power_l": 71, "power_v": 88},
-            {"id": 1301050, "local": "Angers", "visita": "PSG", "liga": "🇫🇷 Ligue 1", "lh": 0.60, "la": 2.70, "power_l": 71, "power_v": 91}
+            {"id": 1301046, "local": "Valladolid", "visita": "Atlético Madrid", "liga": "🇪🇸 LaLiga", "lh": 0.55, "la": 2.40, "power_l": 72, "power_v": 90},
+            {"id": 1301047, "local": "Fulham", "visita": "Chelsea", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 0.70, "la": 2.35, "power_l": 73, "power_v": 89},
+            {"id": 1301048, "local": "Augsburg", "visita": "Borussia Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 0.65, "la": 2.50, "power_l": 71, "power_v": 90},
+            {"id": 1301049, "local": "Necaxa", "visita": "Tigres UANL", "liga": "🇲🇽 Liga MX", "lh": 0.65, "la": 2.25, "power_l": 71, "power_v": 87},
+            {"id": 1301050, "local": "Nantes", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 0.60, "la": 2.45, "power_l": 71, "power_v": 88}
         ]
 
         lista_partidos = []
@@ -1469,7 +1469,20 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
 
     # Ordenar por mayor probabilidad de acierto
     candidatos.sort(key=lambda x: x["probabilidad_fijo"], reverse=True)
-    top_fijos = candidatos[:top_n]
+
+    # Deduplicación estricta de equipos (ningún equipo puede repetirse en el mismo boleto)
+    top_fijos = []
+    equipos_en_boleto = set()
+    for c in candidatos:
+        loc_norm = c["local"].strip().lower()
+        vis_norm = c["visita"].strip().lower()
+        if loc_norm in equipos_en_boleto or vis_norm in equipos_en_boleto:
+            continue
+        top_fijos.append(c)
+        equipos_en_boleto.add(loc_norm)
+        equipos_en_boleto.add(vis_norm)
+        if len(top_fijos) >= top_n:
+            break
 
     # Calcular cuota combinada acumulada
     cuota_parlay_fijos = 1.0
