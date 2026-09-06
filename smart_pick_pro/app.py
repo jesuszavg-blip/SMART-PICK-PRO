@@ -802,28 +802,28 @@ st.sidebar.markdown(sidebar_casinos_html, unsafe_allow_html=True)
 col_sb_sc1, col_sb_sc2, col_sb_sc3 = st.sidebar.columns(3)
 with col_sb_sc1:
     if st.button("👑 FIJOS", use_container_width=True, help="Abrir Radar de Fijos de Oro (Banker Picks - Top Ligas)"):
-        st.session_state['liga_selector_override'] = "👑 [VIP] Radar de Fijos de Oro (Banker Picks - Top Ligas)"
+        st.session_state['sel_main_torneo_modulo'] = "👑 [VIP] Radar de Fijos de Oro (Banker Picks - Top Ligas)"
         st.session_state['live_partido_detalle'] = None
         st.rerun()
 with col_sb_sc2:
     if st.button("🔥 GOLES", use_container_width=True, help="Abrir Radar Festival de Goles"):
-        st.session_state['liga_selector_override'] = "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)"
+        st.session_state['sel_main_torneo_modulo'] = "🔥 [VIP] Festival de Goles (Radar Altas & BTTS)"
         st.session_state['live_partido_detalle'] = None
         st.rerun()
 with col_sb_sc3:
     if st.button("📸 REDES", use_container_width=True, help="Abrir Generador de Fichas para Redes Sociales"):
-        st.session_state['liga_selector_override'] = "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)"
+        st.session_state['sel_main_torneo_modulo'] = "📸 [VIP] Generador de Fichas para Redes (Instagram & WhatsApp)"
         st.session_state['live_partido_detalle'] = None
         st.rerun()
 
 dict_ligas_globales = api_client.obtener_ligas_mundo()
 lista_ligas_keys = list(dict_ligas_globales.keys())
-idx_default_liga = 0
-if st.session_state.get('liga_selector_override') in lista_ligas_keys:
-    idx_default_liga = lista_ligas_keys.index(st.session_state['liga_selector_override'])
-    st.session_state['liga_selector_override'] = None
 
-liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", lista_ligas_keys, index=idx_default_liga)
+# Asegurar persistencia del módulo/torneo seleccionado en session_state
+if 'sel_main_torneo_modulo' not in st.session_state or st.session_state['sel_main_torneo_modulo'] not in lista_ligas_keys:
+    st.session_state['sel_main_torneo_modulo'] = lista_ligas_keys[0]
+
+liga_elegida = st.sidebar.selectbox("🌍 1. Selecciona el Torneo o Módulo:", lista_ligas_keys, key="sel_main_torneo_modulo")
 liga_elegida_val = dict_ligas_globales[liga_elegida]
 
 # Reset reactivo: si el usuario cambia de liga o módulo en el menú lateral,
