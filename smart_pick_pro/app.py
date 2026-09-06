@@ -704,8 +704,8 @@ if not st.session_state['autenticado']:
         
         loc_f = pick_del_dia.get("local", "Local")
         vis_f = pick_del_dia.get("visita", "Visita")
-        logo_l = pick_del_dia.get("logo_local") or api_client.obtener_logo_oficial_equipo(loc_f)
-        logo_v = pick_del_dia.get("logo_visita") or api_client.obtener_logo_oficial_equipo(vis_f)
+        logo_l = api_client.obtener_logo_oficial_equipo(loc_f, pick_del_dia.get("logo_local", ""))
+        logo_v = api_client.obtener_logo_oficial_equipo(vis_f, pick_del_dia.get("logo_visita", ""))
         liga_f = pick_del_dia.get("liga", "Ligas Élite")
         hora_f = pick_del_dia.get("hora", "Hoy")
         merc_f = pick_del_dia.get("mercado", "Victoria")
