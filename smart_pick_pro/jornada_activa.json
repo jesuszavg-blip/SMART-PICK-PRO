@@ -1,86 +1,86 @@
 [
   {
     "casilla": 1,
-    "local": "leon",
-    "visita": "monterrey",
+    "local": "Juarez",
+    "visita": "Pachuca",
     "id": null
   },
   {
     "casilla": 2,
-    "local": "san luis",
-    "visita": "pachuca",
+    "local": "Monterrey",
+    "visita": "Toluca",
     "id": null
   },
   {
     "casilla": 3,
-    "local": "pachuca f",
-    "visita": "guadalajara f",
+    "local": "America",
+    "visita": "Leon",
     "id": null
   },
   {
     "casilla": 4,
-    "local": "valencia",
-    "visita": "celta",
+    "local": "Tijuana w",
+    "visita": "Pachuca w",
     "id": null
   },
   {
     "casilla": 5,
-    "local": "ipswich",
-    "visita": "sunderland",
+    "local": "Ath bilbao",
+    "visita": "Atl. De madrid",
     "id": null
   },
   {
     "casilla": 6,
-    "local": "brentford",
-    "visita": "tottenham",
+    "local": "Espanyol",
+    "visita": "Sevilla",
     "id": null
   },
   {
     "casilla": 7,
-    "local": "brighton",
-    "visita": "aston villa",
+    "local": "Fullham",
+    "visita": "Crystal palace",
     "id": null
   },
   {
     "casilla": 8,
-    "local": "bolonia",
-    "visita": "lazio",
+    "local": "Nottinghamm",
+    "visita": "Tottenham",
     "id": null
   },
   {
     "casilla": 9,
-    "local": "estoril",
-    "visita": "rio ave",
+    "local": "Juventus",
+    "visita": "Milan",
     "id": null
   },
   {
     "casilla": 10,
-    "local": "inter p. a.",
-    "visita": "at. mineiro",
+    "local": "Ajax",
+    "visita": "Psv",
     "id": null
   },
   {
     "casilla": 11,
-    "local": "vitoria ba",
-    "visita": "bahia",
+    "local": "Willem II",
+    "visita": "Excelsior",
     "id": null
   },
   {
     "casilla": 12,
-    "local": "racing",
-    "visita": "boca jrs",
+    "local": "Groningen",
+    "visita": "Twente",
     "id": null
   },
   {
     "casilla": 13,
-    "local": "st. luis",
+    "local": "Charlotte",
     "visita": "houston",
     "id": null
   },
   {
     "casilla": 14,
-    "local": "u. de chile",
-    "visita": "colo colo",
+    "local": "Toronto",
+    "visita": "Chicago",
     "id": null
   }
 ]
