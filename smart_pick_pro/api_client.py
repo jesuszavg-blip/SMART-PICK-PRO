@@ -196,7 +196,85 @@ EQUIPOS_INTERNACIONALES_LOGOS = {
     "vitoria ba": "https://media.api-sports.io/football/teams/119.png",
     "bahia": "https://media.api-sports.io/football/teams/118.png",
     "flamengo": "https://media.api-sports.io/football/teams/127.png",
-    "palmeiras": "https://media.api-sports.io/football/teams/121.png"
+    "palmeiras": "https://media.api-sports.io/football/teams/121.png",
+    "bochum": "https://media.api-sports.io/football/teams/176.png",
+    "vfl bochum": "https://media.api-sports.io/football/teams/176.png",
+    "freiburg": "https://media.api-sports.io/football/teams/160.png",
+    "sc freiburg": "https://media.api-sports.io/football/teams/160.png",
+    "leverkusen": "https://media.api-sports.io/football/teams/168.png",
+    "bayer leverkusen": "https://media.api-sports.io/football/teams/168.png",
+    "leipzig": "https://media.api-sports.io/football/teams/173.png",
+    "rb leipzig": "https://media.api-sports.io/football/teams/173.png",
+    "frankfurt": "https://media.api-sports.io/football/teams/169.png",
+    "eintracht frankfurt": "https://media.api-sports.io/football/teams/169.png",
+    "stuttgart": "https://media.api-sports.io/football/teams/172.png",
+    "vfb stuttgart": "https://media.api-sports.io/football/teams/172.png",
+    "wolfsburg": "https://media.api-sports.io/football/teams/161.png",
+    "vfl wolfsburg": "https://media.api-sports.io/football/teams/161.png",
+    "borussia mönchengladbach": "https://media.api-sports.io/football/teams/163.png",
+    "monchengladbach": "https://media.api-sports.io/football/teams/163.png",
+    "mönchengladbach": "https://media.api-sports.io/football/teams/163.png",
+    "werder bremen": "https://media.api-sports.io/football/teams/162.png",
+    "bremen": "https://media.api-sports.io/football/teams/162.png",
+    "augsburg": "https://media.api-sports.io/football/teams/170.png",
+    "fc augsburg": "https://media.api-sports.io/football/teams/170.png",
+    "mainz": "https://media.api-sports.io/football/teams/164.png",
+    "mainz 05": "https://media.api-sports.io/football/teams/164.png",
+    "union berlin": "https://media.api-sports.io/football/teams/182.png",
+    "heidenheim": "https://media.api-sports.io/football/teams/180.png",
+    "st. pauli": "https://media.api-sports.io/football/teams/186.png",
+    "holstein kiel": "https://media.api-sports.io/football/teams/191.png",
+    "hoffenheim": "https://media.api-sports.io/football/teams/167.png",
+    "brighton": "https://media.api-sports.io/football/teams/51.png",
+    "west ham": "https://media.api-sports.io/football/teams/48.png",
+    "aston villa": "https://media.api-sports.io/football/teams/66.png",
+    "newcastle": "https://media.api-sports.io/football/teams/34.png",
+    "everton": "https://media.api-sports.io/football/teams/45.png",
+    "fulham": "https://media.api-sports.io/football/teams/36.png",
+    "crystal palace": "https://media.api-sports.io/football/teams/52.png",
+    "wolves": "https://media.api-sports.io/football/teams/39.png",
+    "wolverhampton": "https://media.api-sports.io/football/teams/39.png",
+    "brentford": "https://media.api-sports.io/football/teams/55.png",
+    "bournemouth": "https://media.api-sports.io/football/teams/35.png",
+    "nottingham forest": "https://media.api-sports.io/football/teams/65.png",
+    "nottingham": "https://media.api-sports.io/football/teams/65.png",
+    "leicester": "https://media.api-sports.io/football/teams/46.png",
+    "ipswich": "https://media.api-sports.io/football/teams/57.png",
+    "southampton": "https://media.api-sports.io/football/teams/41.png",
+    "real sociedad": "https://media.api-sports.io/football/teams/548.png",
+    "sociedad": "https://media.api-sports.io/football/teams/548.png",
+    "athletic club": "https://media.api-sports.io/football/teams/531.png",
+    "athletic bilbao": "https://media.api-sports.io/football/teams/531.png",
+    "bilbao": "https://media.api-sports.io/football/teams/531.png",
+    "villarreal": "https://media.api-sports.io/football/teams/533.png",
+    "betis": "https://media.api-sports.io/football/teams/543.png",
+    "real betis": "https://media.api-sports.io/football/teams/543.png",
+    "valencia": "https://media.api-sports.io/football/teams/532.png",
+    "girona": "https://media.api-sports.io/football/teams/547.png",
+    "celta": "https://media.api-sports.io/football/teams/538.png",
+    "celta vigo": "https://media.api-sports.io/football/teams/538.png",
+    "mallorca": "https://media.api-sports.io/football/teams/798.png",
+    "osasuna": "https://media.api-sports.io/football/teams/727.png",
+    "getafe": "https://media.api-sports.io/football/teams/546.png",
+    "rayo vallecano": "https://media.api-sports.io/football/teams/728.png",
+    "valladolid": "https://media.api-sports.io/football/teams/720.png",
+    "las palmas": "https://media.api-sports.io/football/teams/534.png",
+    "alaves": "https://media.api-sports.io/football/teams/542.png",
+    "espanyol": "https://media.api-sports.io/football/teams/540.png",
+    "leganes": "https://media.api-sports.io/football/teams/545.png",
+    "napoli": "https://media.api-sports.io/football/teams/492.png",
+    "roma": "https://media.api-sports.io/football/teams/497.png",
+    "lazio": "https://media.api-sports.io/football/teams/487.png",
+    "atalanta": "https://media.api-sports.io/football/teams/499.png",
+    "fiorentina": "https://media.api-sports.io/football/teams/502.png",
+    "bologna": "https://media.api-sports.io/football/teams/500.png",
+    "monaco": "https://media.api-sports.io/football/teams/91.png",
+    "lyon": "https://media.api-sports.io/football/teams/80.png",
+    "lille": "https://media.api-sports.io/football/teams/79.png",
+    "montpellier": "https://media.api-sports.io/football/teams/82.png",
+    "nice": "https://media.api-sports.io/football/teams/84.png",
+    "rennes": "https://media.api-sports.io/football/teams/94.png",
+    "lens": "https://media.api-sports.io/football/teams/116.png"
 }
 
 # DICCIONARIO COMPLETO Y EXACTO DE ESCUDOS DE SELECCIONES NACIONALES (FEDERACIONES OFICIALES HD)
@@ -301,23 +379,23 @@ SELECCIONES_NACIONALES_LOGOS = {
 def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> str:
     """Mapeador 100% exacto de escudos oficiales sin bloqueos de servidor (HTTP 200 garantizado)"""
     if not nombre_equipo:
-        return "https://media.api-sports.io/football/teams/2287.png"
+        return "https://media.api-sports.io/football/leagues/2.png"
         
     eq = str(nombre_equipo).lower().strip()
     
     # 1. Buscar en diccionario de equipos de México y Femenil
     for key, url_escudo in EQUIPOS_MEXICO_LOGOS.items():
-        if key in eq:
+        if key == eq or (len(key) > 4 and key in eq):
             return url_escudo
             
     # 2. Buscar en Selecciones Nacionales
     for key, url_escudo in SELECCIONES_NACIONALES_LOGOS.items():
-        if key in eq:
+        if key == eq or (len(key) > 4 and key in eq):
             return url_escudo
 
     # 3. Buscar en clubes internacionales
     for key, url_escudo in EQUIPOS_INTERNACIONALES_LOGOS.items():
-        if key in eq:
+        if key == eq or (len(key) > 4 and key in eq):
             return url_escudo
             
     # 4. Si se proporciona un logo válido de la API que NO sea una bandera
@@ -326,7 +404,7 @@ def obtener_logo_oficial_equipo(nombre_equipo: str, logo_actual: str = "") -> st
         if not es_bandera:
             return str(logo_actual)
         
-    return "https://media.api-sports.io/football/teams/2287.png"
+    return "https://media.api-sports.io/football/leagues/2.png"
 
 @st.cache_data(ttl=15)
 def obtener_ligas_mundo():
