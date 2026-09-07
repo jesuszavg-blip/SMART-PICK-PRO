@@ -67,33 +67,36 @@ def obtener_o_crear_pick_hoy() -> dict:
     Obtiene el pick gratuito fijado para HOY o lo genera automáticamente
     usando el Fijo de Mayor Certeza de analytics sin duplicados.
     """
-def _es_liga_top_reconocida(l_name: str, country: str) -> int:
+def _es_liga_top_reconocida(l_name: str, country: str, h_name: str = "", a_name: str = "") -> int:
     l_low = l_name.lower()
     c_low = country.lower()
+    h_low = h_name.lower()
+    a_low = a_name.lower()
+    all_txt = f"{l_low} {c_low} {h_low} {a_low}"
     
-    # Ignorar categorías juveniles o divisiones inferiores
-    if any(bad in l_low for bad in ["u19", "u20", "u21", "u23", "u18", "u17", "youth", "reserve", "serie b", "serie c", "serie d", "segunda", "tercera", "amateur", "premier serie"]):
+    # Ignorar categorías juveniles, filiales o divisiones inferiores
+    if any(bad in all_txt for bad in ["u17", "u18", "u19", "u20", "u21", "u23", "sub-", "sub ", "sub1", "sub2", "youth", "reserve", "reserves", "premier league cup", "efl trophy", " ii", " 2", " b team", "serie c", "serie d", "tercera", "rfef", "amateur", "premier serie"]):
         return 999
 
     # Tier 1: Ligas Top Mundiales & Liga MX
-    if "mexico" in c_low and ("liga mx" in l_low or "expansión" in l_low):
+    if "mexico" in c_low and ("liga mx" in l_low or "expansión" in l_low or "femenil" in l_low):
         return 1
-    if "england" in c_low and "premier league" in l_low:
+    if "england" in c_low and ("premier league" in l_low or "championship" in l_low or "fa cup" in l_low or "league cup" in l_low):
         return 1
-    if "spain" in c_low and ("laliga" in l_low or "la liga" in l_low or "primera división" in l_low):
+    if "spain" in c_low and ("laliga" in l_low or "la liga" in l_low or "primera división" in l_low or "copa del rey" in l_low):
         return 1
-    if "germany" in c_low and "bundesliga" in l_low:
+    if "germany" in c_low and ("bundesliga" in l_low or "dfb pokal" in l_low):
         return 1
-    if "italy" in c_low and "serie a" in l_low:
+    if "italy" in c_low and ("serie a" in l_low or "coppa italia" in l_low):
         return 1
-    if "france" in c_low and "ligue 1" in l_low:
+    if "france" in c_low and ("ligue 1" in l_low or "coupe de france" in l_low):
         return 1
-    if any(cup in l_low for cup in ["champions league", "leagues cup", "copa libertadores", "nations league", "eliminatorias", "world cup"]):
+    if any(cup in l_low for cup in ["champions league", "europa league", "conference league", "leagues cup", "copa libertadores", "copa sudamericana", "nations league", "eliminatorias", "world cup"]):
         return 1
         
     # Tier 2: Primeras divisiones de América y Europa reconocidas
-    if any(co in c_low for co in ["brazil", "argentina", "colombia", "chile", "peru", "uruguay", "united states", "usa", "portugal", "netherlands", "mexico"]):
-        if any(div in l_low for div in ["serie a", "liga profesional", "primera división", "primera a", "mls", "primeira liga", "eredivisie", "femenil"]):
+    if any(co in c_low for co in ["brazil", "argentina", "colombia", "chile", "peru", "uruguay", "united states", "usa", "portugal", "netherlands", "mexico", "belgium", "turkey"]):
+        if any(div in l_low for div in ["serie a", "liga profesional", "primera división", "primera division", "primera a", "mls", "primeira liga", "eredivisie", "femenil", "pro league", "super lig"]):
             return 2
             
     return 99
@@ -106,7 +109,7 @@ def _buscar_mejor_partido_real_hoy(today_str: str) -> dict:
         headers = api_client.get_headers()
         url = f"{config.API_FOOTBALL_URL}/fixtures"
         
-        r = requests.get(url, headers=headers, params={"date": today_str}, timeout=12)
+        r = requests.get(url, headers=headers, params={"date": today_str, "timezone": "America/Mexico_City"}, timeout=12)
         if r.status_code == 200:
             data = r.json().get("response", [])
             
@@ -125,12 +128,18 @@ def _buscar_mejor_partido_real_hoy(today_str: str) -> dict:
                 if not h_name or not a_name:
                     continue
                 
-                tier = _es_liga_top_reconocida(l_name, country)
+                tier = _es_liga_top_reconocida(l_name, country, h_name, a_name)
                 if tier > 10:
                     continue
                 
-                prio_status = 0 if st_val in ["NS", "TBD", "1H", "2H", "HT", "LIVE"] else 1
-                hora_str = fix.get("date", "Hoy")[11:16] + " hrs (CDMX)" if "T" in str(fix.get("date", "")) else "Hoy"
+                # Priorizar partidos por jugar (NS, TBD) o en vivo (1H, 2H, HT, LIVE)
+                prio_status = 0 if st_val in ["NS", "TBD", "1H", "2H", "HT", "LIVE"] else 2
+                hora_str = "Hoy"
+                if "T" in str(fix.get("date", "")):
+                    try:
+                        hora_str = fix.get("date", "")[11:16] + " hrs (CDMX)"
+                    except Exception:
+                        hora_str = "Hoy"
                 
                 candidatos.append({
                     "id": fix.get("id"),
@@ -141,7 +150,7 @@ def _buscar_mejor_partido_real_hoy(today_str: str) -> dict:
                     "liga": f"{country} - {l_name}",
                     "hora": hora_str,
                     "status": st_val,
-                    "score_total": (tier, prio_status)
+                    "score_total": (prio_status, tier)
                 })
             
             if candidatos:
