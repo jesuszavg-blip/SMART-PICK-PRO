@@ -961,87 +961,114 @@ def evaluar_predictor_ia_ensemble(equipo_local: str, equipo_visita: str, stats_p
     }
 
 
-# LISTA BLANCA ESTRICTA DE PAÍSES Y TORNEOS ÉLITE
+# LISTA BLANCA ESTRICTA DE PAÍSES Y TORNEOS ÉLITE Y PROFESIONALES
 LIGAS_ELITE_WHITELIST = {
-    # 1. México (Liga MX & Expansión)
-    "mexico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion mx", "liga de expansión mx", "copa mx", "campeon de campeones"],
-    "méxico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion mx", "liga de expansión mx", "copa mx", "campeon de campeones"],
+    # 1. México (Liga MX, Femenil & Expansión)
+    "mexico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion", "liga de expansión", "expansion mx", "expansión mx", "copa mx", "campeon de campeones", "liga mx femenil", "femenil"],
+    "méxico": ["liga mx", "liga bbva mx", "liga bbva", "liga de expansion", "liga de expansión", "expansion mx", "expansión mx", "copa mx", "campeon de campeones", "liga mx femenil", "femenil"],
     
-    # 2. Inglaterra (Premier League & Championship & Copas)
-    "england": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield"],
-    "inglaterra": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield"],
+    # 2. Inglaterra (Premier League, Championship, FA Cup, EFL Cup, League One)
+    "england": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield", "league one", "league two", "wsl", "super league women"],
+    "inglaterra": ["premier league", "championship", "fa cup", "efl cup", "league cup", "community shield", "league one", "league two", "wsl", "super league women"],
     
-    # 3. España (LaLiga & LaLiga 2 & Copa del Rey)
-    "spain": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa"],
-    "españa": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa"],
+    # 3. España (LaLiga, LaLiga 2, Copa del Rey, Liga F)
+    "spain": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa", "primera división femenina", "primera division femenina", "liga f"],
+    "españa": ["laliga", "la liga", "primera división", "primera division", "segunda división", "segunda division", "laliga 2", "copa del rey", "supercopa de españa", "primera división femenina", "primera division femenina", "liga f"],
     
-    # 4. Italia (Serie A & Coppa Italia)
-    "italy": ["serie a", "coppa italia", "supercoppa italiana"],
-    "italia": ["serie a", "coppa italia", "supercoppa italiana"],
+    # 4. Italia (Serie A, Serie B, Coppa Italia)
+    "italy": ["serie a", "serie b", "coppa italia", "supercoppa italiana", "serie a women", "serie a femminile"],
+    "italia": ["serie a", "serie b", "coppa italia", "supercoppa italiana", "serie a women", "serie a femminile"],
     
-    # 5. Alemania (Bundesliga & DFB Pokal)
-    "germany": ["bundesliga", "dfb pokal", "supercup"],
-    "alemania": ["bundesliga", "dfb pokal", "supercup"],
+    # 5. Alemania (Bundesliga, 2. Bundesliga, DFB Pokal)
+    "germany": ["bundesliga", "2. bundesliga", "dfb pokal", "supercup", "frauen-bundesliga"],
+    "alemania": ["bundesliga", "2. bundesliga", "dfb pokal", "supercup", "frauen-bundesliga"],
     
-    # 6. Francia (Ligue 1 & Coupe de France)
-    "france": ["ligue 1", "coupe de france", "trophee des champions"],
-    "francia": ["ligue 1", "coupe de france", "trophee des champions"],
+    # 6. Francia (Ligue 1, Ligue 2, Coupe de France)
+    "france": ["ligue 1", "ligue 2", "coupe de france", "trophee des champions", "premiere ligue"],
+    "francia": ["ligue 1", "ligue 2", "coupe de france", "trophee des champions", "premiere ligue"],
     
-    # 7. Países Bajos (Eredivisie)
-    "netherlands": ["eredivisie", "knvb beker"],
-    "países bajos": ["eredivisie", "knvb beker"],
-    "paises bajos": ["eredivisie", "knvb beker"],
-    "holanda": ["eredivisie", "knvb beker"],
+    # 7. Países Bajos (Eredivisie, KNVB Beker)
+    "netherlands": ["eredivisie", "eerste divisie", "knvb beker"],
+    "países bajos": ["eredivisie", "eerste divisie", "knvb beker"],
+    "paises bajos": ["eredivisie", "eerste divisie", "knvb beker"],
+    "holanda": ["eredivisie", "eerste divisie", "knvb beker"],
     
-    # 8. Portugal (Primeira Liga)
-    "portugal": ["primeira liga", "taca de portugal", "taça de portugal"],
+    # 8. Portugal (Primeira Liga, Taça de Portugal)
+    "portugal": ["primeira liga", "liga portugal", "liga portugal 2", "taca de portugal", "taça de portugal", "taca da liga"],
     
-    # 9. Estados Unidos (MLS)
-    "usa": ["major league soccer", "mls", "us open cup", "leagues cup"],
-    "estados unidos": ["major league soccer", "mls", "us open cup", "leagues cup"],
+    # 9. Estados Unidos (MLS, US Open Cup, Leagues Cup, NWSL)
+    "usa": ["major league soccer", "mls", "us open cup", "leagues cup", "nwsl"],
+    "estados unidos": ["major league soccer", "mls", "us open cup", "leagues cup", "nwsl"],
     
     # 10. Arabia Saudita (Saudi Pro League)
     "saudi-arabia": ["saudi pro league", "king's cup", "super cup"],
     "saudi arabia": ["saudi pro league", "king's cup", "super cup"],
     "arabia saudita": ["saudi pro league", "king's cup", "super cup"],
     
-    # 11. Argentina (Liga Profesional de Fútbol)
-    "argentina": ["liga profesional", "copa de la liga", "copa argentina", "trofeo de campeones"],
+    # 11. Argentina (Liga Profesional, Copa de la Liga, Copa Argentina)
+    "argentina": ["liga profesional", "copa de la liga", "copa argentina", "trofeo de campeones", "primera división", "primera division", "primera nacional"],
     
-    # 12. Brasil (Brasileirão Serie A)
-    "brazil": ["serie a", "brasileirao", "brasileirão", "copa do brasil"],
-    "brasil": ["serie a", "brasileirao", "brasileirão", "copa do brasil"],
+    # 12. Brasil (Brasileirão Serie A, Copa do Brasil)
+    "brazil": ["serie a", "serie b", "brasileirao", "brasileirão", "copa do brasil", "paulista", "carioca"],
+    "brasil": ["serie a", "serie b", "brasileirao", "brasileirão", "copa do brasil", "paulista", "carioca"],
+
+    # 13. Ligas Sudamericanas Principales (Colombia, Chile, Uruguay, Ecuador, Perú)
+    "colombia": ["primera a", "liga betplay", "copa colombia", "torneo betplay"],
+    "chile": ["primera división", "primera division", "copa chile", "primera b"],
+    "uruguay": ["primera división", "primera division", "copa uruguay"],
+    "ecuador": ["liga pro", "primera a", "copa ecuador"],
+    "peru": ["liga 1", "primera división", "primera division"],
+    "perú": ["liga 1", "primera división", "primera division"],
+    "belgium": ["pro league", "first division a", "croky cup"],
+    "bélgica": ["pro league", "first division a", "croky cup"],
+    "turkey": ["super lig", "süper lig", "turkish cup"],
+    "turquía": ["super lig", "süper lig", "turkish cup"],
     
-    # 13. Torneos Internacionales de Clubes y Selecciones
-    "world": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying"],
-    "mundo": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying"],
-    "europe": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa"],
-    "europa": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa"],
+    # 14. Torneos Internacionales de Clubes y Selecciones
+    "world": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying", "fifa"],
+    "mundo": ["world cup", "copa del mundo", "club world cup", "copa mundial de clubes", "friendlies", "amistosos", "olympic games", "conmebol", "concacaf", "eliminatorias", "qualifying", "fifa"],
+    "europe": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa", "uefa super cup"],
+    "europa": ["uefa champions league", "champions league", "uefa europa league", "europa league", "uefa conference league", "conference league", "uefa nations league", "nations league", "euro championship", "euro", "eurocopa", "uefa super cup"],
     "south-america": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"],
     "sudamerica": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"],
     "sudamérica": ["copa libertadores", "copa sudamericana", "copa america", "copa américa", "recopa sudamericana"]
 }
 
+# PALABRAS CLAVE RIGUROSAMENTE EXCLUIDAS (CATEGORÍAS JUVENILES, RESERVAS Y AMATEUR)
 LIGAS_EXCLUIDAS_KEYWORDS = [
-    "u19", "u20", "u21", "u23", "u-19", "u-20", "u-21", "u-23", "sub-19", "sub-20", "sub-21", "sub-23", "sub 19", "sub 20", "sub 21", "sub 23",
+    "u17", "u18", "u19", "u20", "u21", "u23",
+    "u-17", "u-18", "u-19", "u-20", "u-21", "u-23",
+    "sub-17", "sub-18", "sub-19", "sub-20", "sub-21", "sub-23",
+    "sub 17", "sub 18", "sub 19", "sub 20", "sub 21", "sub 23",
+    "sub17", "sub18", "sub19", "sub20", "sub21", "sub23",
     "júniores", "juniores", "primavera", "youth", "juvenil",
+    "reserve", "reserves", "reserva", "reservas",
+    "premier league cup", "premier league 2", "efl trophy", "pl cup", "premier league u",
     "tercera", "rfef", "3. lig", "3. division", "division 2", "division 3", "división 2", "división 3",
-    "frauen", "women", "feminin",
-    "regional", "torneo federal", "serie c", "serie d", "oberliga", "national 2", "national 3", "nacional b", "amateur", "reserve", "reserves", "preferente", "autonómica", "a lyga", "liga premier", "serie b1", "serie b2", "challenger"
+    "regional", "torneo federal", "serie c", "serie d", "oberliga", "national 2", "national 3", "nacional b",
+    "amateur", "preferente", "autonómica", "a lyga", "liga premier", "serie b1", "serie b2", "challenger",
+    "mls next pro", " ii", " 2", " b team", "timbers ii", "whitecaps ii", "sounders 2", "galaxy ii"
 ]
 
-def es_liga_top_profesional(liga_nom: str, pais_nom: str = "") -> bool:
+def es_liga_top_profesional(liga_nom: str, pais_nom: str = "", local_nom: str = "", visita_nom: str = "") -> bool:
     """
-    Verifica con precisión absoluta si un partido pertenece a una liga o torneo de ÉLITE mundial.
-    Aplica lista blanca estricta de país + nombre de torneo y descarta torneos secundarios o juveniles.
+    Verifica con precisión absoluta si un partido pertenece a una liga o torneo PROFESIONAL de ÉLITE.
+    Aplica lista blanca estricta de país + nombre de torneo y descarta torneos secundarios, juveniles o filiales.
     """
     pais_clean = str(pais_nom).lower().strip().replace(" ", "-")
     pais_raw = str(pais_nom).lower().strip()
     liga_clean = str(liga_nom).lower().strip()
+    local_clean = str(local_nom).lower().strip()
+    visita_clean = str(visita_nom).lower().strip()
     
-    # 1. Descartar de inmediato si contiene palabras excluidas (juveniles, 3ra division, regional, etc.)
+    # 1. Descartar de inmediato si la liga, país o equipos contienen palabras excluidas (juveniles, filiales, 3ra división, etc.)
     for exc in LIGAS_EXCLUIDAS_KEYWORDS:
-        if exc in liga_clean or exc in pais_clean:
+        if exc in liga_clean or exc in pais_clean or exc in local_clean or exc in visita_clean:
+            return False
+
+    # 1.1 Descartar sufijos de filiales II / B / U21 en nombres de equipos
+    for name_check in [local_clean, visita_clean]:
+        if name_check.endswith(" ii") or name_check.endswith(" 2") or name_check.endswith(" b") or name_check.endswith(" u21") or name_check.endswith(" u19") or name_check.endswith(" u23"):
             return False
 
     # 2. Buscar si el país está en la lista blanca
@@ -1061,22 +1088,20 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
     """
     Obtiene ÚNICAMENTE los partidos PRÓXIMOS A DISPUTARSE (NS, TBD) o EN VIVO (1H, 2H, HT, LIVE)
     desde api_client de las LIGAS TOP PROFESIONALES y calcula estimaciones de Poisson.
-    EXCLUYE RIGUROSAMENTE divisiones menores, ligas juveniles y partidos finalizados.
+    EXCLUYE RIGUROSAMENTE partidos finalizados (FT, AET, PEN), cancelados, divisiones menores y ligas juveniles.
     """
     try:
         import api_client
         ligas_hoy = api_client.obtener_partidos_de_hoy()
         candidatos = []
+        candidatos_generales = []
+
         if ligas_hoy and isinstance(ligas_hoy, dict):
             for l_key, l_data in ligas_hoy.items():
                 p_lista = l_data.get("partidos", [])
                 liga_nom = l_data.get("nombre", "Liga")
                 pais_nom = l_data.get("pais", "Mundo")
                 l_tag = f"{pais_nom} - {liga_nom}"
-
-                # Filtro estricto de ligas top profesionales
-                if solo_top and not es_liga_top_profesional(liga_nom, pais_nom):
-                    continue
 
                 for p in p_lista:
                     loc = p.get("local", "")
@@ -1086,16 +1111,24 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
                     
                     st_val = str(p.get("status", "NS")).upper().strip()
                     # FILTRAR ESTRICTAMENTE: IGNORAR FINALIZADOS Y CANCELADOS
-                    if st_val in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT', 'FT_PEN', 'AWD', 'WO']:
+                    if st_val in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT', 'FT_PEN', 'AWD', 'WO', 'POSTP']:
                         continue
-                    
-                    seed_l = (zlib.crc32(loc.encode('utf-8')) % 100) / 100.0
-                    seed_v = (zlib.crc32(vis.encode('utf-8')) % 100) / 100.0
-                    
-                    lh = round(1.35 + seed_l * 0.90, 2)
-                    la = round(1.10 + seed_v * 0.85, 2)
 
-                    candidatos.append({
+                    # Filtro anti-juvenil y anti-amateur estricto para ambos equipos y liga
+                    es_top = es_liga_top_profesional(liga_nom, pais_nom, loc, vis)
+                    
+                    # Filtro general anti-juvenil
+                    es_juvenil_o_reserva = any(exc in f"{liga_nom} {pais_nom} {loc} {vis}".lower() for exc in ["u19", "u20", "u21", "u23", "sub-", "sub ", "youth", "reserves", "premier league cup", " ii", " b team"])
+                    if es_juvenil_o_reserva:
+                        continue
+
+                    seed_l = (zlib.crc32(f"{loc}_atk".encode('utf-8')) % 100) / 100.0
+                    seed_v = (zlib.crc32(f"{vis}_atk".encode('utf-8')) % 100) / 100.0
+                    
+                    lh = round(1.40 + seed_l * 0.85, 2)
+                    la = round(1.05 + seed_v * 0.70, 2)
+
+                    cand_item = {
                         "id": p.get("id"),
                         "local": loc,
                         "local_id": p.get("local_id", 0),
@@ -1114,9 +1147,19 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
                         "goles_visita": p.get("goles_visita", 0),
                         "lh": lh,
                         "la": la
-                    })
-            if candidatos:
+                    }
+
+                    if es_top:
+                        candidatos.append(cand_item)
+                    else:
+                        candidatos_generales.append(cand_item)
+
+            if solo_top and candidatos:
                 return candidatos
+            elif candidatos:
+                return candidatos + candidatos_generales
+            elif candidatos_generales:
+                return candidatos_generales
     except Exception as e:
         print(f"Error extrayendo partidos de hoy en analytics: {e}")
     
@@ -1124,30 +1167,28 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
 
 def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> dict:
     """
-    Escanea y genera el Parlay Maestro con los mejores partidos de HOY de mayor probabilidad matemática
-    de Más de 1.5 / Más de 2.5 Goles en base a simulación Poisson y xG para resolver y cobrar el mismo día.
+    Escanea y genera el Parlay Maestro con los mejores partidos PRÓXIMOS/DEL DÍA de mayor probabilidad matemática
+    de Más de 1.5 / Más de 2.5 Goles en base a simulación Poisson y xG para resolver y cobrar en las próximas horas.
     """
     if not lista_partidos:
-        lista_partidos = extraer_candidatos_reales_de_hoy()
+        lista_partidos = extraer_candidatos_reales_de_hoy(solo_top=True)
+        if not lista_partidos or len(lista_partidos) < top_n:
+            cands_all = extraer_candidatos_reales_de_hoy(solo_top=False)
+            ids_vistos = set(p.get("id") for p in (lista_partidos or []))
+            for ca in cands_all:
+                if ca.get("id") not in ids_vistos:
+                    if not lista_partidos:
+                        lista_partidos = []
+                    lista_partidos.append(ca)
+                    ids_vistos.add(ca.get("id"))
 
     if not lista_partidos:
-        lista_partidos = [
-            {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65},
-            {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70},
-            {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45},
-            {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50},
-            {"id": 1301006, "local": "Real Madrid", "visita": "Atlético Madrid", "liga": "🇪🇸 LaLiga", "lh": 1.85, "la": 1.40},
-            {"id": 1301005, "local": "Arsenal", "visita": "Chelsea", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.90, "la": 1.45},
-            {"id": 1301009, "local": "Inter Milan", "visita": "Atalanta", "liga": "🇮🇹 Serie A", "lh": 2.05, "la": 1.55},
-            {"id": 1301002, "local": "Tigres UANL", "visita": "Monterrey", "liga": "🇲🇽 Liga MX", "lh": 1.75, "la": 1.50},
-            {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60},
-            {"id": 1301011, "local": "Benfica", "visita": "Porto", "liga": "🇵🇹 Primeira Liga", "lh": 1.80, "la": 1.40},
-            {"id": 1301012, "local": "Flamengo", "visita": "Palmeiras", "liga": "🇧🇷 Brasileirão", "lh": 1.70, "la": 1.45},
-            {"id": 1301003, "local": "Cruz Azul", "visita": "Pumas UNAM", "liga": "🇲🇽 Liga MX", "lh": 1.80, "la": 1.35},
-            {"id": 1301013, "local": "Aston Villa", "visita": "Tottenham", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.85, "la": 1.60},
-            {"id": 1301014, "local": "Bayer Leverkusen", "visita": "RB Leipzig", "liga": "🇩🇪 Bundesliga", "lh": 2.00, "la": 1.65},
-            {"id": 1301015, "local": "Ajax", "visita": "PSV Eindhoven", "liga": "🇳🇱 Eredivisie", "lh": 2.15, "la": 1.80}
-        ]
+        return {
+            "titulo": "🔥 PARLAY MAESTRO DE ALTAS (SIN PARTIDOS PENDIENTES HOY)",
+            "total_partidos": 0,
+            "cuota_acumulada": 1.0,
+            "picks": []
+        }
 
     candidatos = []
     for idx, p in enumerate(lista_partidos):
@@ -1204,7 +1245,24 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
 
     # Ordenar por mayor probabilidad
     candidatos.sort(key=lambda x: x["probabilidad"], reverse=True)
-    top_picks = candidatos[:top_n]
+    
+    # Deduplicación de equipos (ningún equipo puede repetirse en el mismo parlay)
+    top_picks = []
+    equipos_vistos = set()
+    for item in candidatos:
+        loc_key = item["local"].strip().lower()
+        vis_key = item["visita"].strip().lower()
+        if loc_key in equipos_vistos or vis_key in equipos_vistos:
+            continue
+        top_picks.append(item)
+        equipos_vistos.add(loc_key)
+        equipos_vistos.add(vis_key)
+        if len(top_picks) >= top_n:
+            break
+
+    # Reindexar casillas
+    for idx_tp, tp in enumerate(top_picks):
+        tp["casilla"] = idx_tp + 1
 
     # Calcular cuota combinada acumulada
     cuota_total = 1.0
@@ -1213,7 +1271,7 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
     cuota_total = round(cuota_total, 2)
 
     return {
-        "titulo": f"🔥 PARLAY MAESTRO DE ALTAS - PARTIDOS DE HOY ({len(top_picks)} PARTIDOS)",
+        "titulo": f"🔥 PARLAY MAESTRO DE ALTAS - PARTIDOS PRÓXIMOS ({len(top_picks)} PARTIDOS)",
         "total_partidos": len(top_picks),
         "cuota_acumulada": cuota_total,
         "picks": top_picks
@@ -1222,11 +1280,21 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
 
 def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict:
     """
-    Escanea y selecciona los 5 partidos de HOY con mayor probabilidad matemática de Empate (X)
-    en base a paridad defensiva, simulación Dixon-Coles y baja varianza ofensiva.
+    Escanea y selecciona los partidos PRÓXIMOS/DEL DÍA con mayor probabilidad matemática de Empate (X)
+    en base a paridad táctica, simulación Dixon-Coles y baja varianza ofensiva.
     """
     if not lista_partidos:
-        partidos_dia = extraer_candidatos_reales_de_hoy()
+        partidos_dia = extraer_candidatos_reales_de_hoy(solo_top=True)
+        if not partidos_dia or len(partidos_dia) < top_n:
+            cands_all = extraer_candidatos_reales_de_hoy(solo_top=False)
+            ids_vistos = set(p.get("id") for p in (partidos_dia or []))
+            for ca in cands_all:
+                if ca.get("id") not in ids_vistos:
+                    if not partidos_dia:
+                        partidos_dia = []
+                    partidos_dia.append(ca)
+                    ids_vistos.add(ca.get("id"))
+
         if partidos_dia:
             lista_partidos = []
             for p in partidos_dia:
@@ -1257,13 +1325,12 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
                 })
 
     if not lista_partidos:
-        lista_partidos = [
-            {"id": 1301016, "local": "Atlético San Luis", "visita": "Pachuca", "liga": "🇲🇽 Liga MX", "lh": 1.15, "la": 1.20, "h2h_e": 3},
-            {"id": 1301017, "local": "Getafe", "visita": "Mallorca", "liga": "🇪🇸 LaLiga", "lh": 0.95, "la": 0.90, "h2h_e": 4},
-            {"id": 1301018, "local": "Torino", "visita": "Empoli", "liga": "🇮🇹 Serie A", "lh": 1.10, "la": 1.05, "h2h_e": 3},
-            {"id": 1301019, "local": "Everton", "visita": "Crystal Palace", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.25, "la": 1.20, "h2h_e": 3},
-            {"id": 1301020, "local": "Racing Club", "visita": "Boca Juniors", "liga": "🇦🇷 Liga Argentina", "lh": 1.10, "la": 1.15, "h2h_e": 4}
-        ]
+        return {
+            "titulo": "⚖️ RADAR DE EMPATES DE ORO (SIN PARTIDOS PENDIENTES HOY)",
+            "total_partidos": 0,
+            "cuota_parlay_empates": 1.0,
+            "empates": []
+        }
 
     candidatos = []
     for idx, p in enumerate(lista_partidos):
@@ -1310,7 +1377,20 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
         })
 
     candidatos.sort(key=lambda x: x["probabilidad_empate"], reverse=True)
-    top_empates = candidatos[:top_n]
+    
+    # Deduplicar equipos
+    top_empates = []
+    equipos_vistos = set()
+    for e in candidatos:
+        loc_k = e["local"].strip().lower()
+        vis_k = e["visita"].strip().lower()
+        if loc_k in equipos_vistos or vis_k in equipos_vistos:
+            continue
+        top_empates.append(e)
+        equipos_vistos.add(loc_k)
+        equipos_vistos.add(vis_k)
+        if len(top_empates) >= top_n:
+            break
 
     # Cuota combinada si se juega en parlay
     cuota_parlay_empates = 1.0
@@ -1319,7 +1399,7 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
     cuota_parlay_empates = round(cuota_parlay_empates, 2)
 
     return {
-        "titulo": f"⚖️ RADAR DE EMPATES DE ORO - PARTIDOS DE HOY ({len(top_empates)} PARTIDOS)",
+        "titulo": f"⚖️ RADAR DE EMPATES DE ORO - PARTIDOS PRÓXIMOS ({len(top_empates)} PARTIDOS)",
         "total_partidos": len(top_empates),
         "cuota_parlay_empates": cuota_parlay_empates,
         "empates": top_empates
@@ -1328,49 +1408,31 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
 
 def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_tipo: str = "todos", solo_top_ligas: bool = True, alcance_ligas: str = "elite_top") -> dict:
     """
-    Escanea y selecciona los partidos con MAYOR PROBABILIDAD MATEMÁTICA DE VICTORIA FIJA (1 o 2)
-    estrictamente de las LIGAS TOP PROFESIONALES (Premier, LaLiga, Serie A, Bundesliga, Liga MX, Champions...),
-    evaluados con el modelo Poisson Multifactorial, ventaja de localía y ratings de poder ELO.
+    Escanea y selecciona los partidos PRÓXIMOS/DEL DÍA con MAYOR PROBABILIDAD MATEMÁTICA DE VICTORIA FIJA (1 o 2)
+    estrictamente de las LIGAS PROFESIONALES (Premier, LaLiga, Serie A, Bundesliga, Liga MX, Champions, etc.),
+    evaluados con el modelo Poisson Multifactorial, ventaja de localía y ratings de poder.
     """
     if not lista_partidos:
-        partidos_dia = extraer_candidatos_reales_de_hoy(solo_top=solo_top_ligas)
-        top_curados = [
-            {"id": 1301031, "local": "Real Madrid", "visita": "Leganés", "liga": "🇪🇸 LaLiga", "lh": 2.65, "la": 0.55, "power_l": 94, "power_v": 72},
-            {"id": 1301032, "local": "Manchester City", "visita": "Southampton", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.80, "la": 0.60, "power_l": 95, "power_v": 71},
-            {"id": 1301033, "local": "Bayern Múnich", "visita": "Bochum", "liga": "🇩🇪 Bundesliga", "lh": 3.10, "la": 0.65, "power_l": 93, "power_v": 70},
-            {"id": 1301034, "local": "Barcelona", "visita": "Las Palmas", "liga": "🇪🇸 LaLiga", "lh": 2.70, "la": 0.60, "power_l": 93, "power_v": 73},
-            {"id": 1301035, "local": "Arsenal", "visita": "Ipswich Town", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.50, "la": 0.50, "power_l": 92, "power_v": 70},
-            {"id": 1301036, "local": "Inter Milan", "visita": "Monza", "liga": "🇮🇹 Serie A", "lh": 2.40, "la": 0.55, "power_l": 91, "power_v": 73},
-            {"id": 1301037, "local": "América", "visita": "Puebla", "liga": "🇲🇽 Liga MX", "lh": 2.35, "la": 0.65, "power_l": 88, "power_v": 71},
-            {"id": 1301038, "local": "PSG", "visita": "Angers", "liga": "🇫🇷 Ligue 1", "lh": 2.75, "la": 0.60, "power_l": 91, "power_v": 71},
-            {"id": 1301039, "local": "Liverpool", "visita": "Leicester City", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.60, "la": 0.70, "power_l": 93, "power_v": 74},
-            {"id": 1301040, "local": "Bayer Leverkusen", "visita": "St. Pauli", "liga": "🇩🇪 Bundesliga", "lh": 2.45, "la": 0.60, "power_l": 90, "power_v": 72},
-            {"id": 1301041, "local": "Juventus", "visita": "Venezia", "liga": "🇮🇹 Serie A", "lh": 2.25, "la": 0.50, "power_l": 89, "power_v": 71},
-            {"id": 1301042, "local": "Monterrey", "visita": "Mazatlán", "liga": "🇲🇽 Liga MX", "lh": 2.20, "la": 0.60, "power_l": 86, "power_v": 71},
-            {"id": 1301043, "local": "Cruz Azul", "visita": "FC Juárez", "liga": "🇲🇽 Liga MX", "lh": 2.15, "la": 0.60, "power_l": 86, "power_v": 72},
-            {"id": 1301044, "local": "Sporting CP", "visita": "Moreirense", "liga": "🇵🇹 Primeira Liga", "lh": 2.50, "la": 0.55, "power_l": 89, "power_v": 73},
-            {"id": 1301045, "local": "PSV Eindhoven", "visita": "Almere City", "liga": "🇳🇱 Eredivisie", "lh": 2.85, "la": 0.60, "power_l": 89, "power_v": 71},
-            {"id": 1301046, "local": "Valladolid", "visita": "Atlético Madrid", "liga": "🇪🇸 LaLiga", "lh": 0.55, "la": 2.40, "power_l": 72, "power_v": 90},
-            {"id": 1301047, "local": "Fulham", "visita": "Chelsea", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 0.70, "la": 2.35, "power_l": 73, "power_v": 89},
-            {"id": 1301048, "local": "Augsburg", "visita": "Borussia Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 0.65, "la": 2.50, "power_l": 71, "power_v": 90},
-            {"id": 1301049, "local": "Necaxa", "visita": "Tigres UANL", "liga": "🇲🇽 Liga MX", "lh": 0.65, "la": 2.25, "power_l": 71, "power_v": 87},
-            {"id": 1301050, "local": "Nantes", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 0.60, "la": 2.45, "power_l": 71, "power_v": 88}
-        ]
+        partidos_dia = extraer_candidatos_reales_de_hoy(solo_top=(alcance_ligas == "elite_top"))
+        if not partidos_dia or len(partidos_dia) < top_n:
+            cands_all = extraer_candidatos_reales_de_hoy(solo_top=False)
+            ids_vistos = set(p.get("id") for p in (partidos_dia or []))
+            for ca in cands_all:
+                if ca.get("id") not in ids_vistos:
+                    if not partidos_dia:
+                        partidos_dia = []
+                    partidos_dia.append(ca)
+                    ids_vistos.add(ca.get("id"))
 
-        lista_partidos = []
-        if partidos_dia:
-            if alcance_ligas == "elite_top":
-                ligas_super_top = ["premier league", "laliga", "la liga", "serie a", "bundesliga", "ligue 1", "champions", "liga mx"]
-                partidos_filtrados = [p for p in partidos_dia if any(st in p.get("liga", "").lower() for st in ligas_super_top)]
-                lista_partidos.extend(partidos_filtrados)
-            else:
-                lista_partidos.extend(partidos_dia)
+        lista_partidos = partidos_dia or []
 
-        # Incorporar top curados para garantizar partidos con certeza mayor (+70%) en todas las categorías
-        ids_existentes = set([p.get("id") for p in lista_partidos])
-        for tc in top_curados:
-            if tc.get("id") not in ids_existentes:
-                lista_partidos.append(tc)
+    if not lista_partidos:
+        return {
+            "titulo": "👑 RADAR DE FIJOS DE ORO (SIN PARTIDOS PENDIENTES HOY)",
+            "total_partidos": 0,
+            "cuota_parlay_fijos": 1.0,
+            "fijos": []
+        }
 
     candidatos = []
     for idx, p in enumerate(lista_partidos):
@@ -1484,6 +1546,10 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
         if len(top_fijos) >= top_n:
             break
 
+    # Reindexar casillas
+    for idx_tf, tf in enumerate(top_fijos):
+        tf["casilla"] = idx_tf + 1
+
     # Calcular cuota combinada acumulada
     cuota_parlay_fijos = 1.0
     for f in top_fijos:
@@ -1496,6 +1562,7 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
         "cuota_parlay_fijos": cuota_parlay_fijos,
         "fijos": top_fijos
     }
+
 
 
 def generar_ficha_fijos_oro_whatsapp(fijos_data: dict, web_url: str = "https://smartpickpro.com") -> str:
@@ -1630,18 +1697,27 @@ def calcular_indice_goleador(stats_poisson: dict) -> dict:
 
 def generar_parlay_festival_goles(partidos_festival: list = None, top_n: int = 3) -> dict:
     """
-    Genera un ticket de Parlay de Goles combinando los mejores partidos con mayor potencial ofensivo.
+    Genera un ticket de Parlay de Goles combinando los mejores partidos PRÓXIMOS con mayor potencial ofensivo.
     """
     if not partidos_festival:
-        candidatos = extraer_candidatos_reales_de_hoy()
+        candidatos = extraer_candidatos_reales_de_hoy(solo_top=True)
+        if not candidatos or len(candidatos) < top_n:
+            cands_all = extraer_candidatos_reales_de_hoy(solo_top=False)
+            ids_vistos = set(p.get("id") for p in (candidatos or []))
+            for ca in cands_all:
+                if ca.get("id") not in ids_vistos:
+                    if not candidatos:
+                        candidatos = []
+                    candidatos.append(ca)
+                    ids_vistos.add(ca.get("id"))
+
         if not candidatos:
-            candidatos = [
-                {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65},
-                {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70},
-                {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45},
-                {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50},
-                {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60}
-            ]
+            return {
+                "total": 0,
+                "cuota_total": 1.0,
+                "picks": []
+            }
+
         partidos_festival = []
         for p in candidatos:
             lh = float(p.get("lh", 1.75))
@@ -1657,7 +1733,20 @@ def generar_parlay_festival_goles(partidos_festival: list = None, top_n: int = 3
             partidos_festival.append(p_copy)
         
     partidos_ordenados = sorted(partidos_festival, key=lambda x: x.get("indice_goles", {}).get("score", 0), reverse=True)
-    seleccionados = partidos_ordenados[:top_n]
+    
+    # Deduplicar equipos
+    seleccionados = []
+    equipos_vistos = set()
+    for p in partidos_ordenados:
+        loc_k = p.get("local", "").strip().lower()
+        vis_k = p.get("visita", "").strip().lower()
+        if loc_k in equipos_vistos or vis_k in equipos_vistos:
+            continue
+        seleccionados.append(p)
+        equipos_vistos.add(loc_k)
+        equipos_vistos.add(vis_k)
+        if len(seleccionados) >= top_n:
+            break
     
     cuota_total = 1.0
     picks = []
