@@ -1670,22 +1670,20 @@ if liga_elegida_val == "GOAL_FESTIVAL_MODE":
         </div>
         ''')
 
-        with st.spinner("🔥 Escaneando todos los partidos de hoy y calculando xG y probabilidad ofensiva..."):
-            candidatos_raw = analytics.extraer_candidatos_reales_de_hoy()
-            if not candidatos_raw:
-                candidatos_raw = [
-                    {"id": 1301001, "local": "América", "visita": "Toluca", "liga": "🇲🇽 Liga MX", "lh": 1.95, "la": 1.65, "hora": "Hoy 21:00", "status": "NS"},
-                    {"id": 1301004, "local": "Manchester City", "visita": "Liverpool", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 2.10, "la": 1.70, "hora": "Hoy 13:00", "status": "NS"},
-                    {"id": 1301007, "local": "Barcelona", "visita": "Villarreal", "liga": "🇪🇸 LaLiga", "lh": 2.20, "la": 1.45, "hora": "Hoy 14:00", "status": "NS"},
-                    {"id": 1301008, "local": "Bayern Múnich", "visita": "Dortmund", "liga": "🇩🇪 Bundesliga", "lh": 2.40, "la": 1.50, "hora": "Hoy 11:30", "status": "NS"},
-                    {"id": 1301010, "local": "PSG", "visita": "Mónaco", "liga": "🇫🇷 Ligue 1", "lh": 2.30, "la": 1.60, "hora": "Hoy 14:00", "status": "NS"},
-                    {"id": 1301013, "local": "Aston Villa", "visita": "Tottenham", "liga": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", "lh": 1.85, "la": 1.60, "hora": "Hoy 10:30", "status": "NS"},
-                    {"id": 1301014, "local": "Bayer Leverkusen", "visita": "RB Leipzig", "liga": "🇩🇪 Bundesliga", "lh": 2.00, "la": 1.65, "hora": "Hoy 11:30", "status": "NS"},
-                    {"id": 1301015, "local": "Ajax", "visita": "PSV Eindhoven", "liga": "🇳🇱 Eredivisie", "lh": 2.15, "la": 1.80, "hora": "Hoy 12:00", "status": "NS"}
-                ]
+        with st.spinner("🔥 Escaneando todos los partidos del día y calculando xG y probabilidad ofensiva..."):
+            candidatos_raw = analytics.extraer_candidatos_reales_de_hoy(solo_top=True)
+            if not candidatos_raw or len(candidatos_raw) < 4:
+                cands_all = analytics.extraer_candidatos_reales_de_hoy(solo_top=False)
+                ids_vistos = set(p.get("id") for p in (candidatos_raw or []))
+                for ca in cands_all:
+                    if ca.get("id") not in ids_vistos:
+                        if not candidatos_raw:
+                            candidatos_raw = []
+                        candidatos_raw.append(ca)
+                        ids_vistos.add(ca.get("id"))
 
             partidos_festival = []
-            for p in candidatos_raw:
+            for p in (candidatos_raw or []):
                 lh = float(p.get("lh", 1.75))
                 la = float(p.get("la", 1.45))
                 sp = analytics.calcular_matriz_poisson_multifactorial(
