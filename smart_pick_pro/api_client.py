@@ -814,12 +814,13 @@ def _generar_partidos_hoy_muestra() -> dict:
 def obtener_partidos_de_hoy() -> dict:
     """
     Obtiene todos los partidos programados o jugándose HOY agrupados por Liga/País
-    para apuestas rápidas que se resuelven el mismo día.
+    para apuestas rápidas y parlays que se resuelven el mismo día o en las próximas horas.
     """
     import datetime
     today = datetime.date.today()
     today_str = today.strftime("%Y-%m-%d")
     tomorrow_str = (today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    day_after_str = (today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
     
     headers = get_headers()
     try:
@@ -833,13 +834,23 @@ def obtener_partidos_de_hoy() -> dict:
         upcoming_count = sum(1 for f in fixtures_raw if f.get('fixture', {}).get('status', {}).get('short', 'NS') not in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT'])
 
         # Si hay pocos partidos por jugar hoy (ej. tarde/noche), cargar también los de mañana
-        if upcoming_count < 20:
+        if upcoming_count < 25:
             try:
                 resp_tom = requests.get(url, headers=headers, params={"date": tomorrow_str, "timezone": "America/Mexico_City"}, timeout=10)
                 if resp_tom.status_code == 200 and resp_tom.json().get('response'):
                     fixtures_raw.extend(resp_tom.json()['response'])
             except Exception as e_tom:
                 print(f"Error cargando partidos complementarios de mañana: {e_tom}")
+
+        # Si aún hay pocos partidos próximos, consultar el día siguiente
+        upcoming_count_tot = sum(1 for f in fixtures_raw if f.get('fixture', {}).get('status', {}).get('short', 'NS') not in ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'INT'])
+        if upcoming_count_tot < 15:
+            try:
+                resp_nxt = requests.get(url, headers=headers, params={"date": day_after_str, "timezone": "America/Mexico_City"}, timeout=10)
+                if resp_nxt.status_code == 200 and resp_nxt.json().get('response'):
+                    fixtures_raw.extend(resp_nxt.json()['response'])
+            except Exception as e_nxt:
+                print(f"Error cargando partidos complementarios: {e_nxt}")
 
         if fixtures_raw:
             ligas_hoy = {}
@@ -872,10 +883,17 @@ def obtener_partidos_de_hoy() -> dict:
                     try:
                         d_part = str(hora_utc).split("T")[0]
                         t_part = str(hora_utc).split("T")[1][:5]
-                        if d_part == tomorrow_str:
+                        if d_part == today_str:
+                            hora_str = f"Hoy {t_part} hrs (CDMX)"
+                        elif d_part == tomorrow_str:
                             hora_str = f"Mañana {t_part} hrs (CDMX)"
                         else:
-                            hora_str = f"{t_part} hrs (CDMX)"
+                            try:
+                                dt_d = datetime.date.fromisoformat(d_part)
+                                nom_dia = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"][dt_d.weekday()]
+                                hora_str = f"{nom_dia} {dt_d.day:02d}-{dt_d.strftime('%b')} {t_part} hrs (CDMX)"
+                            except Exception:
+                                hora_str = f"{d_part} {t_part} hrs (CDMX)"
                     except Exception:
                         hora_str = "Hoy"
 
