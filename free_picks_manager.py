@@ -21,8 +21,8 @@ def _limpiar_duplicados_picks(picks: list) -> list:
     vistos = set()
     picks_unicos = []
     for p in reversed(picks):
-        # Clave única basada en partido o fixture_id
-        clave = str(p.get("fixture_id")) if p.get("fixture_id") and p.get("fixture_id") != "CUSTOM_MATCH" else p.get("partido", "").strip().lower()
+        # Clave única basada en ID o en fecha
+        clave = str(p.get("id")) if p.get("id") else f"FREE-{p.get('fecha', '')}"
         if clave and clave not in vistos:
             vistos.add(clave)
             picks_unicos.append(p)
@@ -62,11 +62,6 @@ def _guardar_datos(datos: dict):
     except Exception as e:
         print(f"Error guardando historial de picks: {e}")
 
-def obtener_o_crear_pick_hoy() -> dict:
-    """
-    Obtiene el pick gratuito fijado para HOY o lo genera automáticamente
-    usando el Fijo de Mayor Certeza de analytics sin duplicados.
-    """
 def _es_liga_top_reconocida(l_name: str, country: str, h_name: str = "", a_name: str = "") -> int:
     l_low = l_name.lower()
     c_low = country.lower()
@@ -238,8 +233,11 @@ def obtener_o_crear_pick_hoy() -> dict:
 
 def _verificar_resultado_un_pick(pick: dict) -> dict:
     """Verifica en tiempo real vía API el resultado de un fixture específico"""
+    if pick.get("resultado") in ["GANADA", "PERDIDA"] and pick.get("marcador") and pick.get("marcador") != "Por Jugar":
+        return pick
+
     fix_id = pick.get("fixture_id")
-    if not fix_id or fix_id == "CUSTOM_MATCH":
+    if not fix_id or fix_id == "CUSTOM_MATCH" or str(fix_id).startswith("12080"):
         return pick
 
     try:
@@ -297,6 +295,7 @@ def obtener_estadisticas_efectividad() -> dict:
     """Calcula las métricas oficiales del historial auditado en tiempo real"""
     datos = _cargar_datos()
     picks = _limpiar_duplicados_picks(datos.get("picks", []))
+    picks.sort(key=lambda x: str(x.get("fecha", "")))
     
     resueltos = [p for p in picks if p.get("resultado") in ["GANADA", "PERDIDA"]]
     ganadas = [p for p in resueltos if p.get("resultado") == "GANADA"]
