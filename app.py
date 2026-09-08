@@ -786,6 +786,7 @@ if not st.session_state['autenticado']:
 
     # 2. PESTAÑA HISTORIAL AUDITADO (% EFECTIVIDAD)
     with tab_historial:
+        free_picks_manager.verificar_y_resolver_picks_automatico()
         stats_ef = free_picks_manager.obtener_estadisticas_efectividad()
         picks_historial = stats_ef.get("picks", [])
         
