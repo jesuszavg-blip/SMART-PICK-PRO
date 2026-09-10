@@ -134,6 +134,8 @@ except ImportError:
     from smart_pick_pro import free_picks_manager
     importlib.reload(free_picks_manager)
 
+# Versión del sistema de picks auditados: 2.1 (Live Sync)
+
 try:
     import assets_data
     importlib.reload(assets_data)
