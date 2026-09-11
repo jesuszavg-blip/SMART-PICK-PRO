@@ -1281,7 +1281,8 @@ def generar_parlay_top_altas(lista_partidos: list = None, top_n: int = 15) -> di
 def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict:
     """
     Escanea y selecciona los partidos PRÓXIMOS/DEL DÍA con mayor probabilidad matemática de Empate (X)
-    en base a paridad táctica, simulación Dixon-Coles y baja varianza ofensiva.
+    en base a paridad táctica real, simulación Dixon-Coles y baja varianza ofensiva.
+    EXCLUYE RIGUROSAMENTE partidos con favorito claro (Fijos de Oro).
     """
     if not lista_partidos:
         partidos_dia = extraer_candidatos_reales_de_hoy(solo_top=True)
@@ -1295,34 +1296,7 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
                     partidos_dia.append(ca)
                     ids_vistos.add(ca.get("id"))
 
-        if partidos_dia:
-            lista_partidos = []
-            for p in partidos_dia:
-                loc = p["local"]
-                vis = p["visita"]
-                seed_d = (zlib.crc32(f"{loc}_{vis}_draw".encode('utf-8')) % 100) / 100.0
-                lh_emp = round(1.05 + seed_d * 0.25, 2)
-                la_emp = round(1.00 + (1.0 - seed_d) * 0.25, 2)
-                lista_partidos.append({
-                    "id": p.get("id"),
-                    "local": loc,
-                    "local_id": p.get("local_id", 0),
-                    "logo_local": p.get("logo_local", ""),
-                    "visita": vis,
-                    "visita_id": p.get("visita_id", 0),
-                    "logo_visita": p.get("logo_visita", ""),
-                    "venue": p.get("venue", f"Estadio {loc}"),
-                    "city": p.get("city", "México"),
-                    "referee": p.get("referee", "Árbitro Oficial Asignado"),
-                    "liga": p["liga"],
-                    "hora": p.get("hora", "Hoy"),
-                    "status": p.get("status", "NS"),
-                    "minuto": p.get("minuto", 0),
-                    "goles_local": p.get("goles_local", 0),
-                    "goles_visita": p.get("goles_visita", 0),
-                    "lh": lh_emp,
-                    "la": la_emp
-                })
+        lista_partidos = partidos_dia or []
 
     if not lista_partidos:
         return {
@@ -1338,19 +1312,47 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
         vis = p.get("visita", f"Equipo Visita {idx+1}")
         liga = p.get("liga", "Torneo Oficial")
         hora = p.get("hora", "Hoy")
-        lh = float(p.get("lh", 1.15))
-        la = float(p.get("la", 1.15))
+        lh = float(p.get("lh", 1.40))
+        la = float(p.get("la", 1.10))
 
-        # Cálculo de empate con Dixon-Coles
-        p_emp = 0.0
-        for g in range(6):
-            tau = dixon_coles_tau(g, g, lh, la)
-            p_emp += poisson_probability(g, lh) * poisson_probability(g, la) * tau
+        # Simulación exacta Dixon-Coles + Poisson
+        max_goals = 6
+        matrix = [[0.0 for _ in range(max_goals)] for _ in range(max_goals)]
+        for h in range(max_goals):
+            for a in range(max_goals):
+                tau = dixon_coles_tau(h, a, lh, la)
+                matrix[h][a] = tau * poisson_probability(h, lh) * poisson_probability(a, la)
 
-        prob_emp = max(28.5, min(42.0, round(p_emp * 100, 1)))
-        cuota_emp = round(max(3.10, min(3.80, 1.0 / (prob_emp / 100.0) * 1.08)), 2)
+        total_p = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals))
+        if total_p > 0:
+            for h in range(max_goals):
+                for a in range(max_goals):
+                    matrix[h][a] /= total_p
 
-        marcador_emp = "1 - 1" if (lh + la) >= 2.0 else "0 - 0"
+        p_win_h = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h > a)
+        p_draw = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h == a)
+        p_win_a = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h < a)
+
+        max_win = max(p_win_h, p_win_a)
+        diff_win = abs(p_win_h - p_win_a)
+
+        # REGLA DE EXCLUSIÓN MUTUA:
+        # Si un equipo tiene ventaja contundente (> 52% win o diff > 20%), es un FIJO, NO un empate
+        es_fijo = (max_win >= 0.52) or (diff_win >= 0.20)
+
+        # Score de Paridad Táctica (mayor score = mayor equilibrio y probabilidad de empate)
+        # Premia: alta p_draw, mínima diferencia entre equipos, y ritmo de goles moderado/bajo
+        score_paridad = (p_draw * 100.0) - (diff_win * 40.0) - (abs((lh + la) - 2.2) * 5.0)
+
+        # Probabilidad y Cuota matemática dinámica
+        prob_emp = round(max(28.0, min(39.5, p_draw * 100)), 1)
+        cuota_emp = round(max(2.95, min(3.85, (1.0 / (prob_emp / 100.0)) * 1.05)), 2)
+
+        marcador_emp = "0 - 0" if (lh + la) <= 2.2 else "1 - 1"
+        if p_win_h >= p_win_a:
+            doble_op = f"{loc} o Empate (1X) ({round((p_win_h + p_draw)*100, 1)}%)"
+        else:
+            doble_op = f"Empate o {vis} (X2) ({round((p_win_a + p_draw)*100, 1)}%)"
 
         candidatos.append({
             "id": p.get("id", 1300050 + idx),
@@ -1370,18 +1372,28 @@ def generar_top_empates_oro(lista_partidos: list = None, top_n: int = 5) -> dict
             "goles_visita": p.get("goles_visita", 0),
             "liga": liga,
             "hora": hora,
+            "es_fijo": es_fijo,
+            "diff_win": diff_win,
+            "score_paridad": score_paridad,
             "probabilidad_empate": prob_emp,
             "cuota_empate": cuota_emp,
             "marcador_probable": marcador_emp,
-            "doble_oportunidad": f"{loc} o Empate (1X) ({(prob_emp + 40):.1f}%)"
+            "doble_oportunidad": doble_op
         })
 
-    candidatos.sort(key=lambda x: x["probabilidad_empate"], reverse=True)
+    # Filtrar estrictamente excluyendo fijos
+    candidatos_paridad = [c for c in candidatos if not c["es_fijo"]]
+
+    # Si hay muy pocos partidos que cumplan paridad estricta, relajar suavemente pero ordenando por paridad
+    if len(candidatos_paridad) < top_n:
+        candidatos_paridad = sorted(candidatos, key=lambda x: x["diff_win"])
+
+    candidatos_paridad.sort(key=lambda x: x["score_paridad"], reverse=True)
     
-    # Deduplicar equipos
+    # Deduplicar equipos (ningún equipo puede repetirse en el radar de empates)
     top_empates = []
     equipos_vistos = set()
-    for e in candidatos:
+    for e in candidatos_paridad:
         loc_k = e["local"].strip().lower()
         vis_k = e["visita"].strip().lower()
         if loc_k in equipos_vistos or vis_k in equipos_vistos:
