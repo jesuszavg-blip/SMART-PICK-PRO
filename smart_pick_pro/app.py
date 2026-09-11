@@ -889,19 +889,21 @@ if not st.session_state['autenticado']:
                     <h4 style="color: white; margin: 0 0 10px 0; font-weight: 800; text-align: center;">Acceso a tu Cuenta VIP</h4>
                 </div>
                 ''')
-                user_input = st.text_input("Usuario:", key="login_user")
-                pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
-                
-                st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True, key="btn_login_submit"):
-                    exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
-                    if exito:
-                        st.session_state['autenticado'] = True
-                        st.session_state['usuario'] = user_input.strip().lower()
-                        st.session_state['rol'] = mensaje_o_rol
-                        st.rerun()
-                    else:
-                        st.error(f"❌ {mensaje_o_rol}")
+                with st.form("form_login_vip", clear_on_submit=False):
+                    user_input = st.text_input("Usuario:", key="login_user")
+                    pwd_input = st.text_input("Contraseña:", type="password", key="login_pass")
+                    
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    btn_login_submit = st.form_submit_button("🚀 ACCEDER AL SISTEMA VIP", use_container_width=True)
+                    if btn_login_submit:
+                        exito, mensaje_o_rol = auth.verificar_credenciales(user_input, pwd_input)
+                        if exito:
+                            st.session_state['autenticado'] = True
+                            st.session_state['usuario'] = user_input.strip().lower()
+                            st.session_state['rol'] = mensaje_o_rol
+                            st.rerun()
+                        else:
+                            st.error(f"❌ {mensaje_o_rol}")
 
             with tab_register:
                 if codigo_referido_url:
@@ -911,38 +913,40 @@ if not st.session_state['autenticado']:
                     </div>
                     ''')
 
-                reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
-                reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
-                reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
-                reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
-                reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
+                with st.form("form_register_vip", clear_on_submit=False):
+                    reg_user = st.text_input("Elige tu Nombre de Usuario:", key="reg_user_in", placeholder="ej. crackpicks")
+                    reg_email = st.text_input("📧 Correo Electrónico:", key="reg_email_in", placeholder="tu_correo@ejemplo.com")
+                    reg_pass1 = st.text_input("Crea tu Contraseña:", type="password", key="reg_pass1_in")
+                    reg_pass2 = st.text_input("Confirma tu Contraseña:", type="password", key="reg_pass2_in")
+                    reg_ref_code = st.text_input("Código de Afiliado (Opcional):", value=codigo_referido_url, key="reg_ref_code_in")
 
-                st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("✨ CREAR MI CUENTA", use_container_width=True, key="btn_reg_submit"):
-                    if not reg_user or not reg_pass1 or not reg_email:
-                        st.error("❌ Por favor completa el usuario, correo electrónico y contraseña.")
-                    elif "@" not in reg_email or "." not in reg_email:
-                        st.error("❌ Por favor ingresa un correo electrónico válido.")
-                    elif reg_pass1 != reg_pass2:
-                        st.error("❌ Las contraseñas no coinciden.")
-                    elif len(reg_pass1) < 4:
-                        st.error("❌ La contraseña debe tener al menos 4 caracteres.")
-                    else:
-                        ok_reg, msg_reg = auth.registrar_usuario(
-                            username=reg_user,
-                            password=reg_pass1,
-                            role="VIP",
-                            codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None,
-                            email=reg_email.strip().lower()
-                        )
-                        if ok_reg:
-                            st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
-                            st.session_state['autenticado'] = True
-                            st.session_state['usuario'] = reg_user.strip().lower()
-                            st.session_state['rol'] = "VIP"
-                            st.rerun()
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    btn_reg_submit = st.form_submit_button("✨ CREAR MI CUENTA", use_container_width=True)
+                    if btn_reg_submit:
+                        if not reg_user or not reg_pass1 or not reg_email:
+                            st.error("❌ Por favor completa el usuario, correo electrónico y contraseña.")
+                        elif "@" not in reg_email or "." not in reg_email:
+                            st.error("❌ Por favor ingresa un correo electrónico válido.")
+                        elif reg_pass1 != reg_pass2:
+                            st.error("❌ Las contraseñas no coinciden.")
+                        elif len(reg_pass1) < 4:
+                            st.error("❌ La contraseña debe tener al menos 4 caracteres.")
                         else:
-                            st.error(f"❌ {msg_reg}")
+                            ok_reg, msg_reg = auth.registrar_usuario(
+                                username=reg_user,
+                                password=reg_pass1,
+                                role="VIP",
+                                codigo_referido_usado=reg_ref_code.strip() if reg_ref_code else None,
+                                email=reg_email.strip().lower()
+                            )
+                            if ok_reg:
+                                st.success(f"{msg_reg} ¡Iniciando sesión automáticamente...!")
+                                st.session_state['autenticado'] = True
+                                st.session_state['usuario'] = reg_user.strip().lower()
+                                st.session_state['rol'] = "VIP"
+                                st.rerun()
+                            else:
+                                st.error(f"❌ {msg_reg}")
             
             # --- CAJA DE MÉTODOS DE PAGO INTEGRADOS ---
             bancoppel_card = getattr(config, 'BANCOPPEL_TARJETA', '4169 1608 7646 1600')
