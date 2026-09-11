@@ -31,16 +31,26 @@ def _hash_password(password: str) -> str:
         return f"sha256:{hashlib.sha256((password + salt).encode('utf-8')).hexdigest()}"
 
 def _verify_password(password: str, hashed: str) -> bool:
-    if hashed.startswith("$2b$") or hashed.startswith("$2a$"):
-        if HAS_BCRYPT:
-            return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    if not password or not hashed:
         return False
-    elif hashed.startswith("sha256:"):
-        salt = "smart_pick_salt_2026"
-        expected = f"sha256:{hashlib.sha256((password + salt).encode('utf-8')).hexdigest()}"
-        return expected == hashed
-    else:
-        return password == hashed
+    variants = list(dict.fromkeys([password, password.strip(), password.rstrip(), password.lstrip()]))
+    for p in variants:
+        if hashed.startswith("$2b$") or hashed.startswith("$2a$"):
+            if HAS_BCRYPT:
+                try:
+                    if bcrypt.checkpw(p.encode('utf-8'), hashed.encode('utf-8')):
+                        return True
+                except Exception:
+                    pass
+        elif hashed.startswith("sha256:"):
+            salt = "smart_pick_salt_2026"
+            expected = f"sha256:{hashlib.sha256((p + salt).encode('utf-8')).hexdigest()}"
+            if expected == hashed:
+                return True
+        else:
+            if p == hashed:
+                return True
+    return False
 
 def _get_github_token() -> str:
     """Obtiene el token de GitHub desde variables de entorno, secrets o reconstrucción dinámica segura"""
