@@ -1,86 +1,86 @@
 [
   {
     "casilla": 1,
-    "local": "atlante",
-    "visita": "pachuca",
+    "local": "Atlante",
+    "visita": "Pachuca",
     "id": null
   },
   {
     "casilla": 2,
-    "local": "cruz azul",
-    "visita": "america",
+    "local": "Cruz azul",
+    "visita": "America",
     "id": null
   },
   {
     "casilla": 3,
-    "local": "guadalajara",
-    "visita": "pumas",
+    "local": "Guadalajara",
+    "visita": "Pumas",
     "id": null
   },
   {
     "casilla": 4,
-    "local": "guadalajara w",
-    "visita": "monterrey w",
+    "local": "Guadalajara w",
+    "visita": "Monterrey w",
     "id": null
   },
   {
     "casilla": 5,
-    "local": "puebla w",
-    "visita": "queretaro w",
+    "local": "Puebla w",
+    "visita": "Queretaro w",
     "id": null
   },
   {
     "casilla": 6,
-    "local": "america w",
-    "visita": "tigres w",
+    "local": "America w",
+    "visita": "Tigres w",
     "id": null
   },
   {
     "casilla": 7,
-    "local": "bournemouth",
-    "visita": "brentford",
+    "local": "Burnemounth",
+    "visita": "Brentford",
     "id": null
   },
   {
     "casilla": 8,
-    "local": "manchester united",
-    "visita": "manchester city",
+    "local": "Manchester  united",
+    "visita": "Manchester city",
     "id": null
   },
   {
     "casilla": 9,
-    "local": "lazio",
-    "visita": "milan",
+    "local": "Lazio",
+    "visita": "Milan",
     "id": null
   },
   {
     "casilla": 10,
-    "local": "hoffenheim",
-    "visita": "stuttgart",
+    "local": "Hoffenheim",
+    "visita": "Stuttgart",
     "id": null
   },
   {
     "casilla": 11,
-    "local": "lorient",
-    "visita": "toulousse",
+    "local": "Lorient",
+    "visita": "Toulouse",
     "id": null
   },
   {
     "casilla": 12,
-    "local": "santos",
-    "visita": "cruzeiro",
+    "local": "Santos",
+    "visita": "Cruzeiro",
     "id": null
   },
   {
     "casilla": 13,
-    "local": "tigre",
-    "visita": "rosario central",
+    "local": "Tigre",
+    "visita": "Rosario central",
     "id": null
   },
   {
     "casilla": 14,
-    "local": "san jose",
-    "visita": "houston",
+    "local": "San jose",
+    "visita": "Houston",
     "id": null
   }
 ]
