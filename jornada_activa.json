@@ -1,86 +1,86 @@
 [
   {
     "casilla": 1,
-    "local": "Juarez",
+    "local": "Atlante",
     "visita": "Pachuca",
     "id": null
   },
   {
     "casilla": 2,
-    "local": "Monterrey",
-    "visita": "Toluca",
+    "local": "Cruz azul",
+    "visita": "America",
     "id": null
   },
   {
     "casilla": 3,
-    "local": "America",
-    "visita": "Leon",
+    "local": "Guadalajara",
+    "visita": "Pumas",
     "id": null
   },
   {
     "casilla": 4,
-    "local": "Tijuana w",
-    "visita": "Pachuca w",
+    "local": "Guadalajara w",
+    "visita": "Monterrey w",
     "id": null
   },
   {
     "casilla": 5,
-    "local": "Ath bilbao",
-    "visita": "Atl. De madrid",
+    "local": "Puebla w",
+    "visita": "Queretaro w",
     "id": null
   },
   {
     "casilla": 6,
-    "local": "Espanyol",
-    "visita": "Sevilla",
+    "local": "America w",
+    "visita": "Tigres w",
     "id": null
   },
   {
     "casilla": 7,
-    "local": "Fullham",
-    "visita": "Crystal palace",
+    "local": "Burnemounth",
+    "visita": "Brentford",
     "id": null
   },
   {
     "casilla": 8,
-    "local": "Nottinghamm",
-    "visita": "Tottenham",
+    "local": "Manchester  united",
+    "visita": "Manchester city",
     "id": null
   },
   {
     "casilla": 9,
-    "local": "Juventus",
+    "local": "Lazio",
     "visita": "Milan",
     "id": null
   },
   {
     "casilla": 10,
-    "local": "Ajax",
-    "visita": "Psv",
+    "local": "Hoffenheim",
+    "visita": "Stuttgart",
     "id": null
   },
   {
     "casilla": 11,
-    "local": "Willem II",
-    "visita": "Excelsior",
+    "local": "Lorient",
+    "visita": "Toulouse",
     "id": null
   },
   {
     "casilla": 12,
-    "local": "Groningen",
-    "visita": "Twente",
+    "local": "Santos",
+    "visita": "Cruzeiro",
     "id": null
   },
   {
     "casilla": 13,
-    "local": "Charlotte",
-    "visita": "houston",
+    "local": "Tigre",
+    "visita": "Rosario central",
     "id": null
   },
   {
     "casilla": 14,
-    "local": "Toronto",
-    "visita": "Chicago",
+    "local": "San jose",
+    "visita": "Houston",
     "id": null
   }
 ]
