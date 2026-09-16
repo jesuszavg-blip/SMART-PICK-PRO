@@ -2,29 +2,46 @@ name: Keep Streamlit App Alive
 
 on:
   schedule:
-    # Se ejecuta cada 15 minutos automáticamente las 24 horas del día
+    # Se ejecuta cada 15 minutos automáticamente
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub cuando quieras
+  workflow_dispatch: # Permite ejecución manual
 
 jobs:
   ping-service:
     name: Ping Smart Pick Pro
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit Cloud & Custom Domain
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Ping Streamlit & Custom Domain
         run: |
-          echo "📡 Enviando señal de actividad a Smart Pick Pro..."
+          python -c "
+          import requests, datetime
           
-          # Ping a Streamlit Cloud
-          HTTP_STREAMLIT=$(curl -s -o /dev/null -w "%{http_code}" -L \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-            https://smart-pick-pro.streamlit.app)
-          echo "✅ Streamlit Cloud respondió con código: $HTTP_STREAMLIT"
-
-          # Ping al dominio personalizado
-          HTTP_DOMAIN=$(curl -s -o /dev/null -w "%{http_code}" -L \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-            https://smartpickprojz.com.mx)
-          echo "✅ Dominio Oficial respondió con código: $HTTP_DOMAIN"
-
-          echo "🚀 Ping completado exitosamente. La app se mantiene despierta."
+          headers = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          }
+          session = requests.Session()
+          session.headers.update(headers)
+          
+          urls = [
+              'https://smart-pick-pro.streamlit.app',
+              'https://smartpickprojz.com.mx'
+          ]
+          
+          print('📡 Iniciando Keep-Alive para Smart Pick Pro...')
+          for u in urls:
+              try:
+                  res = session.get(u, timeout=30, allow_redirects=True)
+                  print(f'✅ [OK {res.status_code}] Ping a: {u}')
+              except Exception as e:
+                  print(f'⚠️ Error al conectar con {u}: {e}')
+          
+          print(f'🚀 Proceso completado exitosamente a las {datetime.datetime.utcnow()} UTC')
+          "
