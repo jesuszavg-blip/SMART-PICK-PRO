@@ -1302,6 +1302,31 @@ if st.session_state['rol'] == 'ADMIN':
             st.success(f"✅ Auditoría completada. Efectividad actual: {res_upd['efectividad_pct']}%")
             st.rerun()
 
+        st.markdown("---")
+        # 9. Gestor de Jornadas Progol (Tradicional 14, Revancha 7 y Media Semana 9)
+        st.write("#### 🎯 Gestor de Jornadas Progol Oficiales")
+        tipo_j_admin = st.selectbox(
+            "Seleccionar Quiniela a Editar:",
+            ["Progol Tradicional (14)", "Progol Revancha (7)", "Progol Media Semana (9)"],
+            key="sel_tipo_j_admin"
+        )
+        tipo_code_admin = "tradicional" if "Tradicional" in tipo_j_admin else ("revancha" if "Revancha" in tipo_j_admin else "media_semana")
+        j_actual_admin = jornada_manager.cargar_jornada_activa(tipo=tipo_code_admin)
+        
+        nuevos_partidos_adm = []
+        for idx_adm, p_adm in enumerate(j_actual_admin):
+            c_adm1, c_adm2 = st.columns(2)
+            l_val_adm = c_adm1.text_input(f"C{idx_adm+1} Local:", value=p_adm.get("local", f"Local {idx_adm+1}"), key=f"adm_loc_{tipo_code_admin}_{idx_adm+1}")
+            v_val_adm = c_adm2.text_input(f"C{idx_adm+1} Visita:", value=p_adm.get("visita", f"Visita {idx_adm+1}"), key=f"adm_vis_{tipo_code_admin}_{idx_adm+1}")
+            nuevos_partidos_adm.append({"casilla": idx_adm+1, "local": l_val_adm.strip(), "visita": v_val_adm.strip(), "id": None})
+            
+        if st.button(f"💾 GUARDAR Y SINCRONIZAR {tipo_j_admin.upper()}", use_container_width=True, key=f"btn_save_j_{tipo_code_admin}"):
+            if jornada_manager.guardar_jornada_activa(nuevos_partidos_adm, tipo=tipo_code_admin):
+                st.success(f"✅ ¡{tipo_j_admin} actualizada y sincronizada en GitHub!")
+                st.rerun()
+            else:
+                st.error("❌ Error al guardar la jornada.")
+
 def render_tarjeta_live_segura(p_item):
     if hasattr(pitch_renderer, 'render_tarjeta_partido_live_radar'):
         return pitch_renderer.render_tarjeta_partido_live_radar(p_item)
@@ -2340,178 +2365,174 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
 
         st.stop()
 
-# --- MODO 1: PROGOL TRADICIONAL ---
-elif liga_elegida_val == "PROGOL_MODE":
+# --- MODO 1 & 2: SUITE QUINIELAS & PROGOL VIP (TRADICIONAL 14, REVANCHA 7 & MEDIA SEMANA 9) ---
+elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
     render_html('''
-    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">🎯 OPTIMIZADOR INTELIGENTE DE QUINIELA PROGOL</h2>
-        <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px;">Configura tus dobles y triples deseados sobre los 14 partidos oficiales.</p>
+    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border: 1.5px solid #D4AF37; padding: 22px; border-radius: 14px; text-align: center; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);">
+        <h2 style="color: white; margin: 0; font-weight: 900; font-size: 28px; letter-spacing: 1px;">🎯 SUITE DE QUINIELAS & PROGOL VIP</h2>
+        <p style="color: #E2E8F0; margin: 6px 0 0 0; font-size: 15px; opacity: 0.95;">Simulaciones Poisson, Índices de Incertidumbre y Sistemas Reducidos Oficiales para Progol 14, Revancha 7 y Media Semana 9.</p>
     </div>
     ''')
     
-    with st.expander("📝 Cargar / Editar los 14 Partidos Oficiales Progol de esta Semana"):
-        st.info("💡 Ingresa los nombres reales de los equipos locales y visitantes de la boleta oficial:")
-        nuevos_partidos = []
-        for p_idx in range(1, 15):
-            p_actual = jornada_oficial[p_idx - 1]
-            c1, c2 = st.columns(2)
-            loc_val = c1.text_input(f"Casilla {p_idx} (Local):", value=p_actual["local"], key=f"editor_loc_{p_idx}")
-            vis_val = c2.text_input(f"Casilla {p_idx} (Visita):", value=p_actual["visita"], key=f"editor_vis_{p_idx}")
-            nuevos_partidos.append({"casilla": p_idx, "local": loc_val.strip(), "visita": vis_val.strip(), "id": None})
-            
-        if st.button("💾 GUARDAR JORNADA OFICIAL PROGOL", use_container_width=True):
-            if jornada_manager.guardar_jornada_activa(nuevos_partidos):
-                st.success("✅ ¡Jornada Oficial Progol actualizada con éxito!")
-                st.rerun()
+    tab_pg_trad, tab_pg_rev, tab_pg_med = st.tabs([
+        "👑 1. Progol Fin de Semana (14 Casillas)",
+        "🔥 2. Progol Revancha (7 Casillas)",
+        "⚡ 3. Progol Media Semana (9 Casillas)"
+    ])
 
-    col_pg1, col_pg2 = st.columns(2)
-    with col_pg1:
-        num_dobles = st.slider("Cantidad de Dobles a utilizar:", 0, 7, 4)
-    with col_pg2:
-        num_triples = st.slider("Cantidad de Triples a utilizar:", 0, 5, 3)
-        
-    st.write("### 📋 Casilleros Oficiales (Progol 14 Partidos)")
-    
-    if st.button("🚀 GENERAR COMBINACIÓN MAESTRA PROGOL", use_container_width=True):
-        boleta = progol.generar_quiniela_progol(num_dobles, num_triples, jornada_oficial)
-        st.success(f"✅ ¡Quiniela Optimizada con éxito ({num_dobles} dobles y {num_triples} triples)!")
-        st.markdown("### 🎟️ Tu Boleta Progol Sugerida")
-        
-        for item in boleta:
-            p_match = jornada_oficial[item['casilla'] - 1]
-            probas_txt = item.get('analisis', {}).get('resumen_probas', '')
+    import urllib.parse
+
+    for tab_obj, tipo_code, tab_titulo, badge_icon in [
+        (tab_pg_trad, "tradicional", "PROGOL FIN DE SEMANA (14 CASILLAS)", "👑"),
+        (tab_pg_rev, "revancha", "PROGOL REVANCHA (7 CASILLAS)", "🔥"),
+        (tab_pg_med, "media_semana", "PROGOL MEDIA SEMANA (9 CASILLAS)", "⚡")
+    ]:
+        with tab_obj:
+            jornada_actual = jornada_manager.cargar_jornada_activa(tipo=tipo_code)
+            reducciones_disp = progol.obtener_reducciones_disponibles(tipo=tipo_code)
+            
+            col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.2, 0.8])
+            with col_ctl1:
+                opciones_estrat = list(reducciones_disp.keys()) + ["⚙️ Estrategia Personalizada (Elegir Dobles y Triples)"]
+                estrat_sel = st.selectbox(f"🎯 Estrategia de Reducción ({tipo_code}):", opciones_estrat, key=f"sel_estrat_{tipo_code}")
+            
+            with col_ctl2:
+                if "Personalizada" in estrat_sel:
+                    max_d = 7 if tipo_code == "tradicional" else (5 if tipo_code == "media_semana" else 4)
+                    max_t = 5 if tipo_code == "tradicional" else (4 if tipo_code == "media_semana" else 3)
+                    c_sub1, c_sub2 = st.columns(2)
+                    num_dobles_in = c_sub1.slider(f"Dobles:", 0, max_d, 3, key=f"sl_d_{tipo_code}")
+                    num_triples_in = c_sub2.slider(f"Triples:", 0, max_t, 2, key=f"sl_t_{tipo_code}")
+                    estrat_nombre_txt = f"{num_triples_in} Triples + {num_dobles_in} Dobles"
+                    cant_boletas_est = (2 ** num_dobles_in) * (3 ** num_triples_in)
+                else:
+                    conf_e = reducciones_disp[estrat_sel]
+                    num_triples_in = conf_e["triples"]
+                    num_dobles_in = conf_e["dobles"]
+                    cant_boletas_est = conf_e["boletas"]
+                    estrat_nombre_txt = estrat_sel
+            
+            with col_ctl3:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                if st.button("🚀 RECALCULAR", use_container_width=True, key=f"btn_recalc_{tipo_code}"):
+                    st.cache_data.clear()
+                    st.rerun()
+            
+            # Generar quiniela inteligente
+            boleta_quiniela = progol.generar_quiniela_progol(num_dobles=num_dobles_in, num_triples=num_triples_in, jornada_oficial=jornada_actual, tipo=tipo_code)
+            costo_info = progol.calcular_costo_quiniela_directa(num_dobles=num_dobles_in, num_triples=num_triples_in, tipo=tipo_code)
+            boletas_sencillas = progol.generar_boletas_sencillas_reducidas(jornada_actual, estrat_nombre_txt, n_boletas=cant_boletas_est, tipo=tipo_code)
+            
+            # Tarjetas KPI de Costo y Ahorro
+            p_base = costo_info["precio_base"]
+            costo_directo = costo_info["costo_total"]
+            costo_reducido = len(boletas_sencillas) * p_base
+            ahorro_dinero = max(0.0, costo_directo - costo_reducido)
+            ahorro_pct = round((ahorro_dinero / max(1.0, costo_directo)) * 100, 1) if costo_directo > 0 else 0.0
+
             render_html(f'''
-            <div style="background:#151821; padding:12px 18px; border-radius:8px; margin:6px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <b style="color:white; font-size:15px;">Casilla {item['casilla']}:</b> 
-                    <span style="color:#FFFFFF; font-weight:bold;">{p_match['local']} vs {p_match['visita']}</span>
-                    <div style="color:#94A3B8; font-size:12px; margin-top:3px;">📊 Probabilidades IA: {probas_txt}</div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:18px;">
+                <div style="background:#151821; border:1px solid #282F3F; border-radius:10px; padding:12px; text-align:center;">
+                    <div style="color:#aaa; font-size:11px; font-weight:bold; text-transform:uppercase;">Combinaciones Directas</div>
+                    <div style="color:#FFFFFF; font-size:22px; font-weight:900; margin-top:2px;">{costo_info["combinaciones"]:,}</div>
+                    <div style="color:#888; font-size:10px;">Costo Ventanilla: ${costo_directo:,.2f} MXN</div>
                 </div>
-                <div style="text-align:right;">
-                    <span style="color:{item['color_borde']}; font-weight:900; font-size:16px;">{item['sugerencia']}</span>
+                <div style="background:#151821; border:1.5px solid #D4AF37; border-radius:10px; padding:12px; text-align:center; box-shadow:0 4px 12px rgba(212,175,55,0.15);">
+                    <div style="color:#D4AF37; font-size:11px; font-weight:bold; text-transform:uppercase;">Boletas Reducidas</div>
+                    <div style="color:#D4AF37; font-size:22px; font-weight:900; margin-top:2px;">{len(boletas_sencillas)} Boletas</div>
+                    <div style="color:#F3E5AB; font-size:10px;">Inversión: ${costo_reducido:,.2f} MXN (${p_base:.0f} c/u)</div>
                 </div>
-            </div>
-            ''')
-            
-    st.stop()
-
-# --- MODO 2: OPTIMIZADOR DE REDUCCIONES ---
-elif liga_elegida_val == "REDUCCIONES_MODE":
-    render_html('''
-    <div style="background: linear-gradient(135deg, #1C202B 0%, #2A2E3D 50%, #151821 100%); border:1.5px solid #D4AF37; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #D4AF37; margin: 0; font-weight: 900;">⚙️ Panel de Reducciones Inteligentes Pro</h2>
-        <p style="color: #E2E8F0; margin: 5px 0 0 0; font-size: 15px;">Matriz matemática de reducciones aplicadas a los 14 partidos oficiales</p>
-    </div>
-    ''')
-    
-    with st.expander("📝 Cargar / Editar los 14 Partidos Oficiales Progol de esta Semana"):
-        st.info("💡 Ingresa los nombres reales de los equipos locales y visitantes:")
-        nuevos_partidos = []
-        for p_idx in range(1, 15):
-            p_actual = jornada_oficial[p_idx - 1]
-            c1, c2 = st.columns(2)
-            loc_val = c1.text_input(f"Casilla {p_idx} (Local):", value=p_actual["local"], key=f"editor_red_loc_{p_idx}")
-            vis_val = c2.text_input(f"Casilla {p_idx} (Visita):", value=p_actual["visita"], key=f"editor_red_vis_{p_idx}")
-            nuevos_partidos.append({"casilla": p_idx, "local": loc_val.strip(), "visita": vis_val.strip(), "id": None})
-            
-        if st.button("💾 GUARDAR JORNADA OFICIAL EN REDUCCIONES", use_container_width=True):
-            if jornada_manager.guardar_jornada_activa(nuevos_partidos):
-                st.success("✅ ¡Jornada Oficial Progol actualizada con éxito!")
-                st.rerun()
-
-    estrat_elegida = st.selectbox("🎯 Selecciona una Estrategia de Reducción Integrada:", list(progol.REDUCCIONES_PREDEFINIDAS.keys()))
-    
-    col_red1, col_red2 = st.columns([1.3, 0.7])
-    with col_red1:
-        st.write(f"### 📋 Estructura de Combinaciones ({estrat_elegida})")
-        casilleros_red = progol.obtener_reduccion_predefinida(estrat_elegida, jornada_oficial)
-        for item in casilleros_red:
-            probas_txt = item.get('analisis', {}).get('resumen_probas', '')
-            render_html(f'''
-            <div style="background:#151821; padding:10px 16px; border-radius:8px; margin:5px 0; border-left:5px solid {item['color_borde']}; color:white; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <b style="color:white;">Casilla {item['casilla']}:</b> <span style="color:#FFFFFF; font-weight:bold;">{item['partido']}</span>
-                    <div style="color:#94A3B8; font-size:11px; margin-top:2px;">📊 IA: {probas_txt}</div>
-                </div>
-                <div style="text-align:right;">
-                    <span style="color:{item['color_borde']}; font-weight:900; font-size:15px;">{item['tipo_txt']}</span>
+                <div style="background:#151821; border:1.5px solid #2ECC71; border-radius:10px; padding:12px; text-align:center; box-shadow:0 4px 12px rgba(46,204,113,0.15);">
+                    <div style="color:#2ECC71; font-size:11px; font-weight:bold; text-transform:uppercase;">Ahorro Inteligente</div>
+                    <div style="color:#2ECC71; font-size:22px; font-weight:900; margin-top:2px;">-${ahorro_dinero:,.2f} <span style="font-size:12px;">MXN</span></div>
+                    <div style="color:#A7F3D0; font-size:10px;">Ahorras el {ahorro_pct}% de presupuesto</div>
                 </div>
             </div>
             ''')
 
-    with col_red2:
-        st.write("### 📊 Ranking de Aciertos Estimados")
-        resultados = [random.randint(9, 13) for _ in range(8)]
-        if HAS_PANDAS and pd is not None:
-            resumen_df = pd.DataFrame({
-                'Quiniela': [f"Combinación {i+1}" for i in range(8)],
-                'Aciertos': resultados
-            }).sort_values(by='Aciertos', ascending=False)
-            st.dataframe(resumen_df, use_container_width=True, height=450)
-        else:
-            for idx, r_val in enumerate(sorted(resultados, reverse=True)):
-                st.markdown(f"<div style='background:#151821; padding:8px; margin:4px 0; border-radius:6px; color:#D4AF37; font-weight:bold; border:1px solid #282F3F;'><b>Combinación {idx+1}:</b> {r_val} aciertos</div>", unsafe_allow_html=True)
-
-    st.markdown("---")
-    
-    opciones_cobertura = {
-        "⚡ Cobertura Matemáticamente Óptima (Recomendado)": 0,
-        "🔥 Cobertura Ajustada (8 Boletas Sencillas - $120 MXN)": 8,
-        "🎯 Cobertura Media (16 Boletas Sencillas - $240 MXN)": 16,
-        "🚀 Cobertura Alta (24 Boletas Sencillas - $360 MXN)": 24,
-        "💎 Cobertura Máxima VIP (32 Boletas Sencillas - $480 MXN)": 32,
-    }
-    cob_elegida = st.selectbox("🎯 Nivel de Cobertura y Cantidad de Boletas Sencillas:", list(opciones_cobertura.keys()))
-    cant_boletas_val = opciones_cobertura[cob_elegida]
-
-    st.write("### 🎟️ Desglose de Boletas Sencillas Reducidas (Captura en Progol / TuLotero)")
-    boletas_sencillas = progol.generar_boletas_sencillas_reducidas(jornada_oficial, estrat_elegida, n_boletas=cant_boletas_val)
-    
-    st.success(f"✅ Se han generado **{len(boletas_sencillas)} Boletas Sencillas Reducidas** optimizadas con 14 pronósticos cada una.")
-
-    # Descarga y Resumen Rápido
-    txt_reporte = progol.exportar_boletas_texto_plano(boletas_sencillas, jornada_oficial)
-    col_exp1, col_exp2 = st.columns([1, 1])
-    with col_exp1:
-        resumen_copiable = "\n".join([f"Boleta #{b['numero_boleta']}: {b['cadena_corta']}" for b in boletas_sencillas])
-        st.text_area("📋 Secuencias rápidas para copiar:", value=resumen_copiable, height=100)
-    with col_exp2:
-        st.download_button(
-            label="📄 Descargar Reporte Completo de Boletas (.txt)",
-            data=txt_reporte,
-            file_name="boletas_progol_reducidas.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
-
-    # Verificador de Aciertos Post-Jornada
-    with st.expander("🎯 Verificador de Aciertos Post-Jornada (Comprobar Boletas Ganadoras)"):
-        st.info("💡 Ingresa la cadena de 14 resultados oficiales del domingo (ej. `1X211X2121X211`) o captúralos para calcular tus aciertos:")
-        cadena_in = st.text_input("Cadena de 14 Resultados Oficiales ('1', 'X', '2'):", max_chars=14, placeholder="1X211X2121X211")
-        if cadena_in and len(cadena_in) == 14:
-            res_list = list(cadena_in.upper())
-            evals = progol.verificar_aciertos_quiniela(boletas_sencillas, res_list)
-            st.write("#### 🏆 Resultados de tus Boletas:")
-            for ev in evals:
-                badge_p = "🥇 ¡1ER LUGAR (14 ACIERTOS)!" if ev['es_ganadora_1er'] else ("🥈 2DO LUGAR (13 ACIERTOS)" if ev['es_ganadora_2do'] else ("🥉 3ER LUGAR (12 ACIERTOS)" if ev['es_ganadora_3er'] else f"🎯 {ev['aciertos']} Aciertos"))
-                color_ev = "#D4AF37" if ev['es_premio'] else "#94A3B8"
-                st.markdown(f"<div style='background:#151821; padding:10px 14px; border-radius:8px; margin:4px 0; border-left:5px solid {color_ev}; border:1px solid #282F3F;'><b>Boleta #{ev['numero_boleta']} ({ev['cadena_corta']}):</b> <span style='color:{color_ev}; font-weight:bold; font-size:16px;'>{badge_p}</span></div>", unsafe_allow_html=True)
-
-    cols_b = st.columns(2)
-    for idx_b, b_item in enumerate(boletas_sencillas):
-        with cols_b[idx_b % 2]:
-            with st.expander(f"🎟️ BOLETA #{b_item['numero_boleta']} | Secuencia: {b_item['cadena_corta']}"):
-                for p_sub in b_item['pronosticos']:
-                    p_c = p_sub['casilla']
-                    p_part = p_sub['partido']
-                    p_pk = p_sub['pick']
-                    c_color = "#D4AF37" if p_pk == '1' else ("#38BDF8" if p_pk == 'X' else "#EF4444")
-                    render_html(f'''
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#151821; padding:5px 10px; border-radius:6px; margin:2px 0; border:1px solid #282F3F;">
-                        <span style="color:white; font-size:12px;"><b>Casilla {p_c}:</b> {p_part}</span>
-                        <span style="background:{c_color}; color:#0D0F14; font-weight:900; padding:1px 8px; border-radius:8px; font-size:13px;">{p_pk}</span>
+            # Renderizar Boleta Maestra
+            render_html(f'''
+            <div style="background:linear-gradient(135deg, #151821 0%, #1A1E29 100%); border:1.5px solid #D4AF37; border-radius:14px; padding:16px 20px; color:white; margin-bottom:12px; box-shadow:0 6px 20px rgba(212,175,55,0.15);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:18px; font-weight:900; color:#D4AF37;">{badge_icon} BOLETA MAESTRA - {tab_titulo}</div>
+                        <div style="color:#aaa; font-size:12px;">{len(boleta_quiniela)} casillas analizadas con IA • Triples en máxima paridad, Dobles inteligentes y Fijos contundentes</div>
                     </div>
-                    ''')
+                    <span style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 12px; border-radius:8px; font-size:12px;">{estrat_nombre_txt}</span>
+                </div>
+            </div>
+            ''')
+
+            for b_item in boleta_quiniela:
+                c_num = b_item["casilla"]
+                p_nom = b_item["partido"]
+                sug_txt = b_item["sugerencia"]
+                b_color = b_item["color_borde"]
+                stats_b = b_item["analisis"]
+                p_l = stats_b["p_home_win"]
+                p_e = stats_b["p_draw"]
+                p_v = stats_b["p_away_win"]
+                
+                badge_tipo = "👑 FIJO" if b_item["tipo"] == "fijo" else ("⚡ DOBLE" if b_item["tipo"] == "doble" else "🔥 TRIPLE")
+
+                render_html(f'''
+                <div style="background:#11141C; border-left:5px solid {b_color}; border-top:1px solid #282F3F; border-right:1px solid #282F3F; border-bottom:1px solid #282F3F; padding:10px 16px; border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="background:#0D0F14; border:1px solid #282F3F; color:#D4AF37; font-weight:900; padding:3px 8px; border-radius:6px; font-size:12px; min-width:32px; text-align:center;">C{c_num:02d}</span>
+                        <div>
+                            <div style="color:#FFFFFF; font-weight:900; font-size:14px;">{p_nom}</div>
+                            <div style="color:#94A3B8; font-size:11px; margin-top:2px;">📊 Local {p_l:.0f}% • Empate {p_e:.0f}% • Visita {p_v:.0f}%</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="background:rgba(212,175,55,0.1); border:1px solid {b_color}; color:{b_color}; font-weight:900; padding:4px 10px; border-radius:6px; font-size:13px;">
+                            {badge_tipo}: {sug_txt}
+                        </span>
+                    </div>
+                </div>
+                ''')
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Sección de Boletas Sencillas Reducidas
+            with st.expander(f"🎟️ Ver las {len(boletas_sencillas)} Boletas Sencillas Reducidas para Capturar en Agencia / TuLotero", expanded=False):
+                st.info(f"💡 Copia estas {len(boletas_sencillas)} boletas sencillas para meterlas en la ventanilla oficial de Pronósticos o TuLotero:")
+                cols_bol = st.columns(2)
+                for idx_bs, bs_item in enumerate(boletas_sencillas):
+                    with cols_bol[idx_bs % 2]:
+                        render_html(f'''
+                        <div style="background:#151821; border:1px solid #282F3F; border-left:4px solid #38BDF8; padding:8px 12px; border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#FFFFFF; font-weight:bold; font-size:12px;">Boleta #{bs_item['numero_boleta']}</span>
+                            <span style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:2px 10px; border-radius:6px; font-size:13px; letter-spacing:1.5px;">{bs_item['cadena_corta']}</span>
+                        </div>
+                        ''')
+
+            # Descarga de boletas .txt y Botón de WhatsApp
+            ficha_wa_progol = progol.generar_ficha_whatsapp_progol(
+                boleta=boleta_quiniela,
+                tipo=tipo_code,
+                estrategia_nombre=estrat_nombre_txt,
+                web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx')
+            )
+            txt_boletas_sencillas = progol.exportar_boletas_texto_plano(boletas_sencillas, tipo=tipo_code)
+            encoded_progol_wa = urllib.parse.quote(ficha_wa_progol)
+
+            col_wpg1, col_wpg2 = st.columns(2)
+            with col_wpg1:
+                render_html(f'''
+                <a href="https://wa.me/?text={encoded_progol_wa}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:5px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
+                    💬 COMPARTIR PRONÓSTICO EN WHATSAPP (1 CLIC)
+                </a>
+                ''')
+            with col_wpg2:
+                st.download_button(
+                    label=f"📥 Descargar {len(boletas_sencillas)} Boletas Reducidas (.txt)",
+                    data=txt_boletas_sencillas,
+                    file_name=f"boletas_reducidas_{tipo_code}.txt",
+                    mime="text/plain",
+                    use_container_width=True,
+                    key=f"dl_btn_{tipo_code}"
+                )
 
     st.stop()
 
