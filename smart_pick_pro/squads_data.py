@@ -87,23 +87,20 @@ def obtener_plantilla_probable_equipo(nombre_equipo: str) -> list[str]:
             if key in eq_base:
                 return squad
 
-    seed = zlib.crc32(eq_clean.encode('utf-8'))
-
     if es_femenil:
-        nombres_pool = ["C. Corral", "L. Cervantes", "C. Jaramillo", "L. Ovalle", "S. Mayor", "S. Luebbert", "K. Palacios", "B. Félix", "E. Barreras", "P. Tajonar", "R. Bernal", "A. Pereira", "J. Hermoso", "S. Paños", "M. Zuazua"]
+        nombres_pool = ["C. Corral", "L. Cervantes", "C. Jaramillo", "L. Ovalle", "S. Mayor", "S. Luebbert", "K. Palacios", "B. Félix", "E. Barreras", "P. Tajonar", "R. Bernal"]
     elif any(k in eq_clean for k in ["real", "madrid", "barca", "barcelona", "atletico", "sevilla", "betis", "valencia", "athletic"]):
-        nombres_pool = ["Rodrygo", "K. Mbappé", "Vinícius Jr.", "Pedri", "L. Yamal", "D. Olmo", "F. Valverde", "J. Bellingham", "A. Rüdiger", "T. Courtois", "R. Lewandowski"]
+        nombres_pool = ["T. Courtois", "A. Rüdiger", "D. Carvajal", "F. Mendy", "E. Militão", "F. Valverde", "Pedri", "J. Bellingham", "L. Yamal", "Vinícius Jr.", "K. Mbappé"]
     elif any(k in eq_clean for k in ["manchester", "city", "liverpool", "arsenal", "chelsea", "tottenham", "newcastle", "villa"]):
-        nombres_pool = ["E. Haaland", "P. Foden", "K. De Bruyne", "M. Salah", "B. Saka", "D. Rice", "C. Palmer", "V. van Dijk", "Alisson", "R. Dias", "Rodri"]
+        nombres_pool = ["Alisson", "V. van Dijk", "R. Dias", "W. Saliba", "G. Magalhães", "Rodri", "D. Rice", "K. De Bruyne", "B. Saka", "M. Salah", "E. Haaland"]
     else:
-        nombres_pool = ["García", "Martínez", "López", "Hernández", "González", "Pérez", "Rodríguez", "Sánchez", "Ramírez", "Cruz", "Gómez", "Flores", "Morales", "Vázquez", "Jiménez"]
+        nombres_pool = ["Portero Titular", "Lateral Derecho", "Defensa Central 1", "Defensa Central 2", "Lateral Izquierdo", "Pivote Defensivo", "Mediocampista Mixto", "Volante Ofensivo", "Extremo Derecho", "Extremo Izquierdo", "Delantero Centro"]
 
-    idx_start = seed % len(nombres_pool)
     squad = []
     positions = ["(POR)", "(DEF)", "(DEF)", "(DEF)", "(DEF)", "(MED)", "(MED)", "(MED)", "(DEL)", "(DEL)", "(DEL)"]
     
     for i, pos in enumerate(positions):
-        nombre = nombres_pool[(idx_start + i * 2) % len(nombres_pool)]
+        nombre = nombres_pool[i % len(nombres_pool)]
         squad.append(f"{nombre} {pos}")
         
     return squad
