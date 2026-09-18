@@ -1,16 +1,86 @@
-{
-  "1": "2",
-  "2": "1",
-  "3": "1",
-  "4": "2",
-  "5": "X",
-  "6": "X",
-  "7": "X",
-  "8": "2",
-  "9": "1",
-  "10": "1",
-  "11": "1",
-  "12": "2",
-  "13": "X",
-  "14": "1"
-}
+[
+  {
+    "casilla": 1,
+    "local": "Juarez",
+    "visita": "Pachuca",
+    "id": null
+  },
+  {
+    "casilla": 2,
+    "local": "Monterrey",
+    "visita": "Toluca",
+    "id": null
+  },
+  {
+    "casilla": 3,
+    "local": "America",
+    "visita": "Leon",
+    "id": null
+  },
+  {
+    "casilla": 4,
+    "local": "Tijuana w",
+    "visita": "Pachuca w",
+    "id": null
+  },
+  {
+    "casilla": 5,
+    "local": "Ath bilbao",
+    "visita": "Atl. De madrid",
+    "id": null
+  },
+  {
+    "casilla": 6,
+    "local": "Espanyol",
+    "visita": "Sevilla",
+    "id": null
+  },
+  {
+    "casilla": 7,
+    "local": "Fullham",
+    "visita": "Crystal palace",
+    "id": null
+  },
+  {
+    "casilla": 8,
+    "local": "Nottinghamm",
+    "visita": "Tottenham",
+    "id": null
+  },
+  {
+    "casilla": 9,
+    "local": "Juventus",
+    "visita": "Milan",
+    "id": null
+  },
+  {
+    "casilla": 10,
+    "local": "Ajax",
+    "visita": "Psv",
+    "id": null
+  },
+  {
+    "casilla": 11,
+    "local": "Willem II",
+    "visita": "Excelsior",
+    "id": null
+  },
+  {
+    "casilla": 12,
+    "local": "Groningen",
+    "visita": "Twente",
+    "id": null
+  },
+  {
+    "casilla": 13,
+    "local": "Charlotte",
+    "visita": "houston",
+    "id": null
+  },
+  {
+    "casilla": 14,
+    "local": "Toronto",
+    "visita": "Chicago",
+    "id": null
+  }
+]
