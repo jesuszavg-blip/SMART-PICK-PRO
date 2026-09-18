@@ -2390,13 +2390,13 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
         with tab_obj:
             jornada_actual = jornada_manager.cargar_jornada_activa(tipo=tipo_code)
             reducciones_disp = progol.obtener_reducciones_disponibles(tipo=tipo_code)
+            p_base_oficial = progol.PRECIOS_BASE_OFICIALES.get(tipo_code, 15.0)
             
-            col_ctl1, col_ctl2, col_ctl3 = st.columns([1.5, 1.2, 0.8])
+            col_ctl1, col_ctl2, col_ctl3 = st.columns([1.3, 1.4, 0.7])
             with col_ctl1:
                 opciones_estrat = list(reducciones_disp.keys()) + ["⚙️ Estrategia Personalizada (Elegir Dobles y Triples)"]
                 estrat_sel = st.selectbox(f"🎯 Estrategia de Reducción ({tipo_code}):", opciones_estrat, key=f"sel_estrat_{tipo_code}")
-            
-            with col_ctl2:
+                
                 if "Personalizada" in estrat_sel:
                     max_d = 7 if tipo_code == "tradicional" else (5 if tipo_code == "media_semana" else 4)
                     max_t = 5 if tipo_code == "tradicional" else (4 if tipo_code == "media_semana" else 3)
@@ -2404,13 +2404,47 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
                     num_dobles_in = c_sub1.slider(f"Dobles:", 0, max_d, 3, key=f"sl_d_{tipo_code}")
                     num_triples_in = c_sub2.slider(f"Triples:", 0, max_t, 2, key=f"sl_t_{tipo_code}")
                     estrat_nombre_txt = f"{num_triples_in} Triples + {num_dobles_in} Dobles"
-                    cant_boletas_est = (2 ** num_dobles_in) * (3 ** num_triples_in)
+                    default_boletas_est = (2 ** num_dobles_in) * (3 ** num_triples_in)
                 else:
                     conf_e = reducciones_disp[estrat_sel]
                     num_triples_in = conf_e["triples"]
                     num_dobles_in = conf_e["dobles"]
-                    cant_boletas_est = conf_e["boletas"]
+                    default_boletas_est = conf_e["boletas"]
                     estrat_nombre_txt = estrat_sel
+            
+            with col_ctl2:
+                modo_boletas = st.radio(
+                    f"🎟️ Cantidad de Boletas Reducidas:",
+                    [
+                        f"Recomendada por Estrategia ({default_boletas_est} boletas)",
+                        "Personalizar Cantidad Exacta de Boletas",
+                        "Por Presupuesto Máximo ($MXN)"
+                    ],
+                    key=f"modo_bol_{tipo_code}"
+                )
+                
+                if "Recomendada" in modo_boletas:
+                    cant_boletas_sel = default_boletas_est
+                elif "Cantidad Exacta" in modo_boletas:
+                    cant_boletas_sel = st.number_input(
+                        "Número de boletas a generar:",
+                        min_value=1,
+                        max_value=128,
+                        value=min(default_boletas_est, 32),
+                        step=1,
+                        key=f"num_bol_exact_{tipo_code}"
+                    )
+                else:
+                    presupuesto_usr = st.number_input(
+                        f"Presupuesto disponible ($MXN):",
+                        min_value=int(p_base_oficial),
+                        max_value=5000,
+                        value=int(default_boletas_est * p_base_oficial),
+                        step=int(p_base_oficial),
+                        key=f"presupuesto_usr_{tipo_code}"
+                    )
+                    cant_boletas_sel = max(1, int(presupuesto_usr // p_base_oficial))
+                    st.caption(f"💡 Generarás **{cant_boletas_sel} boletas** sencillas con ${presupuesto_usr:.2f} MXN (${p_base_oficial:.0f} c/u)")
             
             with col_ctl3:
                 st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
@@ -2421,7 +2455,7 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
             # Generar quiniela inteligente
             boleta_quiniela = progol.generar_quiniela_progol(num_dobles=num_dobles_in, num_triples=num_triples_in, jornada_oficial=jornada_actual, tipo=tipo_code)
             costo_info = progol.calcular_costo_quiniela_directa(num_dobles=num_dobles_in, num_triples=num_triples_in, tipo=tipo_code)
-            boletas_sencillas = progol.generar_boletas_sencillas_reducidas(jornada_actual, estrat_nombre_txt, n_boletas=cant_boletas_est, tipo=tipo_code)
+            boletas_sencillas = progol.generar_boletas_sencillas_reducidas(jornada_actual, estrat_nombre_txt, n_boletas=cant_boletas_sel, tipo=tipo_code)
             
             # Tarjetas KPI de Costo y Ahorro
             p_base = costo_info["precio_base"]
@@ -2458,7 +2492,7 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
                         <div style="font-size:18px; font-weight:900; color:#D4AF37;">{badge_icon} BOLETA MAESTRA - {tab_titulo}</div>
                         <div style="color:#aaa; font-size:12px;">{len(boleta_quiniela)} casillas analizadas con IA • Triples en máxima paridad, Dobles inteligentes y Fijos contundentes</div>
                     </div>
-                    <span style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 12px; border-radius:8px; font-size:12px;">{estrat_nombre_txt}</span>
+                    <span style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:4px 12px; border-radius:8px; font-size:12px;">{estrat_nombre_txt} ({len(boletas_sencillas)} Boletas)</span>
                 </div>
             </div>
             ''')
@@ -2511,7 +2545,7 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
             ficha_wa_progol = progol.generar_ficha_whatsapp_progol(
                 boleta=boleta_quiniela,
                 tipo=tipo_code,
-                estrategia_nombre=estrat_nombre_txt,
+                estrategia_nombre=f"{estrat_nombre_txt} ({len(boletas_sencillas)} Boletas)",
                 web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx')
             )
             txt_boletas_sencillas = progol.exportar_boletas_texto_plano(boletas_sencillas, tipo=tipo_code)
@@ -2533,6 +2567,223 @@ elif liga_elegida_val in ["PROGOL_MODE", "REDUCCIONES_MODE"]:
                     use_container_width=True,
                     key=f"dl_btn_{tipo_code}"
                 )
+
+            # --- SECCIÓN DE COMPROBACIÓN & ESCRUTINIO DE RESULTADOS ---
+            st.markdown("<br>", unsafe_allow_html=True)
+            with st.expander(f"🔍 ÁREA DE COMPROBACIÓN & ESCRUTINIO DE RESULTADOS ({tab_titulo})", expanded=False):
+                render_html(f'''
+                <div style="background:#151821; border-left:4px solid #38BDF8; padding:12px 16px; border-radius:8px; margin-bottom:14px;">
+                    <div style="color:#FFFFFF; font-weight:bold; font-size:15px;">🏆 Escrutinio Oficial y Verificación de Boletas</div>
+                    <div style="color:#94A3B8; font-size:12px; margin-top:3px;">
+                        Captura los marcadores oficiales de los partidos (1 = Local, X = Empate, 2 = Visita). El sistema evaluará al instante todas tus boletas sencillas, destacará las ganadoras y calculará tus premios oficiales.
+                    </div>
+                </div>
+                ''')
+
+                res_actuales = jornada_manager.cargar_resultados_oficiales(tipo=tipo_code)
+                n_tot_partidos = len(jornada_actual)
+                
+                # 1. Opción de carga rápida por cadena
+                col_sq1, col_sq2 = st.columns([3, 1])
+                with col_sq1:
+                    cadena_rapida = st.text_input(
+                        f"⚡ Pegar Cadena Rápida de Resultados ({n_tot_partidos} caracteres, ej: {'1X2111X2X11211'[:n_tot_partidos]}):",
+                        placeholder=f"Ej: {'1X2111X2X11211'[:n_tot_partidos]}",
+                        key=f"cadena_rap_{tipo_code}"
+                    )
+                with col_sq2:
+                    st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+                    if st.button("📥 Aplicar Cadena", use_container_width=True, key=f"btn_aplicar_cad_{tipo_code}"):
+                        c_clean = cadena_rapida.strip().upper().replace(" ", "")
+                        if len(c_clean) == n_tot_partidos:
+                            nuevo_res = {}
+                            for i, ch in enumerate(c_clean):
+                                nuevo_res[str(i + 1)] = ch if ch in ["1", "X", "2"] else ""
+                            jornada_manager.guardar_resultados_oficiales(nuevo_res, tipo=tipo_code)
+                            st.success("✅ Resultados aplicados desde la cadena rápida.")
+                            st.rerun()
+                        else:
+                            st.error(f"❌ La cadena debe contener exactamente {n_tot_partidos} caracteres (1, X, 2).")
+
+                st.markdown("---")
+                st.markdown(f"##### 📋 Captura Casilla por Casilla:")
+
+                # Captura interactiva casilla por casilla
+                form_res = {}
+                cols_grid = st.columns(2)
+                for idx_p, p_item in enumerate(jornada_actual):
+                    c_num = p_item.get("casilla", idx_p + 1)
+                    p_nom = f"{p_item.get('local', f'Local {c_num}')} vs {p_item.get('visita', f'Visita {c_num}')}"
+                    val_guardado = str(res_actuales.get(str(c_num), "")).upper()
+                    
+                    # Determinar índice de selección por defecto
+                    idx_default = 0
+                    if val_guardado == "1": idx_default = 1
+                    elif val_guardado == "X": idx_default = 2
+                    elif val_guardado == "2": idx_default = 3
+
+                    with cols_grid[idx_p % 2]:
+                        sel_r = st.selectbox(
+                            f"**C{c_num:02d}.** {p_nom}:",
+                            ["⏳ Pendiente", "1 (Local)", "X (Empate)", "2 (Visita)"],
+                            index=idx_default,
+                            key=f"sel_res_{tipo_code}_{c_num}"
+                        )
+                        if "1" in sel_r: form_res[str(c_num)] = "1"
+                        elif "X" in sel_r: form_res[str(c_num)] = "X"
+                        elif "2" in sel_r: form_res[str(c_num)] = "2"
+                        else: form_res[str(c_num)] = ""
+
+                col_btn_r1, col_btn_r2 = st.columns(2)
+                with col_btn_r1:
+                    if st.button(f"💾 Guardar y Evaluar Escrutinio ({tipo_code})", use_container_width=True, type="primary", key=f"btn_save_escrutinio_{tipo_code}"):
+                        jornada_manager.guardar_resultados_oficiales(form_res, tipo=tipo_code)
+                        st.success("🎉 Resultados oficiales guardados exitosamente.")
+                        st.rerun()
+                with col_btn_r2:
+                    if st.button(f"🗑️ Limpiar Todos los Resultados", use_container_width=True, key=f"btn_clean_escrutinio_{tipo_code}"):
+                        empty_res = {str(i): "" for i in range(1, n_tot_partidos + 1)}
+                        jornada_manager.guardar_resultados_oficiales(empty_res, tipo=tipo_code)
+                        st.warning("Resultados reseteados a pendientes.")
+                        st.rerun()
+
+                # EVALUAR ESCRUTINIO EN TIEMPO REAL
+                escrutinio_data = progol.evaluar_escrutinio_quiniela(boletas_sencillas, res_actuales, tipo=tipo_code)
+
+                if escrutinio_data["partidos_jugados"] > 0:
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("### 📊 Tablero de Premios y Aciertos Logrados")
+
+                    max_ac = escrutinio_data["max_aciertos"]
+                    tot_part = escrutinio_data["partidos_totales"]
+                    p_jugados = escrutinio_data["partidos_jugados"]
+                    tot_prem = escrutinio_data["total_premiadas"]
+
+                    render_html(f'''
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:18px;">
+                        <div style="background:#151821; border:1.5px solid #D4AF37; border-radius:10px; padding:12px; text-align:center; box-shadow:0 4px 12px rgba(212,175,55,0.2);">
+                            <div style="color:#D4AF37; font-size:11px; font-weight:bold; text-transform:uppercase;">Máximo Acierto</div>
+                            <div style="color:#FFFFFF; font-size:24px; font-weight:900; margin-top:2px;">{max_ac} / {tot_part}</div>
+                            <div style="color:#F3E5AB; font-size:11px;">{round((max_ac/max(1, p_jugados))*100, 1)}% de efectividad</div>
+                        </div>
+                        <div style="background:#151821; border:1.5px solid #2ECC71; border-radius:10px; padding:12px; text-align:center; box-shadow:0 4px 12px rgba(46,204,113,0.2);">
+                            <div style="color:#2ECC71; font-size:11px; font-weight:bold; text-transform:uppercase;">Boletas Ganadoras</div>
+                            <div style="color:#2ECC71; font-size:24px; font-weight:900; margin-top:2px;">{tot_prem} Boletas</div>
+                            <div style="color:#A7F3D0; font-size:11px;">En zona oficial de cobro</div>
+                        </div>
+                        <div style="background:#151821; border:1px solid #282F3F; border-radius:10px; padding:12px; text-align:center;">
+                            <div style="color:#94A3B8; font-size:11px; font-weight:bold; text-transform:uppercase;">Partidos Concluidos</div>
+                            <div style="color:#FFFFFF; font-size:24px; font-weight:900; margin-top:2px;">{p_jugados} / {tot_part}</div>
+                            <div style="color:#888; font-size:11px;">{'Jornada Finalizada 🏁' if escrutinio_data['esta_completa'] else 'En desarrollo ⏳'}</div>
+                        </div>
+                    </div>
+                    ''')
+
+                    # Resumen de Categorías de Premiación
+                    cp = escrutinio_data.get("conteo_premios", {})
+                    st.markdown("##### 🏅 Desglose Oficial de Boletas por Categoría de Premio:")
+                    cols_prem = st.columns(5 if tipo_code == "tradicional" else 2)
+                    if tipo_code == "tradicional":
+                        cols_prem[0].metric("👑 14 Aciertos", f"{cp.get('1er_lugar', 0)} boletas")
+                        cols_prem[1].metric("🥈 13 Aciertos", f"{cp.get('2do_lugar', 0)} boletas")
+                        cols_prem[2].metric("🥉 12 Aciertos", f"{cp.get('3er_lugar', 0)} boletas")
+                        cols_prem[3].metric("🎖️ 11 Aciertos", f"{cp.get('4to_lugar', 0)} boletas")
+                        cols_prem[4].metric("🏅 10 Aciertos", f"{cp.get('5to_lugar', 0)} boletas")
+                    elif tipo_code == "revancha":
+                        cols_prem[0].metric("👑 7 Aciertos (Mayor)", f"{cp.get('1er_lugar', 0)} boletas")
+                        cols_prem[1].metric("🥈 6 Aciertos", f"{cp.get('2do_lugar', 0)} boletas")
+                    else: # media_semana
+                        cols_prem[0].metric("👑 9 Aciertos (Mayor)", f"{cp.get('1er_lugar', 0)} boletas")
+                        cols_prem[1].metric("🥈 8 Aciertos", f"{cp.get('2do_lugar', 0)} boletas")
+
+                    # Lista Detallada de Boletas con Semáforo Visual
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("##### 🎟️ Detalle y Semáforo de Aciertos por Boleta:")
+                    for b_eval in escrutinio_data["boletas_evaluadas"]:
+                        num_b = b_eval["numero_boleta"]
+                        ac_b = b_eval["aciertos"]
+                        tot_b = b_eval["total_partidos"]
+                        prem_b = b_eval["premio_categoria"]
+                        es_gan = b_eval["es_ganadora"]
+                        
+                        b_color_card = "#D4AF37" if es_gan else "#282F3F"
+                        bg_card = "rgba(212,175,55,0.06)" if es_gan else "#11141C"
+                        
+                        # Generar badges de casillas con semáforo
+                        casillas_html = []
+                        for dg in b_eval["desglose"]:
+                            c_num = dg["casilla"]
+                            p_pk = dg["pick"]
+                            p_res = dg["resultado_oficial"]
+                            st_cas = dg["estado"]
+                            
+                            if st_cas == "acierto":
+                                bg_c = "#1A4D2E"
+                                bc_c = "#2ECC71"
+                                ic_c = "✅"
+                            elif st_cas == "fallo":
+                                bg_c = "#4A1515"
+                                bc_c = "#E74C3C"
+                                ic_c = "❌"
+                            else:
+                                bg_c = "#1E2330"
+                                bc_c = "#475569"
+                                ic_c = "⏳"
+                                
+                            casillas_html.append(f'''
+                            <div style="background:{bg_c}; border:1px solid {bc_c}; border-radius:6px; padding:4px 8px; text-align:center; min-width:55px;">
+                                <div style="color:#94A3B8; font-size:10px; font-weight:bold;">C{c_num:02d}</div>
+                                <div style="color:#FFFFFF; font-size:12px; font-weight:900;">{p_pk} {ic_c}</div>
+                                <div style="color:#CBD5E1; font-size:9px;">Res: {p_res}</div>
+                            </div>
+                            ''')
+
+                        casillas_row = "".join(casillas_html)
+
+                        render_html(f'''
+                        <div style="background:{bg_card}; border:1.5px solid {b_color_card}; border-radius:10px; padding:12px 16px; margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <span style="background:#0D0F14; border:1px solid #D4AF37; color:#D4AF37; font-weight:900; padding:2px 8px; border-radius:6px; font-size:12px;">Boleta #{num_b}</span>
+                                    <span style="color:#FFFFFF; font-weight:bold; font-size:14px;">🎯 {ac_b} / {tot_b} Aciertos</span>
+                                </div>
+                                <span style="background:{'#1A4D2E' if es_gan else '#1E2330'}; border:1px solid {'#2ECC71' if es_gan else '#475569'}; color:{'#2ECC71' if es_gan else '#94A3B8'}; font-weight:bold; padding:3px 10px; border-radius:6px; font-size:12px;">
+                                    {prem_b}
+                                </span>
+                            </div>
+                            <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px;">
+                                {casillas_row}
+                            </div>
+                        </div>
+                        ''')
+
+                    # Botones de exportación y WhatsApp de Escrutinio
+                    ficha_wa_escrutinio = progol.generar_ficha_escrutinio_whatsapp(
+                        escrutinio=escrutinio_data,
+                        web_url=getattr(config, 'WEBAPP_VIP_URL', 'https://smartpickprojz.com.mx')
+                    )
+                    txt_escrutinio_rep = progol.exportar_escrutinio_texto_plano(escrutinio_data)
+                    encoded_escrutinio_wa = urllib.parse.quote(ficha_wa_escrutinio)
+
+                    col_ew1, col_ew2 = st.columns(2)
+                    with col_ew1:
+                        render_html(f'''
+                        <a href="https://wa.me/?text={encoded_escrutinio_wa}" target="_blank" style="background:#1A4D2E; border:1px solid #2ECC71; color:white; font-weight:900; padding:12px 20px; border-radius:10px; text-decoration:none; display:block; text-align:center; font-size:14px; margin-top:10px; box-shadow:0 4px 12px rgba(46,204,113,0.3);">
+                            💬 COMPARTIR ESCRUTINIO EN WHATSAPP (1 CLIC)
+                        </a>
+                        ''')
+                    with col_ew2:
+                        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+                        st.download_button(
+                            label="📥 Descargar Reporte de Escrutinio (.txt)",
+                            data=txt_escrutinio_rep,
+                            file_name=f"escrutinio_oficial_{tipo_code}.txt",
+                            mime="text/plain",
+                            use_container_width=True,
+                            key=f"dl_btn_escrutinio_{tipo_code}"
+                        )
+                else:
+                    st.info("ℹ️ Ingresa los resultados de los partidos o pega la cadena arriba para ver el escrutinio en tiempo real.")
 
     st.stop()
 
