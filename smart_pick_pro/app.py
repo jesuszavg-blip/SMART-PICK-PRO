@@ -2177,7 +2177,7 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
             with col_pa2:
                 st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
                 if st.button("🚀 RECALCULAR PARLAY DE ALTAS", use_container_width=True):
-                    api_client.obtener_partidos_de_hoy.clear()
+                    st.cache_data.clear()
                     st.rerun()
 
             with st.spinner("Procesando matriz de goles esperados y xG en partidos de hoy..."):
@@ -2262,7 +2262,7 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
             with col_pe2:
                 st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
                 if st.button("🚀 RECALCULAR RADAR DE EMPATES", use_container_width=True):
-                    api_client.obtener_partidos_de_hoy.clear()
+                    st.cache_data.clear()
                     st.rerun()
 
             with st.spinner("Procesando matriz Dixon-Coles de paridad táctica de partidos de hoy..."):
