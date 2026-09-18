@@ -1,0 +1,56 @@
+[
+  {
+    "casilla": 1,
+    "local": "Real Madrid",
+    "visita": "Bayern München",
+    "id": null
+  },
+  {
+    "casilla": 2,
+    "local": "Manchester City",
+    "visita": "Paris Saint Germain",
+    "id": null
+  },
+  {
+    "casilla": 3,
+    "local": "Arsenal",
+    "visita": "Inter",
+    "id": null
+  },
+  {
+    "casilla": 4,
+    "local": "Barcelona",
+    "visita": "Atalanta",
+    "id": null
+  },
+  {
+    "casilla": 5,
+    "local": "Liverpool",
+    "visita": "Bayer Leverkusen",
+    "id": null
+  },
+  {
+    "casilla": 6,
+    "local": "América",
+    "visita": "Pachuca",
+    "id": null
+  },
+  {
+    "casilla": 7,
+    "local": "Tigres UANL",
+    "visita": "León",
+    "id": null
+  },
+  {
+    "casilla": 8,
+    "local": "Atlético Madrid",
+    "visita": "Juventus",
+    "id": null
+  },
+  {
+    "casilla": 9,
+    "local": "Borussia Dortmund",
+    "visita": "Milan",
+    "id": null
+  }
+]
