@@ -1,0 +1,44 @@
+[
+  {
+    "casilla": 1,
+    "local": "Cruz Azul",
+    "visita": "Guadalajara",
+    "id": null
+  },
+  {
+    "casilla": 2,
+    "local": "Monterrey",
+    "visita": "Santos Laguna",
+    "id": null
+  },
+  {
+    "casilla": 3,
+    "local": "Toluca",
+    "visita": "Pumas UNAM",
+    "id": null
+  },
+  {
+    "casilla": 4,
+    "local": "Tigres UANL",
+    "visita": "Necaxa",
+    "id": null
+  },
+  {
+    "casilla": 5,
+    "local": "Aston Villa",
+    "visita": "Chelsea",
+    "id": null
+  },
+  {
+    "casilla": 6,
+    "local": "Villarreal",
+    "visita": "Real Sociedad",
+    "id": null
+  },
+  {
+    "casilla": 7,
+    "local": "Roma",
+    "visita": "Lazio",
+    "id": null
+  }
+]
