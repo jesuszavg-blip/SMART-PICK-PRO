@@ -387,3 +387,218 @@ def exportar_boletas_texto_plano(boletas: list[dict], tipo: str = "tradicional")
     lineas.append("\n============================================================")
     lineas.append("¡Mucha suerte en tu quiniela!")
     return "\n".join(lineas)
+
+def evaluar_escrutinio_quiniela(boletas_sencillas: list[dict], resultados_oficiales: dict, tipo: str = "tradicional") -> dict:
+    """
+    Evalúa matemáticamente cada una de las boletas sencillas generadas contra los resultados
+    oficiales capturados ('1', 'X', '2'), calculando aciertos, fallos, estatus y categorías de premios.
+    """
+    tot_partidos = 14 if tipo == "tradicional" else (7 if tipo == "revancha" else 9)
+    
+    # Normalizar diccionario de resultados oficiales
+    res_clean = {}
+    partidos_jugados = 0
+    for i in range(1, tot_partidos + 1):
+        r_val = str(resultados_oficiales.get(str(i), "") or resultados_oficiales.get(i, "")).strip().upper()
+        if r_val in ["1", "X", "2", "L", "E", "V"]:
+            if r_val == "L": r_val = "1"
+            elif r_val == "E": r_val = "X"
+            elif r_val == "V": r_val = "2"
+            res_clean[i] = r_val
+            partidos_jugados += 1
+        else:
+            res_clean[i] = ""
+
+    boletas_evaluadas = []
+    conteo_premios = {
+        "1er_lugar": 0,
+        "2do_lugar": 0,
+        "3er_lugar": 0,
+        "4to_lugar": 0,
+        "5to_lugar": 0
+    }
+    max_aciertos = 0
+    mejor_boleta = None
+
+    for b in boletas_sencillas:
+        num_b = b.get("numero_boleta", 1)
+        pronosticos = b.get("pronosticos", [])
+        
+        aciertos_b = 0
+        fallos_b = 0
+        pendientes_b = 0
+        desglose_b = []
+        
+        for p in pronosticos:
+            c_num = p["casilla"]
+            pick_b = str(p["pick"]).strip().upper()
+            res_of = res_clean.get(c_num, "")
+            
+            if not res_of:
+                estado_casilla = "pendiente"
+                pendientes_b += 1
+            elif pick_b == res_of:
+                estado_casilla = "acierto"
+                aciertos_b += 1
+            else:
+                estado_casilla = "fallo"
+                fallos_b += 1
+                
+            desglose_b.append({
+                "casilla": c_num,
+                "partido": p["partido"],
+                "pick": pick_b,
+                "resultado_oficial": res_of if res_of else "⏳",
+                "estado": estado_casilla
+            })
+
+        # Categorización oficial de premios Progol
+        if tipo == "tradicional":
+            if aciertos_b == 14:
+                cat_premio = "👑 1er Lugar (14 Aciertos) - ¡PREMIO MAYOR!"
+                es_ganadora = True
+                conteo_premios["1er_lugar"] += 1
+            elif aciertos_b == 13:
+                cat_premio = "🥈 2do Lugar (13 Aciertos)"
+                es_ganadora = True
+                conteo_premios["2do_lugar"] += 1
+            elif aciertos_b == 12:
+                cat_premio = "🥉 3er Lugar (12 Aciertos)"
+                es_ganadora = True
+                conteo_premios["3er_lugar"] += 1
+            elif aciertos_b == 11:
+                cat_premio = "🎖️ 4to Lugar (11 Aciertos)"
+                es_ganadora = True
+                conteo_premios["4to_lugar"] += 1
+            elif aciertos_b == 10:
+                cat_premio = "🏅 5to Lugar (10 Aciertos)"
+                es_ganadora = True
+                conteo_premios["5to_lugar"] += 1
+            else:
+                cat_premio = "Sin Premio"
+                es_ganadora = False
+        elif tipo == "revancha":
+            if aciertos_b == 7:
+                cat_premio = "👑 Premio Mayor (7 Aciertos)"
+                es_ganadora = True
+                conteo_premios["1er_lugar"] += 1
+            elif aciertos_b == 6:
+                cat_premio = "🥈 2do Lugar (6 Aciertos)"
+                es_ganadora = True
+                conteo_premios["2do_lugar"] += 1
+            else:
+                cat_premio = "Sin Premio"
+                es_ganadora = False
+        else: # media_semana
+            if aciertos_b == 9:
+                cat_premio = "👑 Premio Mayor (9 Aciertos)"
+                es_ganadora = True
+                conteo_premios["1er_lugar"] += 1
+            elif aciertos_b == 8:
+                cat_premio = "🥈 2do Lugar (8 Aciertos)"
+                es_ganadora = True
+                conteo_premios["2do_lugar"] += 1
+            else:
+                cat_premio = "Sin Premio"
+                es_ganadora = False
+
+        if aciertos_b > max_aciertos:
+            max_aciertos = aciertos_b
+
+        info_eval = {
+            "numero_boleta": num_b,
+            "aciertos": aciertos_b,
+            "fallos": fallos_b,
+            "pendientes": pendientes_b,
+            "total_partidos": tot_partidos,
+            "premio_categoria": cat_premio,
+            "es_ganadora": es_ganadora,
+            "desglose": desglose_b,
+            "cadena_corta": b.get("cadena_corta", ""),
+            "porcentaje_acierto": round((aciertos_b / max(1, partidos_jugados)) * 100, 1) if partidos_jugados > 0 else 0.0
+        }
+        boletas_evaluadas.append(info_eval)
+        if mejor_boleta is None or aciertos_b > mejor_boleta["aciertos"]:
+            mejor_boleta = info_eval
+
+    # Ordenar boletas por número de aciertos descendente
+    boletas_evaluadas_sorted = sorted(boletas_evaluadas, key=lambda x: x["aciertos"], reverse=True)
+    total_premiadas = sum(conteo_premios.values())
+
+    return {
+        "tipo": tipo,
+        "partidos_jugados": partidos_jugados,
+        "partidos_totales": tot_partidos,
+        "esta_completa": (partidos_jugados == tot_partidos),
+        "max_aciertos": max_aciertos,
+        "mejor_boleta": mejor_boleta or (boletas_evaluadas[0] if boletas_evaluadas else {}),
+        "total_premiadas": total_premiadas,
+        "conteo_premios": conteo_premios,
+        "boletas_evaluadas": boletas_evaluadas_sorted,
+        "boletas_orden_original": boletas_evaluadas,
+        "resultados_registrados": res_clean
+    }
+
+def generar_ficha_escrutinio_whatsapp(escrutinio: dict, web_url: str = "https://smartpickprojz.com.mx") -> str:
+    """Genera una ficha atractiva con los resultados y aciertos para compartir en WhatsApp."""
+    tipo = escrutinio.get("tipo", "tradicional")
+    titulos = {
+        "tradicional": "👑 *ESCRUTINIO OFICIAL - PROGOL FIN DE SEMANA (14)* 👑",
+        "revancha": "🔥 *ESCRUTINIO OFICIAL - PROGOL REVANCHA (7)* 🔥",
+        "media_semana": "⚡ *ESCRUTINIO OFICIAL - PROGOL MEDIA SEMANA (9)* ⚡"
+    }
+    
+    txt = titulos.get(tipo, titulos["tradicional"]) + "\n"
+    txt += f"📊 *Partidos Evaluados:* {escrutinio['partidos_jugados']}/{escrutinio['partidos_totales']}\n"
+    txt += f"🏆 *Máximo Acierto Logrado:* {escrutinio['max_aciertos']} / {escrutinio['partidos_totales']}\n"
+    txt += f"🎟️ *Boletas en Zona de Premios:* {escrutinio['total_premiadas']}\n"
+    txt += "━━━━━━━━━━━━━━━━━━━━━\n\n"
+    
+    txt += "*📋 RESUMEN DE PREMIACIONES:*\n"
+    cp = escrutinio.get("conteo_premios", {})
+    if tipo == "tradicional":
+        txt += f"  👑 14 Aciertos (1er Lugar): {cp.get('1er_lugar', 0)} boletas\n"
+        txt += f"  🥈 13 Aciertos (2do Lugar): {cp.get('2do_lugar', 0)} boletas\n"
+        txt += f"  🥉 12 Aciertos (3er Lugar): {cp.get('3er_lugar', 0)} boletas\n"
+        txt += f"  🎖️ 11 Aciertos (4to Lugar): {cp.get('4to_lugar', 0)} boletas\n"
+        txt += f"  🏅 10 Aciertos (5to Lugar): {cp.get('5to_lugar', 0)} boletas\n"
+    elif tipo == "revancha":
+        txt += f"  👑 7 Aciertos (Premio Mayor): {cp.get('1er_lugar', 0)} boletas\n"
+        txt += f"  🥈 6 Aciertos (2do Lugar): {cp.get('2do_lugar', 0)} boletas\n"
+    else:
+        txt += f"  👑 9 Aciertos (Premio Mayor): {cp.get('1er_lugar', 0)} boletas\n"
+        txt += f"  🥈 8 Aciertos (2do Lugar): {cp.get('2do_lugar', 0)} boletas\n"
+        
+    txt += "\n*🎟️ TOP MEJORES BOLETAS:* \n"
+    for b in escrutinio.get("boletas_evaluadas", [])[:5]:
+        b_num = b["numero_boleta"]
+        ac = b["aciertos"]
+        tot = b["total_partidos"]
+        prem = b["premio_categoria"]
+        txt += f"  • Boleta #{b_num}: *{ac}/{tot} Aciertos* ({prem})\n"
+        
+    txt += "\n━━━━━━━━━━━━━━━━━━━━━\n"
+    txt += f"📲 *Verifica tus boletas completas en:* {web_url}\n"
+    txt += "🚀 *Smart Pick Pro - Inteligencia Artificial Deportiva*"
+    return txt
+
+def exportar_escrutinio_texto_plano(escrutinio: dict) -> str:
+    """Genera un archivo .txt con el reporte detallado del escrutinio de la quiniela."""
+    tipo = escrutinio.get("tipo", "tradicional")
+    lineas = [
+        f"🏆 REPORTE OFICIAL DE ESCRUTINIO Y RESULTADOS - SMART PICK PRO ({tipo.upper()}) 🏆",
+        f"Partidos evaluados: {escrutinio['partidos_jugados']} de {escrutinio['partidos_totales']}",
+        f"Máximo puntaje alcanzado: {escrutinio['max_aciertos']} aciertos",
+        f"Total de boletas premiadas: {escrutinio['total_premiadas']}",
+        "============================================================"
+    ]
+    for b in escrutinio.get("boletas_orden_original", []):
+        lineas.append(f"\n🎟️ BOLETA #{b['numero_boleta']} | Aciertos: {b['aciertos']}/{b['total_partidos']} | {b['premio_categoria']}")
+        for p in b.get("desglose", []):
+            simb = "✅ ACIERTO" if p["estado"] == "acierto" else ("❌ FALLO" if p["estado"] == "fallo" else "⏳ PENDIENTE")
+            lineas.append(f"  C{p['casilla']:02d}: {p['partido']} -> Pick: [{p['pick']}] | Resultado: [{p['resultado_oficial']}] -> {simb}")
+            
+    lineas.append("\n============================================================")
+    lineas.append("Smart Pick Pro - Análisis y Escrutinio Inteligente")
+    return "\n".join(lineas)
+
