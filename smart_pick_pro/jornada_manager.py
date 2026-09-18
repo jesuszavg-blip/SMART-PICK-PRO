@@ -184,3 +184,38 @@ def guardar_jornada_activa(partidos: list[dict], tipo: str = "tradicional") -> b
     except Exception as e:
         print(f"Error al guardar jornada activa {tipo}: {e}")
         return False
+
+def cargar_resultados_oficiales(tipo: str = "tradicional") -> dict:
+    """Carga los resultados finales registrados de la jornada ({1: '1', 2: 'X', ...})."""
+    r_file = BASE_DIR / f"resultados_{tipo}.json"
+    conf = ARCHIVOS_JORNADA.get(tipo, ARCHIVOS_JORNADA["tradicional"])
+    n_expected = conf["num_partidos"]
+    default_res = {str(i): "" for i in range(1, n_expected + 1)}
+    
+    if r_file.exists():
+        try:
+            with open(r_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    # Asegurar que todas las casillas existen
+                    for i in range(1, n_expected + 1):
+                        if str(i) not in data:
+                            data[str(i)] = ""
+                    return data
+        except Exception:
+            pass
+    return default_res
+
+def guardar_resultados_oficiales(resultados: dict, tipo: str = "tradicional") -> bool:
+    """Guarda los resultados finales oficiales ({'1': '1', '2': 'X', ...}) en disco y sincroniza con GitHub."""
+    r_file = BASE_DIR / f"resultados_{tipo}.json"
+    try:
+        json_str = json.dumps(resultados, ensure_ascii=False, indent=2)
+        with open(r_file, "w", encoding="utf-8") as f:
+            f.write(json_str)
+        _sincronizar_jornada_github(json_str, tipo=f"res_{tipo}")
+        return True
+    except Exception as e:
+        print(f"Error al guardar resultados oficiales {tipo}: {e}")
+        return False
+
