@@ -652,8 +652,32 @@ def _buscar_mejor_partido_real_hoy(today_str: str) -> dict:
                 vis = top_match["visita"]
                 f_id = top_match["id"]
                 
-                cuota_pick = 1.28 if top_match["attractiveness"] > 0 else 1.45
-                prob_pick = 88.0 if top_match["attractiveness"] > 0 else 80.0
+                poiss_res = analytics.estimar_poisson_partido_unificado(loc, vis, top_match["liga"])
+                p_lh = poiss_res["p_home_win"]
+                p_vis = poiss_res["p_away_win"]
+                p_1X = poiss_res["p_1X"]
+                p_X2 = poiss_res["p_X2"]
+
+                if p_lh >= p_vis:
+                    es_local = True
+                    if p_lh >= 60.0:
+                        mercado = f"Victoria {loc} (1)"
+                        prob_val = p_lh
+                    else:
+                        mercado = f"Doble Op: {loc} o Empate (1X)"
+                        prob_val = p_1X
+                    doble_op_txt = f"{loc} o Empate (1X) ({p_1X}%)"
+                else:
+                    es_local = False
+                    if p_vis >= 58.0:
+                        mercado = f"Victoria {vis} (2)"
+                        prob_val = p_vis
+                    else:
+                        mercado = f"Doble Op: {vis} o Empate (X2)"
+                        prob_val = p_X2
+                    doble_op_txt = f"{vis} o Empate (X2) ({p_X2}%)"
+
+                cuota_pick = analytics.calcular_cuota_probabilidad(prob_val)
                 
                 return {
                     "id": f"FREE-{today_str}",
@@ -667,11 +691,11 @@ def _buscar_mejor_partido_real_hoy(today_str: str) -> dict:
                     "logo_visita": api_client.obtener_logo_oficial_equipo(vis),
                     "liga": top_match["liga"],
                     "hora": top_match["hora"],
-                    "mercado": f"Victoria {loc} (1)",
-                    "es_local": True,
+                    "mercado": mercado,
+                    "es_local": es_local,
                     "cuota": cuota_pick,
-                    "probabilidad": prob_pick,
-                    "doble_op": f"{loc} o Empate (1X) ({prob_pick + 9.0:.1f}%)",
+                    "probabilidad": prob_val,
+                    "doble_op": doble_op_txt,
                     "fixture_id": f_id,
                     "resultado": "PENDIENTE" if top_match["status"] in ["NS", "TBD"] else "EN JUEGO",
                     "marcador": "Por Jugar" if top_match["status"] in ["NS", "TBD"] else "En Juego",
