@@ -2079,7 +2079,7 @@ elif liga_elegida_val in ["PARLAY_HUNTER_MODE", "BANKER_PICKS_MODE"]:
             with col_pf4:
                 st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
                 if st.button("🚀 RECALCULAR", use_container_width=True):
-                    api_client.obtener_partidos_de_hoy.clear()
+                    st.cache_data.clear()
                     st.rerun()
 
             f_code = "todos"
