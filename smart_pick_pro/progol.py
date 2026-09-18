@@ -76,9 +76,10 @@ def obtener_fuerza_equipo(nombre: str) -> float:
         if k in n_clean or n_clean in k:
             return float(v)
             
-    # 3. Fallback determinista con CRC32
-    seed = zlib.crc32(n_clean.encode('utf-8'))
-    return 74.0 + (seed % 9)
+    # 3. Fallback unificado con ratings oficiales de analytics
+    if analytics and hasattr(analytics, "obtener_rating_equipo"):
+        return float(analytics.obtener_rating_equipo(nombre))
+    return 75.0
 
 def estimar_probabilidades_partido_progol(local: str, visita: str, fixture_id=None) -> dict:
     """
