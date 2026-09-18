@@ -1,5 +1,3 @@
-import random
-import zlib
 import streamlit as st
 
 try:
@@ -13,6 +11,8 @@ try:
     import analytics
 except ImportError:
     analytics = None
+
+import jornada_manager
 
 # Base de datos calibrada de fuerza relativa de clubes y selecciones
 TEAM_POWER_RATINGS = {
@@ -43,22 +43,38 @@ TEAM_POWER_RATINGS = {
     "tijuana f": 77, "pumas f": 77, "toluca f": 76, "atlas f": 76, "juarez f": 76, "león f": 74
 }
 
-REDUCCIONES_PREDEFINIDAS = {
-    "🔥 PRIMERA - 4 TRIPLES (4T)": {"triples": 4, "dobles": 0, "descripcion": "4 Triples + 10 Fijos"},
-    "⚡ SEGUNDA - 7 DOBLES (7D)": {"triples": 0, "dobles": 7, "descripcion": "7 Dobles + 7 Fijos"},
-    "🎯 TERCERA - 3 TRIPLES + 3 DOBLES (3T 3D)": {"triples": 3, "dobles": 3, "descripcion": "3 Triples + 3 Dobles + 8 Fijos"},
-    "🚀 CUARTA - 2 TRIPLES + 6 DOBLES (2T 6D)": {"triples": 2, "dobles": 6, "descripcion": "2 Triples + 6 Dobles + 6 Fijos"},
-    "💎 QUINTA - 8 TRIPLES (8T)": {"triples": 8, "dobles": 0, "descripcion": "8 Triples + 6 Fijos"},
-    "👑 SEXTA - 11 DOBLES (11D)": {"triples": 0, "dobles": 11, "descripcion": "11 Dobles + 3 Fijos"},
+# 1. Reducciones Progol Tradicional (14 Casillas)
+REDUCCIONES_TRADICIONAL = {
+    "🔥 PRIMERA - 4 TRIPLES (4T)": {"triples": 4, "dobles": 0, "boletas": 9, "descripcion": "4 Triples + 10 Fijos (9 boletas sencillas)"},
+    "⚡ SEGUNDA - 7 DOBLES (7D)": {"triples": 0, "dobles": 7, "boletas": 16, "descripcion": "7 Dobles + 7 Fijos (16 boletas sencillas)"},
+    "🎯 TERCERA - 3 TRIPLES + 3 DOBLES (3T 3D)": {"triples": 3, "dobles": 3, "boletas": 24, "descripcion": "3 Triples + 3 Dobles + 8 Fijos (24 boletas)"},
+    "🚀 CUARTA - 2 TRIPLES + 6 DOBLES (2T 6D)": {"triples": 2, "dobles": 6, "boletas": 18, "descripcion": "2 Triples + 6 Dobles + 6 Fijos (18 boletas)"},
+    "💎 QUINTA - 8 TRIPLES (8T)": {"triples": 8, "dobles": 0, "boletas": 32, "descripcion": "8 Triples + 6 Fijos (32 boletas)"},
+    "👑 SEXTA - 11 DOBLES (11D)": {"triples": 0, "dobles": 11, "boletas": 32, "descripcion": "11 Dobles + 3 Fijos (32 boletas)"},
 }
 
-CANTIDAD_BOLETAS_REDUCCION_OPTIMA = {
-    "🔥 PRIMERA - 4 TRIPLES (4T)": 9,
-    "⚡ SEGUNDA - 7 DOBLES (7D)": 16,
-    "🎯 TERCERA - 3 TRIPLES + 3 DOBLES (3T 3D)": 24,
-    "🚀 CUARTA - 2 TRIPLES + 6 DOBLES (2T 6D)": 18,
-    "💎 QUINTA - 8 TRIPLES (8T)": 32,
-    "👑 SEXTA - 11 DOBLES (11D)": 32,
+# 2. Reducciones Progol Revancha (7 Casillas)
+REDUCCIONES_REVANCHA = {
+    "⚡ DIRECTA 1 - 2 TRIPLES + 2 DOBLES (2T 2D)": {"triples": 2, "dobles": 2, "boletas": 6, "descripcion": "2 Triples + 2 Dobles + 3 Fijos (6 boletas)"},
+    "🎯 DIRECTA 2 - 3 TRIPLES (3T)": {"triples": 3, "dobles": 0, "boletas": 9, "descripcion": "3 Triples + 4 Fijos (9 boletas sencillas)"},
+    "🚀 DIRECTA 3 - 4 DOBLES (4D)": {"triples": 0, "dobles": 4, "boletas": 8, "descripcion": "4 Dobles + 3 Fijos (8 boletas sencillas)"},
+    "💎 AGRESIVA - 2 TRIPLES + 3 DOBLES (2T 3D)": {"triples": 2, "dobles": 3, "boletas": 12, "descripcion": "2 Triples + 3 Dobles + 2 Fijos (12 boletas)"},
+    "👑 COBERTURA TOTAL - 1 TRIPLE + 4 DOBLES (1T 4D)": {"triples": 1, "dobles": 4, "boletas": 8, "descripcion": "1 Triple + 4 Dobles + 2 Fijos (8 boletas)"}
+}
+
+# 3. Reducciones Progol Media Semana (9 Casillas)
+REDUCCIONES_MEDIA_SEMANA = {
+    "⚡ EQUILIBRADA - 2 TRIPLES + 3 DOBLES (2T 3D)": {"triples": 2, "dobles": 3, "boletas": 12, "descripcion": "2 Triples + 3 Dobles + 4 Fijos (12 boletas)"},
+    "🎯 AGRESIVA - 3 TRIPLES + 2 DOBLES (3T 2D)": {"triples": 3, "dobles": 2, "boletas": 18, "descripcion": "3 Triples + 2 Dobles + 4 Fijos (18 boletas)"},
+    "🚀 ECONÓMICA - 4 DOBLES (4D)": {"triples": 0, "dobles": 4, "boletas": 8, "descripcion": "4 Dobles + 5 Fijos (8 boletas sencillas)"},
+    "💎 VIP - 3 TRIPLES + 3 DOBLES (3T 3D)": {"triples": 3, "dobles": 3, "boletas": 24, "descripcion": "3 Triples + 3 Dobles + 3 Fijos (24 boletas)"},
+    "👑 CANDADO - 5 DOBLES (5D)": {"triples": 0, "dobles": 5, "boletas": 16, "descripcion": "5 Dobles + 4 Fijos (16 boletas sencillas)"}
+}
+
+PRECIOS_BASE_OFICIALES = {
+    "tradicional": 15.0,  # $15 MXN por quiniela sencilla
+    "revancha": 5.0,      # $5 MXN adicional por revancha
+    "media_semana": 15.0  # $15 MXN por quiniela sencilla
 }
 
 def obtener_fuerza_equipo(nombre: str) -> float:
@@ -131,7 +147,6 @@ def estimar_probabilidades_partido_progol(local: str, visita: str, fixture_id=No
         pick_fijo = "2"
         pick_fijo_txt = "Fijo Visita (2)"
     else:
-        # En caso de empate como opción más probable
         if p_v >= p_l:
             pick_fijo = "2"
             pick_fijo_txt = "Fijo Visita (2)"
@@ -139,7 +154,7 @@ def estimar_probabilidades_partido_progol(local: str, visita: str, fixture_id=No
             pick_fijo = "1"
             pick_fijo_txt = "Fijo Local (1)"
 
-    # 2. Determinación de Pick Doble Base
+    # 2. Determinación del Mejor Doble (1X, X2 o 12)
     if p_x2 >= p_1x and p_x2 >= p_12:
         pick_doble = "X2"
         pick_doble_txt = "Doble Empate/Visita (X2)"
@@ -153,9 +168,7 @@ def estimar_probabilidades_partido_progol(local: str, visita: str, fixture_id=No
         pick_doble_txt = "Doble Local/Visita (12)"
         doble_options = ['1', '2']
 
-    # 3. Índice de Incertidumbre (los partidos con probabilidades más parejas tienen mayor incertidumbre)
-    # Partidos con 35% L, 33% E, 32% V tienen score alto -> Candidatos ideales a Triples / Dobles
-    # Partidos con 70% L, 20% E, 10% V tienen score bajo -> Candidatos ideales a Fijos
+    # 3. Índice de Incertidumbre
     prob_max = max(p_l, p_e, p_v)
     diff_extremos = abs(p_l - p_v)
     incertidumbre = round(100.0 - prob_max - (diff_extremos * 0.4), 2)
@@ -179,21 +192,41 @@ def estimar_probabilidades_partido_progol(local: str, visita: str, fixture_id=No
         "resumen_probas": f"{p_l:.0f}% L | {p_e:.0f}% E | {p_v:.0f}% V"
     }
 
-def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: list[dict] = None) -> list[dict]:
+def obtener_reducciones_disponibles(tipo: str = "tradicional") -> dict:
+    """Devuelve el diccionario de reducciones según la modalidad seleccionada."""
+    if tipo == "revancha":
+        return REDUCCIONES_REVANCHA
+    elif tipo == "media_semana":
+        return REDUCCIONES_MEDIA_SEMANA
+    return REDUCCIONES_TRADICIONAL
+
+def calcular_costo_quiniela_directa(num_dobles: int, num_triples: int, tipo: str = "tradicional") -> dict:
+    """Calcula el número de combinaciones y costo oficial en ventanilla."""
+    precio_base = PRECIOS_BASE_OFICIALES.get(tipo, 15.0)
+    combinaciones = (2 ** num_dobles) * (3 ** num_triples)
+    costo_total = combinaciones * precio_base
+    return {
+        "precio_base": precio_base,
+        "combinaciones": combinaciones,
+        "costo_total": costo_total
+    }
+
+def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: list[dict] = None, tipo: str = "tradicional") -> list[dict]:
     """
     Genera una combinación inteligente y matemáticamente consistente de quiniela Progol
-    de 14 casilleros evaluando las probabilidades reales de cada encuentro:
-    - Asigna Triples a los partidos con mayor incertidumbre/paridad.
-    - Asigna Dobles a los siguientes partidos más disputados con su doble de mayor EV (1X, X2 o 12).
-    - Asigna Fijos a los partidos con mayor certeza estadística y ventaja probada.
+    (14, 7 o 9 casillas) evaluando las probabilidades reales de cada encuentro:
+    - Triples a los partidos con mayor incertidumbre/paridad.
+    - Dobles a los siguientes partidos más disputados (+EV).
+    - Fijos a los partidos con mayor certeza estadística.
     """
     if not jornada_oficial:
-        from jornada_manager import cargar_jornada_activa
-        jornada_oficial = cargar_jornada_activa()
+        jornada_oficial = jornada_manager.cargar_jornada_activa(tipo=tipo)
 
-    # 1. Analizar cada uno de los 14 encuentros con el motor de IA
+    total_casillas = len(jornada_oficial) if jornada_oficial else (14 if tipo == "tradicional" else (7 if tipo == "revancha" else 9))
+
+    # 1. Analizar cada uno de los encuentros con el motor de IA
     analisis_partidos = []
-    for idx in range(1, 15):
+    for idx in range(1, total_casillas + 1):
         p_info = jornada_oficial[idx - 1] if len(jornada_oficial) >= idx else {"local": f"Local {idx}", "visita": f"Visita {idx}", "id": None}
         loc_name = p_info.get("local", f"Local {idx}")
         vis_name = p_info.get("visita", f"Visita {idx}")
@@ -204,7 +237,6 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
         analisis_partidos.append(datos_eval)
 
     # 2. Ordenar casillas por nivel de incertidumbre descendente
-    # Mayor incertidumbre -> Candidatos a Triples primero, luego Dobles, luego Fijos
     ranking_incertidumbre = sorted(analisis_partidos, key=lambda x: x["incertidumbre"], reverse=True)
     
     casillas_triples = set([item["casilla"] for item in ranking_incertidumbre[:num_triples]])
@@ -215,17 +247,17 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
         c_idx = p["casilla"]
         if c_idx in casillas_triples:
             sugerencia = "Triple (1/X/2)"
-            tipo = "triple"
+            tipo_pick = "triple"
             color_borde = "#D4AF37"
             pick_base = p["pick_fijo"]
         elif c_idx in casillas_dobles:
             sugerencia = p["pick_doble_txt"]
-            tipo = "doble"
+            tipo_pick = "doble"
             color_borde = "#38BDF8"
             pick_base = p["pick_fijo"]
         else:
             sugerencia = p["pick_fijo_txt"]
-            tipo = "fijo"
+            tipo_pick = "fijo"
             color_borde = "#10B981" if p["prob_max"] >= 50.0 else "#F3E5AB"
             pick_base = p["pick_fijo"]
 
@@ -233,7 +265,7 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
             "casilla": c_idx,
             "partido": f"{p['local']} vs {p['visita']}",
             "sugerencia": sugerencia,
-            "tipo": tipo,
+            "tipo": tipo_pick,
             "color_borde": color_borde,
             "pick_base": pick_base,
             "doble_tipo": p["pick_doble"],
@@ -242,98 +274,52 @@ def generar_quiniela_progol(num_dobles: int, num_triples: int, jornada_oficial: 
 
     return sorted(boleta, key=lambda x: x["casilla"])
 
-def obtener_config_reduccion(nombre_estrat: str) -> dict:
-    """Busca la configuración de reducción por clave exacta o coincidencia parcial."""
-    if not nombre_estrat:
-        return {"triples": 2, "dobles": 6, "descripcion": "2T 6D"}
-    if nombre_estrat in REDUCCIONES_PREDEFINIDAS:
-        return REDUCCIONES_PREDEFINIDAS[nombre_estrat]
+def obtener_config_reduccion(nombre_estrat: str, tipo: str = "tradicional") -> dict:
+    """Busca la configuración de reducción por clave en el catálogo de la modalidad."""
+    catalogo = obtener_reducciones_disponibles(tipo)
+    if nombre_estrat in catalogo:
+        return catalogo[nombre_estrat]
     n_lower = str(nombre_estrat).lower()
-    for k, v in REDUCCIONES_PREDEFINIDAS.items():
+    for k, v in catalogo.items():
         if n_lower in k.lower() or k.lower() in n_lower:
             return v
-        if "primera" in n_lower and "primera" in k.lower(): return v
-        if "segunda" in n_lower and "segunda" in k.lower(): return v
-        if "tercera" in n_lower and "tercera" in k.lower(): return v
-        if "cuarta" in n_lower and "cuarta" in k.lower(): return v
-        if "quinta" in n_lower and "quinta" in k.lower(): return v
-        if "sexta" in n_lower and "sexta" in k.lower(): return v
-    return {"triples": 2, "dobles": 6, "descripcion": "2T 6D"}
+    # Default de fallback
+    return list(catalogo.values())[0] if catalogo else {"triples": 2, "dobles": 2, "boletas": 6, "descripcion": "Default"}
 
-def obtener_reduccion_predefinida(nombre_estrat: str, jornada_oficial: list[dict] = None) -> list[dict]:
-    """Genera la estructura de combinaciones para una estrategia de reducción predefinida con asignación inteligente por IA."""
+def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estrat: str, n_boletas: int = None, tipo: str = "tradicional") -> list[dict]:
+    """
+    Genera N boletas sencillas reducidas (cada una con pronósticos individuales '1', 'X', '2')
+    optimizadas matemáticamente según la estrategia seleccionada.
+    """
     if not jornada_oficial:
-        from jornada_manager import cargar_jornada_activa
-        jornada_oficial = cargar_jornada_activa()
+        jornada_oficial = jornada_manager.cargar_jornada_activa(tipo=tipo)
 
-    config_estrat = obtener_config_reduccion(nombre_estrat)
-    raw_triples = config_estrat.get("triples", 4)
-    raw_dobles = config_estrat.get("dobles", 0)
+    config_estrat = obtener_config_reduccion(nombre_estrat, tipo=tipo)
+    num_triples = config_estrat.get("triples", 2)
+    num_dobles = config_estrat.get("dobles", 2)
     
-    num_triples = raw_triples if isinstance(raw_triples, int) else len(raw_triples)
-    num_dobles = raw_dobles if isinstance(raw_dobles, int) else len(raw_dobles)
-
-    # Optimización inteligente: colocar Triples en máxima incertidumbre y Dobles en media
-    boleta_optimizada = generar_quiniela_progol(num_dobles=num_dobles, num_triples=num_triples, jornada_oficial=jornada_oficial)
-
-    casilleros = []
-    for item in boleta_optimizada:
-        casilleros.append({
-            "casilla": item["casilla"],
-            "partido": item["partido"],
-            "tipo_txt": item["sugerencia"],
-            "color_borde": item["color_borde"],
-            "analisis": item["analisis"],
-            "tipo": item["tipo"],
-            "pick_base": item["pick_base"],
-            "doble_tipo": item["doble_tipo"]
-        })
-
-    return casilleros
-
-def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estrat: str, n_boletas: int = None) -> list[dict]:
-    """
-    Genera N boletas sencillas reducidas (cada una con 14 pronósticos individuales '1', 'X', '2')
-    matemáticamente optimizadas según la estrategia de reducción y las probabilidades reales.
-    """
-    if not jornada_oficial:
-        from jornada_manager import cargar_jornada_activa
-        jornada_oficial = cargar_jornada_activa()
-
     if n_boletas is None or n_boletas <= 0:
-        n_boletas = CANTIDAD_BOLETAS_REDUCCION_OPTIMA.get(nombre_estrat, 16)
+        n_boletas = config_estrat.get("boletas", 12)
 
-    config_estrat = obtener_config_reduccion(nombre_estrat)
-    raw_triples = config_estrat.get("triples", 4)
-    raw_dobles = config_estrat.get("dobles", 0)
-    
-    num_triples = raw_triples if isinstance(raw_triples, int) else len(raw_triples)
-    num_dobles = raw_dobles if isinstance(raw_dobles, int) else len(raw_dobles)
-
-    # Obtener la asignación óptima de casillas según la IA
-    casillas_optimizadas = generar_quiniela_progol(num_dobles=num_dobles, num_triples=num_triples, jornada_oficial=jornada_oficial)
+    # Obtener asignación óptima de casillas según la IA
+    casillas_optimizadas = generar_quiniela_progol(num_dobles=num_dobles, num_triples=num_triples, jornada_oficial=jornada_oficial, tipo=tipo)
 
     boletas = []
-
     for b_idx in range(n_boletas):
         pronosticos_boleta = []
-        
         for item in casillas_optimizadas:
             casilla = item["casilla"]
             p_partido = item["partido"]
-            tipo = item["tipo"]
+            t_pick = item["tipo"]
             stats = item["analisis"]
             
-            if tipo == "triple":
-                # Secuencia de triples priorizando el pick más probable de la IA
+            if t_pick == "triple":
                 sec_triples = [stats["pick_fijo"], "X" if stats["pick_fijo"] != "X" else "1", "2" if stats["pick_fijo"] == "1" else "1"]
                 pick = sec_triples[(b_idx + casilla) % 3]
-            elif tipo == "doble":
-                # Doble real del partido (1X, X2 o 12)
+            elif t_pick == "doble":
                 sec_dobles = stats["doble_options"]
                 pick = sec_dobles[(b_idx + casilla) % 2]
             else:
-                # Fijo 100% coherente con el análisis de IA
                 pick = stats["pick_fijo"]
 
             pronosticos_boleta.append({
@@ -351,54 +337,48 @@ def generar_boletas_sencillas_reducidas(jornada_oficial: list[dict], nombre_estr
 
     return boletas
 
-def verificar_aciertos_quiniela(boletas: list[dict], resultados_oficiales: list[str]) -> list[dict]:
-    """
-    Compara las boletas generadas contra los 14 resultados oficiales ('1', 'X', '2')
-    y calcula el número de aciertos, ordenando de mayor a menor éxito.
-    """
-    if not resultados_oficiales or len(resultados_oficiales) < 14:
-        return []
+def generar_ficha_whatsapp_progol(boleta: list[dict], tipo: str = "tradicional", estrategia_nombre: str = "", web_url: str = "https://smartpickprojz.com.mx") -> str:
+    """Genera una ficha lista para compartir en WhatsApp con formato premium."""
+    titulos = {
+        "tradicional": "👑 *SMART PICK PRO - PROGOL FIN DE SEMANA (14 CASILLAS)* 👑",
+        "revancha": "🔥 *SMART PICK PRO - PROGOL REVANCHA (7 CASILLAS)* 🔥",
+        "media_semana": "⚡ *SMART PICK PRO - PROGOL MEDIA SEMANA (9 CASILLAS)* ⚡"
+    }
+    
+    txt = titulos.get(tipo, titulos["tradicional"]) + "\n"
+    txt += "🔮 _Pronósticos Matemáticos Dixon-Coles & Poisson Multifactorial_\n"
+    if estrategia_nombre:
+        txt += f"🎯 *Estrategia:* {estrategia_nombre}\n"
+    txt += "━━━━━━━━━━━━━━━━━━━━━\n\n"
 
-    evaluaciones = []
-    for b in boletas:
-        aciertos = 0
-        detalle = []
+    for b in boleta:
+        c = b["casilla"]
+        part = b["partido"]
+        sug = b["sugerencia"]
+        stats = b["analisis"]
         
-        for idx, p in enumerate(b.get("pronosticos", [])):
-            if idx < len(resultados_oficiales):
-                real = resultados_oficiales[idx].upper().strip()
-                pick = p.get("pick", "").upper().strip()
-                es_acierto = (pick == real)
-                if es_acierto:
-                    aciertos += 1
-                detalle.append({
-                    "casilla": idx + 1,
-                    "pick": pick,
-                    "resultado": real,
-                    "acierto": es_acierto
-                })
+        icon = "🟢" if b["tipo"] == "fijo" else ("🔵" if b["tipo"] == "doble" else "🟡")
+        txt += f"*{c:02d}. {part}*\n"
+        txt += f"   {icon} *Pronóstico:* {sug}\n"
+        txt += f"   📊 _Probabilidades:_ {stats['resumen_probas']}\n\n"
 
-        evaluaciones.append({
-            "numero_boleta": b.get("numero_boleta", 1),
-            "cadena_corta": b.get("cadena_corta", ""),
-            "aciertos": aciertos,
-            "detalle": detalle,
-            "es_ganadora_1er": aciertos == 14,
-            "es_ganadora_2do": aciertos == 13,
-            "es_ganadora_3er": aciertos == 12,
-            "es_premio": aciertos >= 10
-        })
+    txt += "━━━━━━━━━━━━━━━━━━━━━\n"
+    txt += f"📲 *Genera tus Quinielas y Boletas Reducidas en:* {web_url}\n"
+    txt += "🍀 _¡Mucho éxito en tu jugada oficial!_"
+    return txt
 
-    return sorted(evaluaciones, key=lambda x: x["aciertos"], reverse=True)
-
-def exportar_boletas_texto_plano(boletas: list[dict], jornada_oficial: list[dict] = None) -> str:
-    """Genera un reporte en texto limpio con todas las boletas para copiar o imprimir."""
+def exportar_boletas_texto_plano(boletas: list[dict], tipo: str = "tradicional") -> str:
+    """Genera un reporte en texto plano de las boletas sencillas para copiar o imprimir."""
+    titulos = {
+        "tradicional": "PROGOL FIN DE SEMANA (14 CASILLAS)",
+        "revancha": "PROGOL REVANCHA (7 CASILLAS)",
+        "media_semana": "PROGOL MEDIA SEMANA (9 CASILLAS)"
+    }
     lineas = [
-        "🏆 SMART PICK PRO - REPORTE DE BOLETAS REDUCIDAS PROGOL 🏆",
+        f"🏆 SMART PICK PRO - REPORTE DE BOLETAS REDUCIDAS {titulos.get(tipo, 'PROGOL')} 🏆",
         f"Total de boletas generadas: {len(boletas)}",
         "============================================================"
     ]
-    
     for b in boletas:
         lineas.append(f"\n🎟️ BOLETA #{b['numero_boleta']} | Secuencia: {b['cadena_corta']}")
         for p in b.get("pronosticos", []):
@@ -407,15 +387,3 @@ def exportar_boletas_texto_plano(boletas: list[dict], jornada_oficial: list[dict
     lineas.append("\n============================================================")
     lineas.append("¡Mucha suerte en tu quiniela!")
     return "\n".join(lineas)
-
-def procesar_reducciones_excel(file_path_or_buffer):
-    """Carga y procesa las hojas de un archivo Excel de reducciones de quinielas."""
-    if not HAS_PANDAS or pd is None:
-        return None, []
-        
-    try:
-        xls = pd.ExcelFile(file_path_or_buffer)
-        return xls, xls.sheet_names
-    except Exception as e:
-        print(f"Error al procesar Excel: {e}")
-        return None, []
