@@ -421,7 +421,7 @@ def obtener_ligas_mundo():
             "🔴 [EN VIVO] Radar de Partidos Multiligas": "LIVE_RADAR_MODE",
             "💎 [ESPECIAL] Cazador de Parlays VIP (Fijos, Altas & Empates)": "PARLAY_HUNTER_MODE",
             "🤝 [VIP] Programa de Afiliados (Gana 50% - 40% - 30%)": "AFFILIATE_PROGRAM_MODE",
-            "🎯 [ESPECIAL] Simulador Progol Tradicional": "PROGOL_MODE",
+            "🎯 [VIP] Simulador Progol & Quinielas (Tradicional 14, Revancha 7 & Media Semana 9)": "PROGOL_MODE",
             "⚙️ [ESPECIAL] Optimizador de Reducciones (Excel)": "REDUCCIONES_MODE",
             "🇲🇽 Mexico - Liga MX": "262", 
             "👩🇲🇽 Mexico - Liga MX Femenil": "868", 
