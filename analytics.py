@@ -650,28 +650,24 @@ def generar_bet_builder_dinamico(
     # =========================================================
     # 1. MERCADO DE RESULTADO / DOBLE OPORTUNIDAD / DNB
     # =========================================================
-    if p_home_win >= 62.0:
+    if p_home_win >= 60.0:
         picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_local}", "prob": f"{p_home_win:.1f}%"})
-    elif p_away_win >= 56.0:
+    elif p_away_win >= 58.0:
         picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Victoria Directa: {equipo_visita}", "prob": f"{p_away_win:.1f}%"})
-    elif p_away_win >= p_home_win + 5.0:
-        # Visitante tiene ventaja clara (ej. Tigres vs Juárez)
-        if p_X2 >= 64.0:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_visita} o Empate (X2)", "prob": f"{p_X2:.1f}%"})
-        else:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Empate Apuesta No Válida (DNB): {equipo_visita}", "prob": f"{min(82.0, p_away_win + 18.0):.1f}%"})
-    elif p_home_win >= p_away_win + 8.0:
+    elif p_away_win >= p_home_win + 4.0:
+        # Visitante tiene ventaja clara (ej. Chelsea vs Brentford, Tigres vs Juárez)
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_visita} o Empate (X2)", "prob": f"{p_X2:.1f}%"})
+    elif p_home_win >= p_away_win + 4.0:
         # Local tiene ventaja clara
-        if p_1X >= 66.0:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate (1X)", "prob": f"{p_1X:.1f}%"})
-        else:
-            picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Empate Apuesta No Válida (DNB): {equipo_local}", "prob": f"{min(82.0, p_home_win + 18.0):.1f}%"})
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o Empate (1X)", "prob": f"{p_1X:.1f}%"})
     elif p_draw >= 32.0:
         # Choque sumamente parejo con alta tendencia de empate
-        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Hándicap Asiático +1.5: {equipo_visita if p_1X >= p_X2 else equipo_local}", "prob": f"{max(76.0, min(89.0, max(p_1X, p_X2) + 12.0)):.1f}%"})
-    else:
-        # Ambos equipos buscan el triunfo sin especular
         picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {equipo_local} o {equipo_visita} (12)", "prob": f"{p_12:.1f}%"})
+    else:
+        fav_eq = equipo_local if p_home_win >= p_away_win else equipo_visita
+        fav_code = "1X" if fav_eq == equipo_local else "X2"
+        fav_prob = p_1X if fav_eq == equipo_local else p_X2
+        picks.append({"categoria": "🛡️ Resultado", "descripcion": f"Doble Op: {fav_eq} o Empate ({fav_code})", "prob": f"{fav_prob:.1f}%"})
 
     # =========================================================
     # 2. MERCADO DE GOLES DINÁMICO Y DIVERSIFICADO
@@ -961,6 +957,236 @@ def evaluar_predictor_ia_ensemble(equipo_local: str, equipo_visita: str, stats_p
     }
 
 
+# ==============================================================================
+# MOTOR UNIFICADO DE RATINGS DE EQUIPOS, JERARQUÍA Y ESTIMACIÓN POISSON
+# ==============================================================================
+
+RATINGS_EQUIPOS_TOP = {
+    # --- INGLATERRA (Premier League & Championship) ---
+    "manchester city": 94.0, "man city": 94.0, "liverpool": 93.0, "arsenal": 92.5,
+    "chelsea": 87.5, "tottenham": 85.5, "tottenham hotspur": 85.5, "manchester united": 85.0,
+    "man united": 85.0, "aston villa": 85.0, "newcastle": 84.0, "newcastle united": 84.0,
+    "brighton": 81.5, "west ham": 79.0, "west ham united": 79.0, "fulham": 78.5,
+    "brentford": 77.0, "crystal palace": 77.5, "bournemouth": 77.0, "wolverhampton": 76.0,
+    "wolves": 76.0, "everton": 76.5, "nottingham forest": 76.5, "leicester": 74.5,
+    "leicester city": 74.5, "ipswich": 71.5, "ipswich town": 71.5, "southampton": 71.5,
+    "leeds": 74.0, "leeds united": 74.0, "burnley": 73.0, "sheffield united": 72.0,
+
+    # --- ESPAÑA (LaLiga & LaLiga 2) ---
+    "real madrid": 95.0, "barcelona": 93.5, "atletico madrid": 89.0, "atlético madrid": 89.0,
+    "real sociedad": 84.0, "athletic club": 84.0, "athletic bilbao": 84.0, "villarreal": 83.5,
+    "girona": 83.0, "real betis": 82.5, "betis": 82.5, "sevilla": 80.5,
+    "valencia": 78.5, "celta vigo": 78.0, "celta de vigo": 78.0, "osasuna": 77.5,
+    "getafe": 76.5, "mallorca": 76.5, "rcd mallorca": 76.5, "rayo vallecano": 76.0,
+    "alaves": 75.5, "deportivo alavés": 75.5, "las palmas": 75.0, "espanyol": 74.5,
+    "leganes": 72.5, "leganés": 72.5, "valladolid": 72.0, "real valladolid": 72.0,
+
+    # --- ALEMANIA (Bundesliga & 2. Bundesliga) ---
+    "bayern munich": 94.0, "bayern münchen": 94.0, "bayern": 94.0, "bayer leverkusen": 92.0,
+    "leverkusen": 92.0, "borussia dortmund": 88.5, "dortmund": 88.5, "rb leipzig": 87.5,
+    "leipzig": 87.5, "stuttgart": 84.5, "vfb stuttgart": 84.5, "eintracht frankfurt": 82.5,
+    "frankfurt": 82.5, "wolfsburg": 79.0, "vfl wolfsburg": 79.0, "freiburg": 79.0,
+    "sc freiburg": 79.0, "hoffenheim": 78.0, "borussia mönchengladbach": 78.0,
+    "borussia m'gladbach": 78.0, "werder bremen": 77.5, "union berlin": 77.0,
+    "augsburg": 76.0, "mainz": 76.0, "mainz 05": 76.0, "heidenheim": 75.0,
+    "st. pauli": 73.0, "holstein kiel": 71.5, "bochum": 72.0, "darmstadt": 71.0,
+
+    # --- ITALIA (Serie A & Serie B) ---
+    "inter": 92.0, "inter milan": 92.0, "internazionale": 92.0, "juventus": 88.0,
+    "ac milan": 87.5, "milan": 87.5, "atalanta": 87.5, "napoli": 87.0,
+    "roma": 84.0, "as roma": 84.0, "lazio": 83.5, "fiorentina": 82.5,
+    "bologna": 81.5, "torino": 78.5, "genoa": 76.5, "monza": 76.0,
+    "udinese": 76.0, "parma": 75.0, "como": 75.0, "cagliari": 74.5,
+    "verona": 74.0, "hellas verona": 74.0, "empoli": 73.5, "lecce": 73.0,
+    "venezia": 71.5, "sassuolo": 74.0, "salernitana": 70.0,
+
+    # --- FRANCIA (Ligue 1) ---
+    "paris saint germain": 92.5, "psg": 92.5, "monaco": 85.0, "as monaco": 85.0,
+    "marseille": 84.5, "olympique marseille": 84.5, "lille": 84.0, "lyon": 82.5,
+    "olympique lyon": 82.5, "lens": 81.5, "nice": 81.0, "rennes": 80.0,
+    "brest": 80.5, "stade brestois": 80.5, "reims": 77.0, "strasbourg": 76.5,
+    "toulouse": 76.0, "montpellier": 75.0, "nantes": 75.0, "auxerre": 73.0,
+    "saint-etienne": 73.0, "angers": 71.5, "le havre": 72.0,
+
+    # --- MÉXICO (Liga MX) ---
+    "america": 85.0, "américa": 85.0, "club américa": 85.0, "cruz azul": 84.5,
+    "monterrey": 84.0, "rayados": 84.0, "tigres": 84.0, "tigres uanl": 84.0,
+    "toluca": 83.0, "guadalajara": 81.0, "chivas": 81.0, "pumas": 80.0,
+    "pumas unam": 80.0, "pachuca": 79.0, "santos laguna": 77.0, "santos": 77.0,
+    "leon": 77.0, "león": 77.0, "atlas": 76.0, "atletico san luis": 76.0,
+    "atlético san luis": 76.0, "necaxa": 75.5, "tijuana": 75.0, "xolos": 75.0,
+    "puebla": 73.0, "juarez": 73.0, "juárez": 73.0, "fc juárez": 73.0,
+    "mazatlan": 72.0, "mazatlán": 72.0, "queretaro": 72.0, "querétaro": 72.0,
+
+    # --- OTRAS LIGAS TOP EUROPEAS & SUDAMERICANAS ---
+    "sporting cp": 86.5, "sporting lisbon": 86.5, "benfica": 86.0, "porto": 85.5,
+    "braga": 81.0, "psv": 86.0, "psv eindhoven": 86.0, "feyenoord": 84.5,
+    "ajax": 83.5, "az alkmaar": 80.5, "twente": 79.5, "club brugge": 78.5,
+    "anderlecht": 76.5, "galatasaray": 83.0, "fenerbahce": 83.0, "besiktas": 80.0,
+    "celtic": 78.0, "rangers": 77.5, "bodo/glimt": 76.5, "bodø/glimt": 76.5,
+    "shakhtar donetsk": 77.0, "dinamo zagreb": 76.0, "young boys": 75.5,
+    "red star belgrade": 75.0, "crvena zvezda": 75.0, "salzburg": 78.5,
+    "river plate": 85.0, "boca juniors": 83.5, "racing club": 81.5, "velez": 80.0,
+    "palmeiras": 85.5, "flamengo": 85.5, "botafogo": 84.5, "atletico mineiro": 82.5,
+    "sao paulo": 82.0, "internacional": 81.5, "fluminense": 80.5, "corinthians": 80.0,
+    "inter miami": 83.0, "lafc": 81.0, "columbus crew": 81.0, "la galaxy": 80.0,
+    "al hilal": 84.5, "al nassr": 83.5, "al ittihad": 81.5, "al ahli": 81.0,
+
+    # --- SELECCIONES NACIONALES ---
+    "argentina": 94.0, "france": 93.5, "francia": 93.5, "spain": 93.5, "españa": 93.5,
+    "england": 92.5, "inglaterra": 92.5, "brazil": 90.5, "brasil": 90.5, "germany": 90.5,
+    "alemania": 90.5, "portugal": 90.0, "netherlands": 88.0, "países bajos": 88.0,
+    "italy": 87.5, "italia": 87.5, "belgium": 86.0, "bélgica": 86.0, "colombia": 86.0,
+    "uruguay": 86.0, "croatia": 85.0, "croacia": 85.0, "morocco": 84.0, "marruecos": 84.0,
+    "mexico": 82.0, "méxico": 82.0, "usa": 82.0, "estados unidos": 82.0, "japan": 82.0,
+    "japón": 82.0, "switzerland": 81.0, "suiza": 81.0, "denmark": 81.0, "dinamarca": 81.0,
+    "austria": 80.5, "turkey": 80.0, "turquía": 80.0, "ecuador": 80.0, "canada": 79.0,
+    "canadá": 79.0, "chile": 78.5, "peru": 77.0, "perú": 77.0, "paraguay": 77.0
+}
+
+def obtener_rating_equipo(nombre: str, liga: str = "", pais: str = "") -> float:
+    """
+    Obtiene el rating de poder oficial de un equipo para calcular probabilidades con precisión matemática.
+    Aplica normalización de nombres, búsqueda directa, búsqueda difusa y fallback inteligente según la liga.
+    """
+    if not nombre:
+        return 75.0
+    
+    nom_clean = str(nombre).lower().strip()
+    
+    # 1. Búsqueda exacta
+    if nom_clean in RATINGS_EQUIPOS_TOP:
+        return RATINGS_EQUIPOS_TOP[nom_clean]
+    
+    # 2. Normalización de prefijos/sufijos habituales
+    for prefix in ["club ", "cf ", "fc ", "cd ", "ca ", "sc ", "rcd ", "sv ", "vfl ", "tsv ", "1. ", "ac ", "as "]:
+        if nom_clean.startswith(prefix):
+            nom_clean = nom_clean[len(prefix):].strip()
+            break
+    
+    if nom_clean in RATINGS_EQUIPOS_TOP:
+        return RATINGS_EQUIPOS_TOP[nom_clean]
+    
+    # 3. Búsqueda por subcadena en la base oficial
+    for k, v in RATINGS_EQUIPOS_TOP.items():
+        if len(k) >= 4 and (k in nom_clean or nom_clean in k):
+            return v
+    
+    # 4. Fallback inteligente calibrado según nivel de liga
+    liga_low = str(liga).lower()
+    pais_low = str(pais).lower()
+    
+    if any(top in liga_low for top in ["champions league", "premier league"]):
+        return 78.0
+    elif any(top in liga_low for top in ["laliga", "serie a", "bundesliga", "ligue 1"]):
+        return 76.5
+    elif any(med in liga_low for med in ["liga mx", "eredivisie", "primeira liga", "brasileirao", "mls", "copa libertadores"]):
+        return 75.0
+    elif any(p in pais_low for p in ["england", "spain", "germany", "italy", "france", "mexico"]):
+        return 74.0
+        
+    return 73.5
+
+
+def estimar_poisson_partido_unificado(
+    local: str, 
+    visita: str, 
+    liga: str = "", 
+    pais: str = "",
+    id_local: int = 0,
+    id_visita: int = 0
+) -> dict:
+    """
+    Motor Centralizado de Estimación Poisson + Dixon-Coles
+    basado en ratings de jerarquía real de clubes, ventaja de localía y calibración de ligas.
+    Garantiza 100% de consistencia matemática entre todos los módulos de Smart Pick Pro.
+    """
+    r_loc = obtener_rating_equipo(local, liga, pais)
+    r_vis = obtener_rating_equipo(visita, liga, pais)
+
+    # Ventaja de localía estándar calibrada (+2.4 a +3.5 pts de rating)
+    ventaja_loc = 2.8
+    liga_low = str(liga).lower()
+    if any(m in liga_low for m in ["liga mx", "brasil", "argentina", "libertadores", "sudamericana"]):
+        ventaja_loc = 3.4
+    elif "champions" in liga_low or "premier" in liga_low:
+        ventaja_loc = 2.4
+
+    pow_l = r_loc + ventaja_loc
+    pow_v = r_vis
+    diff = pow_l - pow_v  # Positivo = ventaja local, Negativo = ventaja visita
+
+    # Estimación de Goles Esperados (Lambdas)
+    base_gh = 1.45
+    base_ga = 1.15
+
+    # Moduladores por diferencia de jerarquía
+    lh = max(0.45, min(3.60, base_gh + (diff * 0.052)))
+    la = max(0.35, min(3.40, base_ga - (diff * 0.048)))
+
+    lh = round(lh, 2)
+    la = round(la, 2)
+
+    # Cálculo exacto con matriz Poisson + Dixon-Coles
+    max_goals = 6
+    matrix = [[0.0 for _ in range(max_goals)] for _ in range(max_goals)]
+    for h in range(max_goals):
+        for a in range(max_goals):
+            tau = dixon_coles_tau(h, a, lh, la)
+            matrix[h][a] = tau * poisson_probability(h, lh) * poisson_probability(a, la)
+
+    total_p = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals))
+    if total_p > 0:
+        for h in range(max_goals):
+            for a in range(max_goals):
+                matrix[h][a] /= total_p
+
+    p_win_h = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h > a)
+    p_draw = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h == a)
+    p_win_a = sum(matrix[h][a] for h in range(max_goals) for a in range(max_goals) if h < a)
+
+    p_home_pct = round(p_win_h * 100, 1)
+    p_draw_pct = round(p_draw * 100, 1)
+    p_away_pct = round(p_win_a * 100, 1)
+
+    # Ajuste de cierre a 100.0%
+    tot_pct = p_home_pct + p_draw_pct + p_away_pct
+    if tot_pct > 0 and tot_pct != 100.0:
+        diff_tot = round(100.0 - tot_pct, 1)
+        p_draw_pct = round(p_draw_pct + diff_tot, 1)
+
+    p_1X = round(p_home_pct + p_draw_pct, 1)
+    p_X2 = round(p_away_pct + p_draw_pct, 1)
+    p_12 = round(100.0 - p_draw_pct, 1)
+
+    total_goals = [0.0] * (max_goals * 2 - 1)
+    for h in range(max_goals):
+        for a in range(max_goals):
+            total_goals[h + a] += matrix[h][a]
+
+    p_over_15 = round(sum(total_goals[2:]) * 100, 1)
+    p_over_25 = round(sum(total_goals[3:]) * 100, 1)
+    p_btts = round(sum(matrix[h][a] for h in range(1, max_goals) for a in range(1, max_goals)) * 100, 1)
+
+    return {
+        "matrix": matrix,
+        "lambda_home": lh,
+        "lambda_away": la,
+        "p_home_win": p_home_pct,
+        "p_draw": p_draw_pct,
+        "p_away_win": p_away_pct,
+        "p_1X": p_1X,
+        "p_X2": p_X2,
+        "p_12": p_12,
+        "p_over_15": p_over_15,
+        "p_over_25": p_over_25,
+        "p_btts": p_btts,
+        "rating_loc": r_loc,
+        "rating_vis": r_vis,
+        "diff_poder": round(diff, 1)
+    }
+
+
 # LISTA BLANCA ESTRICTA DE PAÍSES Y TORNEOS ÉLITE Y PROFESIONALES
 LIGAS_ELITE_WHITELIST = {
     # 1. México (Liga MX, Femenil & Expansión)
@@ -1087,7 +1313,7 @@ def es_liga_top_profesional(liga_nom: str, pais_nom: str = "", local_nom: str = 
 def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
     """
     Obtiene ÚNICAMENTE los partidos PRÓXIMOS A DISPUTARSE (NS, TBD) o EN VIVO (1H, 2H, HT, LIVE)
-    desde api_client de las LIGAS TOP PROFESIONALES y calcula estimaciones de Poisson.
+    desde api_client de las LIGAS TOP PROFESIONALES y calcula estimaciones Poisson EXACTAS y UNIFICADAS.
     EXCLUYE RIGUROSAMENTE partidos finalizados (FT, AET, PEN), cancelados, divisiones menores y ligas juveniles.
     """
     try:
@@ -1122,11 +1348,17 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
                     if es_juvenil_o_reserva:
                         continue
 
-                    seed_l = (zlib.crc32(f"{loc}_atk".encode('utf-8')) % 100) / 100.0
-                    seed_v = (zlib.crc32(f"{vis}_atk".encode('utf-8')) % 100) / 100.0
-                    
-                    lh = round(1.40 + seed_l * 0.85, 2)
-                    la = round(1.05 + seed_v * 0.70, 2)
+                    poiss_data = estimar_poisson_partido_unificado(
+                        local=loc,
+                        visita=vis,
+                        liga=liga_nom,
+                        pais=pais_nom,
+                        id_local=p.get("local_id", 0),
+                        id_visita=p.get("visita_id", 0)
+                    )
+
+                    lh = poiss_data["lambda_home"]
+                    la = poiss_data["lambda_away"]
 
                     cand_item = {
                         "id": p.get("id"),
@@ -1146,7 +1378,8 @@ def extraer_candidatos_reales_de_hoy(solo_top: bool = True) -> list:
                         "goles_local": p.get("goles_local", 0),
                         "goles_visita": p.get("goles_visita", 0),
                         "lh": lh,
-                        "la": la
+                        "la": la,
+                        "stats_poisson": poiss_data
                     }
 
                     if es_top:
@@ -1452,49 +1685,80 @@ def generar_top_fijos_oro(lista_partidos: list = None, top_n: int = 10, filtro_t
         vis = p.get("visita", f"Equipo Visita {idx+1}")
         liga = p.get("liga", "Torneo Oficial")
         hora = p.get("hora", "Hoy")
-        lh = float(p.get("lh", 1.85))
-        la = float(p.get("la", 1.10))
+        
+        # Obtener stats poisson unificadas
+        poiss_data = p.get("stats_poisson")
+        if not poiss_data or not isinstance(poiss_data, dict):
+            poiss_data = estimar_poisson_partido_unificado(
+                local=loc,
+                visita=vis,
+                liga=liga,
+                pais=p.get("city", ""),
+                id_local=p.get("local_id", 0),
+                id_visita=p.get("visita_id", 0)
+            )
 
-        # Simulación Poisson exacta
-        p_win_h = 0.0
-        p_draw = 0.0
-        p_win_a = 0.0
-        for gh in range(7):
-            for ga in range(7):
-                prob_cell = poisson_probability(gh, lh) * poisson_probability(ga, la)
-                if gh > ga:
-                    p_win_h += prob_cell
-                elif gh == ga:
-                    p_draw += prob_cell
-                else:
-                    p_win_a += prob_cell
+        p_local_pct = poiss_data["p_home_win"]
+        p_draw_pct = poiss_data["p_draw"]
+        p_visita_pct = poiss_data["p_away_win"]
+        p_1X = poiss_data["p_1X"]
+        p_X2 = poiss_data["p_X2"]
 
-        p_local_pct = round(p_win_h * 100, 1)
-        p_visita_pct = round(p_win_a * 100, 1)
-        p_draw_pct = round(p_draw * 100, 1)
-
-        # Determinar si el favorito es Local o Visita
-        if p_local_pct >= p_visita_pct:
+        # Determinar si el favorito es Local o Visita con lógica matemática unificada
+        if p_local_pct >= p_visita_pct + 4.0:
             es_local_fijo = True
-            prob_fijo = max(55.0, min(94.5, p_local_pct))
             equipo_favorito = loc
-            tipo_fijo = "Fijo Local (1)"
-            tipo_tag = "LOCAL"
-            icono_tipo = "🏠"
-            cuota_fijo = round(max(1.15, min(1.85, 1.0 / (prob_fijo / 100.0) * 1.05)), 2)
-            mercado_txt = f"Victoria {loc} (1)"
-            doble_conservadora = f"{loc} o Empate (1X) ({min(98.5, round(prob_fijo + p_draw_pct, 1))}%)"
-        else:
+            if p_local_pct >= 60.0:
+                prob_fijo = p_local_pct
+                tipo_fijo = "Fijo Local (1)"
+                tipo_tag = "LOCAL"
+                icono_tipo = "🏠"
+                mercado_txt = f"Victoria {loc} (1)"
+            else:
+                prob_fijo = p_1X
+                tipo_fijo = "Doble Op. (1X)"
+                tipo_tag = "BANCO 1X"
+                icono_tipo = "🛡️"
+                mercado_txt = f"Doble Op: {loc} o Empate (1X)"
+            doble_conservadora = f"{loc} o Empate (1X) ({p_1X}%)"
+        elif p_visita_pct >= p_local_pct + 4.0:
             es_local_fijo = False
-            prob_fijo = max(55.0, min(94.5, p_visita_pct))
             equipo_favorito = vis
-            tipo_fijo = "Fijo Visita (2)"
-            tipo_tag = "VISITA"
-            icono_tipo = "✈️"
-            cuota_fijo = round(max(1.18, min(1.95, 1.0 / (prob_fijo / 100.0) * 1.06)), 2)
-            mercado_txt = f"Victoria {vis} (2)"
-            doble_conservadora = f"{vis} o Empate (X2) ({min(98.5, round(prob_fijo + p_draw_pct, 1))}%)"
+            if p_visita_pct >= 58.0:
+                prob_fijo = p_visita_pct
+                tipo_fijo = "Fijo Visita (2)"
+                tipo_tag = "VISITA"
+                icono_tipo = "✈️"
+                mercado_txt = f"Victoria {vis} (2)"
+            else:
+                prob_fijo = p_X2
+                tipo_fijo = "Doble Op. (X2)"
+                tipo_tag = "BANCO X2"
+                icono_tipo = "🛡️"
+                mercado_txt = f"Doble Op: {vis} o Empate (X2)"
+            doble_conservadora = f"{vis} o Empate (X2) ({p_X2}%)"
+        else:
+            # Choque parejo
+            if p_local_pct >= p_visita_pct:
+                es_local_fijo = True
+                equipo_favorito = loc
+                prob_fijo = p_1X
+                tipo_fijo = "Doble Op. (1X)"
+                tipo_tag = "BANCO 1X"
+                icono_tipo = "🛡️"
+                mercado_txt = f"Doble Op: {loc} o Empate (1X)"
+                doble_conservadora = f"{loc} o Empate (1X) ({p_1X}%)"
+            else:
+                es_local_fijo = False
+                equipo_favorito = vis
+                prob_fijo = p_X2
+                tipo_fijo = "Doble Op. (X2)"
+                tipo_tag = "BANCO X2"
+                icono_tipo = "🛡️"
+                mercado_txt = f"Doble Op: {vis} o Empate (X2)"
+                doble_conservadora = f"{vis} o Empate (X2) ({p_X2}%)"
 
+        cuota_fijo = calcular_cuota_probabilidad(prob_fijo)
         marcador_top = "2 - 0" if es_local_fijo else "0 - 2"
         if prob_fijo >= 75.0:
             marcador_top = "3 - 0" if es_local_fijo else "0 - 3"
