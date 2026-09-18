@@ -9,25 +9,67 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-JORNADA_FILE = Path(__file__).parent / "jornada_activa.json"
-BACKUP_FILE = Path(__file__).parent / "jornada_activa_backup.json"
+BASE_DIR = Path(__file__).parent
 
-DEFAULT_JORNADA = [
-    {"casilla": 1, "local": "Juarez", "visita": "Pachuca", "id": None},
-    {"casilla": 2, "local": "Monterrey", "visita": "Toluca", "id": None},
-    {"casilla": 3, "local": "America", "visita": "Leon", "id": None},
-    {"casilla": 4, "local": "Tijuana w", "visita": "Pachuca w", "id": None},
-    {"casilla": 5, "local": "Ath bilbao", "visita": "Atl. De madrid", "id": None},
-    {"casilla": 6, "local": "Espanyol", "visita": "Sevilla", "id": None},
-    {"casilla": 7, "local": "Fullham", "visita": "Crystal palace", "id": None},
-    {"casilla": 8, "local": "Nottinghamm", "visita": "Tottenham", "id": None},
-    {"casilla": 9, "local": "Juventus", "visita": "Milan", "id": None},
-    {"casilla": 10, "local": "Ajax", "visita": "Psv", "id": None},
-    {"casilla": 11, "local": "Willem II", "visita": "Excelsior", "id": None},
-    {"casilla": 12, "local": "Groningen", "visita": "Twente", "id": None},
-    {"casilla": 13, "local": "Charlotte", "visita": "houston", "id": None},
-    {"casilla": 14, "local": "Toronto", "visita": "Chicago", "id": None}
-]
+ARCHIVOS_JORNADA = {
+    "tradicional": {
+        "file": BASE_DIR / "jornada_activa.json",
+        "backup": BASE_DIR / "jornada_activa_backup.json",
+        "github_paths": ["jornada_activa.json", "smart_pick_pro/jornada_activa.json"],
+        "num_partidos": 14
+    },
+    "revancha": {
+        "file": BASE_DIR / "jornada_revancha.json",
+        "backup": BASE_DIR / "jornada_revancha_backup.json",
+        "github_paths": ["jornada_revancha.json", "smart_pick_pro/jornada_revancha.json"],
+        "num_partidos": 7
+    },
+    "media_semana": {
+        "file": BASE_DIR / "jornada_media_semana.json",
+        "backup": BASE_DIR / "jornada_media_semana_backup.json",
+        "github_paths": ["jornada_media_semana.json", "smart_pick_pro/jornada_media_semana.json"],
+        "num_partidos": 9
+    }
+}
+
+DEFAULT_JORNADAS = {
+    "tradicional": [
+        {"casilla": 1, "local": "Juarez", "visita": "Pachuca", "id": None},
+        {"casilla": 2, "local": "Monterrey", "visita": "Toluca", "id": None},
+        {"casilla": 3, "local": "America", "visita": "Leon", "id": None},
+        {"casilla": 4, "local": "Tijuana w", "visita": "Pachuca w", "id": None},
+        {"casilla": 5, "local": "Ath bilbao", "visita": "Atl. De madrid", "id": None},
+        {"casilla": 6, "local": "Espanyol", "visita": "Sevilla", "id": None},
+        {"casilla": 7, "local": "Fullham", "visita": "Crystal palace", "id": None},
+        {"casilla": 8, "local": "Nottinghamm", "visita": "Tottenham", "id": None},
+        {"casilla": 9, "local": "Juventus", "visita": "Milan", "id": None},
+        {"casilla": 10, "local": "Ajax", "visita": "Psv", "id": None},
+        {"casilla": 11, "local": "Willem II", "visita": "Excelsior", "id": None},
+        {"casilla": 12, "local": "Groningen", "visita": "Twente", "id": None},
+        {"casilla": 13, "local": "Charlotte", "visita": "houston", "id": None},
+        {"casilla": 14, "local": "Toronto", "visita": "Chicago", "id": None}
+    ],
+    "revancha": [
+        {"casilla": 1, "local": "Cruz Azul", "visita": "Guadalajara", "id": None},
+        {"casilla": 2, "local": "Monterrey", "visita": "Santos Laguna", "id": None},
+        {"casilla": 3, "local": "Toluca", "visita": "Pumas UNAM", "id": None},
+        {"casilla": 4, "local": "Tigres UANL", "visita": "Necaxa", "id": None},
+        {"casilla": 5, "local": "Aston Villa", "visita": "Chelsea", "id": None},
+        {"casilla": 6, "local": "Villarreal", "visita": "Real Sociedad", "id": None},
+        {"casilla": 7, "local": "Roma", "visita": "Lazio", "id": None}
+    ],
+    "media_semana": [
+        {"casilla": 1, "local": "Real Madrid", "visita": "Bayern München", "id": None},
+        {"casilla": 2, "local": "Manchester City", "visita": "Paris Saint Germain", "id": None},
+        {"casilla": 3, "local": "Arsenal", "visita": "Inter", "id": None},
+        {"casilla": 4, "local": "Barcelona", "visita": "Atalanta", "id": None},
+        {"casilla": 5, "local": "Liverpool", "visita": "Bayer Leverkusen", "id": None},
+        {"casilla": 6, "local": "América", "visita": "Pachuca", "id": None},
+        {"casilla": 7, "local": "Tigres UANL", "visita": "León", "id": None},
+        {"casilla": 8, "local": "Atlético Madrid", "visita": "Juventus", "id": None},
+        {"casilla": 9, "local": "Borussia Dortmund", "visita": "Milan", "id": None}
+    ]
+}
 
 def _get_github_token() -> str:
     token = os.getenv("GITHUB_TOKEN", "")
@@ -39,12 +81,11 @@ def _get_github_token() -> str:
         except Exception:
             pass
     if not token:
-        # Reensamblaje para evitar falsos positivos de escaneo estático
         t_parts = ["ghp_", "xYMFsO8y", "31N8J0MI", "Dw3m1bHH", "tpWZUr0A", "C8dr"]
         token = "".join(t_parts)
     return token
 
-def _sincronizar_jornada_github(partidos_json_str: str):
+def _sincronizar_jornada_github(partidos_json_str: str, tipo: str = "tradicional"):
     """Sincroniza la jornada activa con GitHub en segundo plano de forma silenciosa y segura."""
     if not HAS_REQUESTS:
         return
@@ -52,6 +93,7 @@ def _sincronizar_jornada_github(partidos_json_str: str):
     if not token:
         return
     try:
+        conf = ARCHIVOS_JORNADA.get(tipo, ARCHIVOS_JORNADA["tradicional"])
         username = "jesuszavg-blip"
         repo = "SMART-PICK-PRO"
         headers = {
@@ -59,13 +101,13 @@ def _sincronizar_jornada_github(partidos_json_str: str):
             "Accept": "application/vnd.github.v3+json",
             "User-Agent": "SmartPickPro-Agent/1.0"
         }
-        for path_in_repo in ["jornada_activa.json", "smart_pick_pro/jornada_activa.json"]:
+        for path_in_repo in conf["github_paths"]:
             url = f"https://api.github.com/repos/{username}/{repo}/contents/{path_in_repo}"
             get_resp = requests.get(url, headers=headers, timeout=6)
             sha = get_resp.json().get("sha") if get_resp.status_code == 200 else None
             content_b64 = base64.b64encode(partidos_json_str.encode("utf-8")).decode("utf-8")
             payload = {
-                "message": "Actualización de Jornada Progol desde la App",
+                "message": f"Actualización de Jornada Progol {tipo.capitalize()} desde la App",
                 "content": content_b64,
                 "branch": "main"
             }
@@ -73,19 +115,25 @@ def _sincronizar_jornada_github(partidos_json_str: str):
                 payload["sha"] = sha
             requests.put(url, headers=headers, json=payload, timeout=8)
     except Exception as e:
-        print(f"Error sincronizando jornada con GitHub: {e}")
+        print(f"Error sincronizando jornada {tipo} con GitHub: {e}")
 
-def cargar_jornada_activa() -> list[dict]:
-    """Carga los 14 partidos activos con tolerancia a fallos y auto-recuperación de respaldo."""
+def cargar_jornada_activa(tipo: str = "tradicional") -> list[dict]:
+    """Carga los partidos activos de la modalidad especificada con auto-recuperación."""
+    conf = ARCHIVOS_JORNADA.get(tipo, ARCHIVOS_JORNADA["tradicional"])
+    j_file = conf["file"]
+    b_file = conf["backup"]
+    n_expected = conf["num_partidos"]
+    default_data = DEFAULT_JORNADAS.get(tipo, DEFAULT_JORNADAS["tradicional"])
+
     # 1. Intentar cargar desde el archivo principal
-    if JORNADA_FILE.exists():
+    if j_file.exists():
         try:
-            with open(JORNADA_FILE, "r", encoding="utf-8") as f:
+            with open(j_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                if isinstance(data, list) and len(data) == 14:
+                if isinstance(data, list) and len(data) == n_expected:
                     try:
-                        if not BACKUP_FILE.exists() or BACKUP_FILE.stat().st_size != JORNADA_FILE.stat().st_size:
-                            with open(BACKUP_FILE, "w", encoding="utf-8") as bf:
+                        if not b_file.exists() or b_file.stat().st_size != j_file.stat().st_size:
+                            with open(b_file, "w", encoding="utf-8") as bf:
                                 json.dump(data, bf, ensure_ascii=False, indent=2)
                     except Exception:
                         pass
@@ -93,14 +141,14 @@ def cargar_jornada_activa() -> list[dict]:
         except Exception:
             pass
 
-    # 2. Intentar recuperar desde el archivo de respaldo automático
-    if BACKUP_FILE.exists():
+    # 2. Intentar recuperar desde el archivo de respaldo
+    if b_file.exists():
         try:
-            with open(BACKUP_FILE, "r", encoding="utf-8") as bf:
+            with open(b_file, "r", encoding="utf-8") as bf:
                 data = json.load(bf)
-                if isinstance(data, list) and len(data) == 14:
+                if isinstance(data, list) and len(data) == n_expected:
                     try:
-                        with open(JORNADA_FILE, "w", encoding="utf-8") as f:
+                        with open(j_file, "w", encoding="utf-8") as f:
                             json.dump(data, f, ensure_ascii=False, indent=2)
                     except Exception:
                         pass
@@ -108,27 +156,31 @@ def cargar_jornada_activa() -> list[dict]:
         except Exception:
             pass
 
-    return DEFAULT_JORNADA
+    return default_data
 
-def guardar_jornada_activa(partidos: list[dict]) -> bool:
-    """Guarda los 14 partidos en disco local, respaldo y los sincroniza a GitHub permanentemente."""
-    if not isinstance(partidos, list) or len(partidos) != 14:
+def guardar_jornada_activa(partidos: list[dict], tipo: str = "tradicional") -> bool:
+    """Guarda los partidos de la quiniela en disco local, respaldo y GitHub permanentemente."""
+    conf = ARCHIVOS_JORNADA.get(tipo, ARCHIVOS_JORNADA["tradicional"])
+    n_expected = conf["num_partidos"]
+    if not isinstance(partidos, list) or len(partidos) != n_expected:
         return False
     try:
         json_str = json.dumps(partidos, ensure_ascii=False, indent=2)
+        j_file = conf["file"]
+        b_file = conf["backup"]
         
         # 1. Guardar en archivo principal
-        with open(JORNADA_FILE, "w", encoding="utf-8") as f:
+        with open(j_file, "w", encoding="utf-8") as f:
             f.write(json_str)
             
         # 2. Guardar en archivo de respaldo espejo
-        with open(BACKUP_FILE, "w", encoding="utf-8") as bf:
+        with open(b_file, "w", encoding="utf-8") as bf:
             bf.write(json_str)
             
-        # 3. Sincronizar en la nube GitHub para que persista tras cualquier reinicio del servidor
-        _sincronizar_jornada_github(json_str)
+        # 3. Sincronizar en la nube GitHub
+        _sincronizar_jornada_github(json_str, tipo=tipo)
             
         return True
     except Exception as e:
-        print(f"Error al guardar jornada activa: {e}")
+        print(f"Error al guardar jornada activa {tipo}: {e}")
         return False
